@@ -1,0 +1,112 @@
+@import "../../scss/base";
+
+#bulk-nav {
+    $size: 3rem;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: white;
+    transform: translateY(100%);
+    opacity: 0;
+    padding-left: $size;
+    @include animate(transform, opacity);
+
+    &:before {
+        content: '';
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: $size;
+        background: $gray-100;
+        position: absolute;
+        border-right: $border-width solid $border-color;
+    }
+
+    & > svg {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: $size;
+        text-align: center;
+        transform: translateY(-50%);
+        color: $gray-800;
+    }
+
+    &.show {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+#bulk-operation-toggler {
+    position: relative;
+    width: 2rem;
+    min-width: 2rem;
+    padding: 0;
+
+
+    .form-check-inline {
+        margin-right: 0;
+        padding-left: 0;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+
+        &.warning {
+            .form-check-label:before {
+                border-color: $danger;
+                background-color: $danger;
+            }
+        }
+    }
+
+    .form-check-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .form-check-label::before,
+    .form-check-label::after {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.bulk-operation-input {
+    $size: 1rem;
+    padding: 0;
+    position: relative;
+
+    .form-check-inline {
+        margin-right: 0;
+        padding-left: 1rem;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0;
+    }
+
+    .form-check-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .form-check-label::before,
+    .form-check-label::after {
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}

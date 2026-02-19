@@ -1,0 +1,34 @@
+{% macro attributes(attr) -%}
+    {%- for attrname, attrvalue in attr -%}
+        {{- " " -}}
+        {%- if attrname in ['placeholder', 'title'] -%}
+            {{- attrname }}="{{ translation_domain is same as(false) ? attrvalue : attrvalue|trans(attr_translation_parameters, translation_domain) }}"
+        {%- elseif attrvalue is same as(true) -%}
+            {{- attrname }}="{{ attrname }}"
+        {%- elseif attrvalue is not same as(false) -%}
+            {{- attrname }}="{{ attrvalue }}"
+        {%- endif -%}
+    {%- endfor -%}
+{%- endmacro -%}
+
+
+{% macro label(label, format = '', translation_domain = 'cms') -%}
+    {%- if format -%}
+        {{- (format|replace({'%name%': label}))|trans({}, translation_domain, null) -}}
+    {%- else -%}
+        {{- label|humanize -}}
+    {%- endif -%}
+{%- endmacro -%}
+
+
+{% macro field(label, format = '', translation_domain = 'cms') -%}
+    {%- if format -%}
+        {{- (format|replace({'%name%': label}))|trans({}, translation_domain, null)|raw -}}
+    {%- else -%}
+        {{- label|humanize -}}
+    {%- endif -%}
+{%- endmacro -%}
+
+
+
+

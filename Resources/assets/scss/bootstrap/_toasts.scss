@@ -1,0 +1,83 @@
+//@import "bootstrap/scss/toasts";
+
+.toast {
+
+    @include media-breakpoint-up('sm') {
+        max-width: $toast-max-width;
+        min-width: $toast-min-width;
+    }
+
+    overflow: hidden; // cheap rounded corners on nested items
+    @include font-size($toast-font-size);
+    color: $toast-color;
+    background-color: $toast-background-color;
+    background-clip: padding-box;
+    border: $toast-border-width solid $toast-border-color;
+    box-shadow: $toast-box-shadow;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    @include border-radius($toast-border-radius);
+
+    &:not(:last-child) {
+        margin-bottom: $toast-padding-x;
+    }
+
+    &.showing {
+        opacity: 1;
+    }
+
+    &.show {
+        display: block;
+        opacity: 1;
+    }
+
+    &.hide {
+        display: none;
+    }
+
+    .toast-header button.btn-close {
+        $size: 1.3rem;
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        margin-right: 3px;
+        width: $size;
+        height: $size;
+        line-height: $size;
+        font-size: 80%;
+        border: $custom-btn-close-border;
+        background: $custom-btn-close-bg;
+        color: $white;
+        @include border-radius($border-radius);
+    }
+}
+
+.toast-header {
+    display: flex;
+    align-items: center;
+    padding: $toast-padding-y $toast-padding-x;
+    color: $toast-header-color;
+    background-color: $toast-header-background-color;
+    background-clip: padding-box;
+    border-bottom: $toast-border-width solid $toast-header-border-color;
+}
+
+.toast-body {
+    padding: $toast-padding-x; // apply to both vertical and horizontal
+}
+
+
+.toaster-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: $toast-padding-y $toast-padding-x;
+    z-index: $zindex-modal+1;
+
+    @include media-breakpoint-down('sm') {
+        left: 0;
+
+    }
+}
+

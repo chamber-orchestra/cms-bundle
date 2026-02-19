@@ -1,0 +1,18 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        public: false       # Allows optimizing the container by removing unused services; this also means
+
+    ChamberOrchestra\CmsBundle\:
+        resource: '../../'
+        exclude: "../../{DependencyInjection,Resources,ExceptionInterface}"
+
+    Symfony\Bundle\MakerBundle\Doctrine\DoctrineHelper: '@maker.doctrine_helper'
+    Symfony\Bundle\MakerBundle\FileManager: '@maker.file_manager'
+
+    ChamberOrchestra\CmsBundle\Maker\Generator\TranslationGenerator:
+        arguments:
+            $fileManager: "@maker.file_manager"
+            $translationsPath: "translations/"

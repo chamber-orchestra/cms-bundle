@@ -1,0 +1,92 @@
+{
+  "name": "chamber-orchestra/cms-bundle",
+  "type": "symfony-bundle",
+  "description": "Symfony 8 bundle providing a full-featured CMS admin panel — trait-based CRUD operations, DTO↔entity sync, CSV export, sortable lists, soft delete, copy/move, toggle, and Bootstrap 5 admin UI",
+  "keywords": [
+    "symfony",
+    "symfony8",
+    "cms",
+    "admin",
+    "admin-panel",
+    "crud",
+    "crud-generator",
+    "backend",
+    "doctrine",
+    "orm",
+    "dto",
+    "form",
+    "bootstrap5",
+    "soft-delete",
+    "export",
+    "csv",
+    "bundle"
+  ],
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Andrew Lukin",
+      "email": "lukin.andrej@gmail.com",
+      "homepage": "https://github.com/wtorsi",
+      "role": "Developer"
+    },
+    {
+      "name": "Girchenko Mikhail",
+      "email": "girchenkomikhail@gmail.com",
+      "homepage": "https://github.com/baldrys-ed",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^8.5",
+    "chamber-orchestra/doctrine-extensions-bundle": "^8.0",
+    "chamber-orchestra/doctrine-sort-bundle": "^8.0",
+    "chamber-orchestra/file-bundle": "^8.0",
+    "chamber-orchestra/form-bundle": "^8.0",
+    "chamber-orchestra/menu-bundle": "^8.0",
+    "chamber-orchestra/meta-bundle": "^8.0",
+    "chamber-orchestra/metadata-bundle": "^8.0",
+    "chamber-orchestra/pagination-bundle": "^8.0",
+    "doctrine/collections": "^2.0",
+    "doctrine/orm": "^3.0",
+    "symfony/event-dispatcher": "^8.0",
+    "symfony/form": "^8.0",
+    "symfony/framework-bundle": "^8.0",
+    "symfony/http-foundation": "^8.0",
+    "symfony/http-kernel": "^8.0",
+    "symfony/options-resolver": "^8.0",
+    "symfony/property-access": "^8.0",
+    "symfony/routing": "^8.0",
+    "symfony/string": "^8.0",
+    "symfony/twig-bundle": "^8.0",
+    "symfony/uid": "^8.0",
+    "symfony/yaml": "^8.0"
+  },
+  "require-dev": {
+    "doctrine/doctrine-bundle": "^3.2",
+    "phpunit/phpunit": "^13.0",
+    "symfony/test-pack": "^1.2"
+  },
+  "suggest": {
+    "studio-42/elfinder": "^2.1: File manager integration for media uploads in the admin UI"
+  },
+  "autoload": {
+    "psr-4": {
+      "ChamberOrchestra\\CmsBundle\\": ""
+    },
+    "exclude-from-classmap": [
+      "/tests/"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "minimum-stability": "stable",
+  "config": {
+    "sort-packages": true
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
+  }
+}

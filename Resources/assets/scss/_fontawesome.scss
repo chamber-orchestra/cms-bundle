@@ -1,0 +1,20 @@
+@import "@fortawesome/fontawesome-pro/scss/variables";
+@import "@fortawesome/fontawesome-pro/scss/mixins";
+@import "@fortawesome/fontawesome-pro/scss/core";
+@import "@fortawesome/fontawesome-pro/scss/fixed-width";
+@import "@fortawesome/fontawesome-pro/scss/larger";
+
+
+.#{$fa-css-prefix},
+.fas,
+.far,
+.fal,
+.fad,
+.fab {
+    &:before {
+        content: '';
+        //width: 1em;
+        display: inline-block;
+    }
+}
+

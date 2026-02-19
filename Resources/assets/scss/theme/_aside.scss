@@ -1,0 +1,78 @@
+$aside-heading-padding: 3px 25px;
+$aside-heading-image-height: 90px;
+
+$aside-width: 280px;
+$aside-margin: -236px;
+
+#aside {
+    width: $aside-width;
+    flex-shrink: 0;
+
+    &.closed {
+        margin-left: $aside-margin;
+
+        + #main {
+            width: calc(100% - #{$aside-width + $aside-margin}) !important;
+        }
+        .nav-link, {
+            text-align: right;
+            span{
+                display: none;
+            }
+            padding-right: 0.5rem;
+            .fa-angle-left{
+                display: none;
+            }
+        }
+        #menu-input-group-search{
+            display: none;
+        }
+    }
+    .logout-link{
+        color: $white;
+        &:hover {
+            color: $dark;
+            text-decoration: $link-hover-decoration;
+        }
+        @include transition($btn-transition)
+    }
+    #menu-input-group-search{
+        padding: 0.5rem;
+    }
+}
+
+#main {
+    width: calc(100% - #{$aside-width});
+}
+
+.aside-inner-block {
+    padding: 0 0;
+}
+
+.aside-header {
+    padding: $aside-heading-padding;
+    background: url("../../img/patterns/7.png") no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+#sidebar-close {
+    position: absolute;
+    top: 3px !important;
+    right: 3px !important;
+    width: 36px;
+    z-index: 1020;
+}
+
+#sidebar-open {
+    position: fixed;
+    top: 3px;
+    left: 3px;
+    width: 36px;
+    z-index: 1020;
+}
+
+#menu-item-search{
+    width: 2.3rem;
+    justify-content: center;
+}

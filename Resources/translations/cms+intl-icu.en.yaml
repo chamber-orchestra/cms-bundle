@@ -1,0 +1,116 @@
+common:
+    title:
+        list: "List"
+        view: "View"
+        create: "New"
+        delete: "Delete"
+        update: "Editing"
+        meta: "Meta"
+        settings: "Settings"
+        edit: Edit
+        fields: Columns
+        dashboard: Dashboard
+    flash:
+        create: "Object was created"
+        update: "Object was updated"
+        delete: "Object was deleted"
+    form:
+        placeholder: "Choose a value"
+    btn:
+        new: "Create"
+        save: "Save"
+        back: "Back"
+        delete: "Delete"
+        close: "Close"
+    text:
+        breadcrumbs: "Breadcrumbs"
+        delete: |
+            You are going to delete this object.
+            Please, confirm the deletion?
+
+        no_entities: "No objects yet."
+    crumbs:
+        index: Object list
+        create: Creating object
+        update: Updating object
+        meta: Meta
+    nav:
+        index: List
+        parent: Parent
+        create: Create
+        update: Update
+        blocks: Blocks
+        images: Images
+        files: Files
+        meta: Meta
+        children: Children
+        view: View
+        bulk_delete: <i class="far fa-fw fa-times"></i> Delete
+        export: CSV
+    close: Close
+    move_up: Move Up
+    move_down: Move Down
+    create: Create
+    edit: Edit
+    view: View
+    delete: Delete
+    no_caption: No caption
+    move: Move
+    toggle: Toggle
+    copy: Copy
+    toggle_on: Enable
+    toggle_off: Disable
+    entity_actions: Actions
+    entity_sort_actions: Sort Actions
+    children: Children
+    choose_value: Please, choose one of the values
+    logout: Sign out
+    details: Details
+    file_deleted: File has been deleted or not readable
+    required: Field is required
+
+filter:
+    title: 'Filter'
+    search: 'Search'
+modal:
+    close: Close
+toast:
+    success: Success!
+    error: Error!
+
+
+collection:
+    field:
+        add: Add
+        delete: Delete
+
+dashboard:
+    welcome: Welcome!
+    about: It is your own CMS (Your Own CMS or YOC).
+    welcome_text: |
+        Here you can edit your website content.
+        We are very glad that you are using our dev team.
+
+
+security:
+    title:
+        login: Authorization
+    btn:
+        login: Sign In
+    field:
+        email: E-mail
+        password: Password
+
+crud:
+    flash:
+        created: Object has been successfully created
+        updated: Object has been successfully updated
+        deleted: Object has been successfully deleted
+        all_deleted: All objects have been successfully deleted
+        selected_deleted: Selected objects have been successfully deleted
+        enabled: Object was enabled
+        disabled: Object was disabled
+    index:
+        select_all_on_page: 'Selected all elements on the page'
+        select_all: '<i class="fas fa-exclamation-triangle text-warning"></i> Selected all elements!'
+        selected: 'Selected {count} element(s)!'

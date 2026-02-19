@@ -1,0 +1,35 @@
+{%- extends '@ChamberOrchestraCms/base.html.twig' -%}
+{%- trans_default_domain 'cms' %}
+{# @var form \Symfony\Component\Form\FormView #}
+
+{%- block body -%}
+    <main class="min-vh-100 bg-light row align-items-center justify-content-center">
+        <div class="col-12 col-lg-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4>{{- 'security.title.login'|trans -}}</h4>
+                </div>
+                <div class="card-body">
+                    {%- form_theme form with ['@ChamberOrchestraCms/form/inline.html.twig'] only -%}
+                    {{- form_start(form) -}}
+                    {{- form_rest(form) -}}
+                    <button type="submit" class="btn btn-primary w-100">
+                        {{- 'security.btn.login'|trans -}}
+                    </button>
+                    {{- form_end(form) -}}
+                </div>
+            </div>
+        </div>
+
+    </main>
+{%- endblock -%}
+
+
+
+{%- block javascripts -%}
+    {{ vite_entry_script_tags('security/login', {}, 'cms') }}
+{%- endblock -%}
+
+{%- block stylesheets -%}
+    {{ vite_entry_link_tags('security/login', {}, 'cms') }}
+{%- endblock -%}

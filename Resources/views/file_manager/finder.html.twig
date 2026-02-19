@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>File Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+
+
+    <link rel="stylesheet" href="{{ asset("bundles/wisecms/assets/jquery-ui/smoothness/jquery-ui.min.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("bundles/wisecms/assets/jquery-ui/smoothness/jquery-ui.min.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("bundles/wisefile/elfinder/css/elfinder.min.css") }}"/>
+    <link rel="stylesheet" href="{{ asset("bundles/wisefile/elfinder/theme/default/css/theme.css") }}"/>
+</head>
+<body>
+<div id="elfinder"></div>
+<script src="{{ asset("bundles/wisecms/assets/jquery/jquery.min.js") }}"></script>
+<script src="{{ asset("bundles/wisecms/assets/jquery-ui/jquery-ui.min.js") }}"></script>
+<script src="{{ asset("bundles/wisefile/elfinder/elfinder.min.js") }}"></script>
+<script src="{{ asset("bundles/wisefile/elfinder/i18n/elfinder.ru.js") }}"></script>
+<script type="text/javascript" charset="utf-8">
+    $(function () {
+
+
+        var FileBrowserDialogue = {
+            init: function () {
+                // Here goes your code for setting your custom things onLoad.
+            },
+            sumbit: function (file, elf) {
+                parent.tinymce.activeEditor.windowManager.getParams().oninsert(file, elf);
+                parent.tinymce.activeEditor.windowManager.close();
+            }
+        }
+
+        var elf = $('#elfinder').elfinder({
+            url: "{{ path("backend_file_manager_elfinder_connector") }}",
+            lang: 'ru',
+            getFileCallback: function (file) { // editor callback
+                // Require `commandsOptions.getfile.onlyURL = false` (default)
+                FileBrowserDialogue.sumbit(file, elf); // pass selected file path to TinyMCE
+            }
+        }).elfinder("instance")
+
+
+    })
+</script>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+{# @var form \Symfony\Component\Form\FormView #}
+{%- extends '@ChamberOrchestraCms/base.html.twig' -%}
+{%- trans_default_domain translation_domain|default('cms') %}
+{%- import '@ChamberOrchestraCms/macro/html.html.twig' as html -%}
+{# @var title string #}
+{# @var label_format string #}
+{# @var form_themes array #}
+{%- block page_title -%}{{- (parent_entity_title is defined and parent_entity_title ? parent_entity_title|trans|raw ~ ' • ') ~ (parent_entity_label is defined and parent_entity_label ? parent_entity_label|trans|raw ~ ' • ') ~ title|trans({}, translation_domain)|default(class|humanize) ~ (sub_title is defined and sub_title ? ' • ' ~ sub_title|trans|raw) -}}{%- endblock -%}
+{%- block content_title -%}{{- "common.title.create"|trans -}}{%- endblock -%}
+
+{%- block content_body -%}
+    {%- form_theme form with form_themes only -%}
+    <article class="card-body">
+        {{- form_start(form) -}}
+        {%- block form_inner -%}
+            {{- form_rest(form) -}}
+        {%- endblock -%}
+        {%- block actions -%}
+            <div class="row">
+                {%- block actions_inner -%}
+                    <div class="col-12 col-lg-2 offset-lg-2">
+                        <button type="submit" class="btn btn-success w-100">{{- 'common.btn.save'|trans -}}</button>
+                    </div>
+                {%- endblock -%}
+            </div>
+        {%- endblock -%}
+        {{- form_end(form) -}}
+    </article>
+{%- endblock -%}
+
+
+
+{%- block javascripts -%}
+    {{ vite_entry_script_tags('crud/edit', {}, 'cms') }}
+{%- endblock -%}
+{%- block stylesheets -%}
+    {{ vite_entry_link_tags('crud/edit', {}, 'cms') }}
+{%- endblock -%}

@@ -1,0 +1,10 @@
+// stylelint-disable property-blacklist
+@mixin animate($transitions...) {
+    will-change: $transitions;
+    $props: ();
+    @each $transition in $transitions {
+        $props: append($props, $transition $transition-duration $transition-easing, comma);
+
+    }
+    @include transition($props);
+}

@@ -1,0 +1,15 @@
+@import "../../scss/init";
+
+#fields_filter_dropdown {
+  .dropdown-toggle {
+	cursor: pointer;
+
+	&::after {
+	  content: none;
+	}
+  }
+  .dropdown-menu{
+	min-width: auto;
+	max-width: 11rem;
+  }
+}

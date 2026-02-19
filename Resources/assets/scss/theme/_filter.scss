@@ -1,0 +1,57 @@
+$aside-filter-bg: rgba($gray-100, 0.9);
+$content-aside-width: 25%;
+
+.aside-filter {
+
+    width: $content-aside-width;
+    display: block !important;
+    position: fixed;
+    right: 0;
+    left: 100%;
+    top: 0;
+    bottom: 0;
+    padding: $grid-gutter-width/2;
+    background: $aside-filter-bg;
+    @include box-shadow($box-shadow);
+
+    z-index: $zindex-fixed;
+    margin-left: 0;
+    height: auto !important;
+    transition: $transition-base;
+
+
+    .aside-filter-inner {
+        overflow-y: scroll;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    .btn-toggle {
+        background: $warning;
+        position: absolute;
+        padding: .5rem;
+        border-radius: 2rem 0 0 2rem;
+        font-size: 16px;
+        top: 20px;
+        left: -50px;
+        width: 50px;
+        color: $black;
+        cursor: pointer;
+        @include box-shadow($box-shadow);
+    }
+
+    &.collapsing {
+        position: fixed;
+        overflow: visible;
+        height: auto;
+        display: block;
+    }
+
+    &.show {
+        margin-left: -$content-aside-width;
+    }
+}
+

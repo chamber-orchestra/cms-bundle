@@ -1,0 +1,37 @@
+@import "bootstrap/root";
+@import "bootstrap/reboot";
+@import "bootstrap/type";
+@import "bootstrap/images";
+//@import "bootstrap/scss/code";
+@import "bootstrap/scss/containers";
+@import "bootstrap/grid";
+@import "bootstrap/tables";
+@import "bootstrap/forms";
+@import "bootstrap/buttons";
+@import "bootstrap/scss/transitions";
+@import "bootstrap/dropdown";
+
+@import "bootstrap/button-group";
+// input-group is now imported via bootstrap/forms
+@import "bootstrap/nav";
+@import "bootstrap/navbar";
+@import "bootstrap/card";
+@import "bootstrap/breadcrumb";
+@import "bootstrap/pagination";
+@import "bootstrap/badge";
+//@import "bootstrap/jumbotron";
+@import "bootstrap/alert";
+//@import "bootstrap/scss/progress";
+//@import "bootstrap/scss/list-group";
+@import "bootstrap/close";
+@import "bootstrap/toasts";
+@import "bootstrap/modal";
+@import "bootstrap/tooltip";
+//@import "bootstrap/scss/popover";
+//@import "bootstrap/carousel";
+//@import "bootstrap/scss/spinners";
+//@import "bootstrap/scss/offcanvas";
+//@import "bootstrap/scss/placeholders";
+@import "bootstrap/utilities";
+@import "bootstrap/scss/helpers";
+@import "bootstrap/scss/utilities/api";

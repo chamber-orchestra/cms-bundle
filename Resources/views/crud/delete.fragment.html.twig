@@ -1,0 +1,18 @@
+{# @var form \Symfony\Component\Form\FormView #}
+{%- extends "@ChamberOrchestraCms/modal.html.twig" -%}
+{%- trans_default_domain translation_domain|default('cms') %}
+{%- set attr = attr|default({id: 'modal-delete'}) -%}
+{%- set form_attr = form_attr|default({attr: {id: 'delete'}}) -%}
+{%- set dialog_attr = dialog_attr|default({"class": 'modal-sm'}) -%}
+{%- block title -%}{{- 'common.title.delete'|trans -}}{%- endblock -%}
+{%- form_theme form with ['@ChamberOrchestraCms/form/inline.html.twig'] only -%}
+
+{%- block body -%}
+    {%- apply spaceless -%}
+        {{- form_start(form, form_attr) -}}
+        {{- form_rest(form) -}}
+        <p>{{- 'common.text.delete'|trans|raw|nl2br -}}</p>
+        <button type="submit" class="btn btn-success w-100">{{- 'common.btn.delete'|trans -}}</button>
+        {{- form_end(form) -}}
+    {%- endapply -%}
+{%- endblock -%}

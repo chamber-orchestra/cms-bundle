@@ -1,0 +1,107 @@
+@import "forms/form-control";
+@import "forms/form-select";
+@import "forms/form-check";
+@import "forms/form-range";
+@import "forms/form-text";
+@import "forms/labels";
+@import "forms/input-group";
+@import "forms/validation";
+
+// Custom: form labels
+.form-label {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-sm;
+}
+
+.col-form-label {
+    padding-top: add($input-padding-y, $input-border-width);
+    padding-bottom: add($input-padding-y, $input-border-width);
+    margin-bottom: 0;
+    @include font-size(inherit);
+    line-height: $input-line-height;
+    font-size: $font-size-sm;
+}
+
+// Custom: form groups (removed in BS5 but used in CMS)
+.form-group {
+    margin-bottom: $form-group-margin-bottom;
+    position: relative;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+// Custom: required field indicator
+label, legend {
+    &:not(.form-check-label).required {
+        &:after {
+            content: " * ";
+        }
+    }
+}
+
+// Custom: list collection
+.list-collection {
+    padding-left: 0;
+    $spacer: 1rem;
+
+    &:empty {
+        margin-bottom: 0;
+    }
+
+    > li {
+        position: relative;
+        padding: $spacer;
+        border: $border-width solid $border-color;
+        counter-increment: list;
+        list-style: none;
+
+        + li {
+            border-top: 0;
+        }
+
+        &:before {
+            content: counter(list);
+            background: $gray-200;
+            display: inline-block;
+            position: absolute;
+            $size: 1.5rem;
+            width: $size;
+            height: $size;
+            line-height: $size;
+            font-weight: bold;
+            left: -$size;
+            text-align: center;
+            border-radius: $border-radius;
+        }
+    }
+}
+
+// Custom: form-group validation hack
+.form-group {
+    @each $state, $data in $form-validation-states {
+        .was-validated &.is-#{$state} {
+            .#{$state}-feedback,
+            .#{$state}-tooltip {
+                display: block;
+            }
+        }
+    }
+}
+
+fieldset.tab-pane {
+    border: $border-width solid $border-color;
+
+    @each $state, $data in $form-validation-states {
+        @include form-validation-state-selector($state) {
+            border-color: map-get($data, color);
+        }
+    }
+}
+
+select {
+    option:disabled {
+        display: none;
+    }
+}
