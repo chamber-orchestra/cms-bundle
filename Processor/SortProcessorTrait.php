@@ -53,7 +53,7 @@ trait SortProcessorTrait
         // Single query: find the nearest non-deleted sibling in the given direction
         $qb = $er->createQueryBuilder($alias)
             ->select($alias.'.'.$sortField)
-            ->andWhere($alias.'.deletedAt IS NULL');
+            ->andWhere($alias.'.deletedDatetime IS NULL');
 
         if ($dir > 0) {
             $qb->andWhere($alias.'.'.$sortField.' > :current')
