@@ -1,0 +1,42 @@
+//@import "bootstrap/scss/forms/validation";
+
+// Form validation
+//
+// Provide feedback to users when form field values are valid or invalid. Works
+// primarily for client-side validation via scoped `:invalid` and `:valid`
+// pseudo-classes but also includes `.is-invalid` and `.is-valid` classes for
+// server-side validation.
+
+// scss-docs-start form-validation-states-loop
+@each $state, $data in $form-validation-states {
+    @include form-validation-state($state, $data...);
+}
+// scss-docs-end form-validation-states-loop
+
+// Custom form-group validation hack
+.form-group {
+    @each $state, $data in $form-validation-states {
+        .was-validated &.is-#{$state} {
+            .#{$state}-feedback,
+            .#{$state}-tooltip {
+                display: block;
+            }
+        }
+    }
+}
+
+.invalid-tooltip, .invalid-feedback {
+    &:blank {
+
+    }
+}
+
+fieldset.tab-pane {
+    border: $border-width solid $border-color;
+
+    @each $state, $data in $form-validation-states {
+        @include form-validation-state-selector($state) {
+            border-color: map-get($data, color);
+        }
+    }
+}

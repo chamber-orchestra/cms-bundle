@@ -1,0 +1,84 @@
+@import "../../scss/init";
+
+$nestable-padding-x: 1rem;
+$nestable-padding-y: 1rem;
+$nestable-spacer-x: 3px;
+$nestable-spacer-y: 3px;
+$nestable-offset: 1rem;
+
+.nestable {
+    display: block;
+    list-style: none;
+    position: relative;
+
+    &.disabled {
+        opacity: 0.8;
+
+        &:after {
+            content: " ";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 1000;
+            cursor: not-allowed;
+        }
+    }
+
+}
+
+.nestable-list {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+
+    .nestable-list {
+        padding-left: $nestable-offset;
+    }
+}
+
+
+//.nestable-item,
+.nestable-empty,
+.nestable-placeholder {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    //min-height: 20px;
+    //border-radius: 3px;
+    //font-size: 13px;
+    //line-height: 19px;
+}
+
+
+.nestable-row {
+    display: block;
+    margin-bottom: $nestable-spacer-y;
+    padding: $nestable-spacer-y $nestable-spacer-x;
+    text-decoration: none;
+    border: $border-width solid $border-color;
+    border-radius: $border-radius;
+    overflow: hidden;
+
+    &:hover {
+        background: $gray-100;
+    }
+}
+
+
+.nestable-placeholder,
+.nestable-empty {
+    border: $border-width dotted $border-color;
+    margin-bottom: $nestable-spacer-y;
+}
+
+
+.nestable-drag {
+    position: absolute;
+    z-index: 9999;
+    pointer-events: none;
+}

@@ -1,0 +1,311 @@
+{# todo create one index html twig #}
+{%- extends '@ChamberOrchestraCms/base.html.twig' -%}
+{%- trans_default_domain translation_domain|default('cms') %}
+{%- import '@ChamberOrchestraCms/macro/html.html.twig' as html -%}
+{# @var title string #}
+{# @var label_format string #}
+{# @var action #}
+{%- block page_title -%}
+    {{- (parent_entity_title is defined and parent_entity_title ? parent_entity_title|trans ~ ' • ') ~ (parent_entity_label is defined and parent_entity_label ? parent_entity_label ~ ' • ') ~ title|trans({}, translation_domain)|default (class|humanize) -}}
+{%- endblock -%}
+{%- block content_header -%}
+    <header class="card-header ">
+        <h2 class="card-title mb-0 d-flex justify-content-between">
+            {{- "common.title.list"|trans -}}
+            <div id="fields_filter_dropdown" class="dropdown" data-storage="{{ class|replace({'\\': '_'}) }}">
+                <a class="dropdown-toggle text-dark text-decoration-none" role='button' data-bs-toggle="dropdown" aria-expanded="false" title="{{ 'common.title.fields'|trans }}" aria-label="{{ 'common.title.fields'|trans }}">
+                    <i class="fas fa-table"></i>
+                </a>
+                <div class="dropdown-menu ps-3 dropdown-menu-end">
+                    {%- for field in fields|keys -%}
+                        {%- set val = html.field(field, label_format, translation_domain) -%}
+                        <div class="dropdown-item-text form-check form-check-inline">
+                            <input type="checkbox"  class="form-check-input" value="{{ field }}" id="ff{{ field }}">
+                            <label class="form-check-label" for="ff{{ field }}">
+                                {{ val }}
+                            </label>
+                        </div>
+                    {%- endfor -%}
+                </div>
+            </div>
+        </h2>
+    </header>
+{%- endblock -%}
+
+{%- block content_body_inner -%}
+    {%- set has_actions = block('table_actions') is defined
+        or (update is defined and update is not null)
+        or block('update_button') is defined
+        or actions is instanceof('callable') -%}
+    {% set has_link = block('table_link') is defined %}
+
+    <div class="table-responsive mb-0">
+        <table class="table table-sm table-list table-bordered mb-0">
+            <thead>
+            <tr>
+                {%- if bulk_operation_form is defined and bulk_operation_form -%}
+                    <th class="table-shrink text-center" id="bulk-operation-toggler">
+                        <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" {#
+                            #} data-all-on-page-tooltip="{{ 'crud.index.select_all_on_page'|trans }}" {#
+                            #} data-all-tooltip="{{ 'crud.index.select_all'|trans }}" {#
+                            #} data-selected-tooltip="{{ 'crud.index.selected'|trans }}" {#
+                            #} name="bulk_operation_toggler" {#
+                            #} id="bulk-operation-toggler-input">
+                            <label for="bulk-operation-toggler-input" class="form-check-label"></label>
+                        </div>
+                    </th>
+                {%- endif -%}
+                {%- if has_link -%}
+                    <th class="table-shrink text-center">*</th>
+                {%- endif -%}
+                {%- block table_headings -%}{%- endblock -%}
+
+                {%- if has_actions -%}
+                    <th class="table-shrink text-center">*</th>
+                {%- endif -%}
+                {%- if move is defined and move is not null -%}
+                    <th class="table-shrink text-center">*</th>
+                {%- endif -%}
+                {%- if toggle is defined and toggle is not null and class is instanceof('\\ChamberOrchestra\\DoctrineExtensionsBundle\\Contracts\\Entity\\ToggleInterface') -%}
+                    <th class="table-shrink text-center">*</th>
+                {%- endif -%}
+                {%- if copy is defined and copy is not null and class is instanceof('\\ChamberOrchestra\\CmsBundle\\Contracts\\Entity\\CopyInterface') -%}
+                    <th class="table-shrink text-center">*</th>
+                {%- endif -%}
+                {%- if delete_form is defined and delete_form -%}
+                    <th class="table-shrink text-center">*</th>
+                {%- endif -%}
+            </tr>
+            </thead>
+            <tbody>
+            {%- for entity in entities -%}
+                {%- set attr = {} -%}
+                <tr {{ block('row_attributes') }}>
+                    {%- if bulk_operation_form is defined and bulk_operation_form -%}
+                        <td class="table-shrink text-center bulk-operation-input">
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" class="form-check-input" {#
+                                #} name="bulk_operation_input" {#
+                                #} value="{{ entity.id }}" {#
+                                #} id="bi{{ entity.id }}">
+                                <label for="bi{{ entity.id }}" class="form-check-label"></label>
+                            </div>
+                        </td>
+                    {%- endif -%}
+                    {%- if has_link -%}
+                        <td class="table-shrink text-center">
+                            {{- block('table_link') -}}
+                        </td>
+                    {%- endif -%}
+                    {%- block table_values -%}{%- endblock -%}
+                    {%- if has_actions -%}
+                        <td class="table-shrink text-end">
+                            <div class="btn-toolbar flex-lg-nowrap" role="toolbar" {#
+                            #}aria-label="{{ 'common.entity_actions'|trans }}">
+                                {{- block('table_actions') is defined ? block('table_actions') -}}
+                                {%- if update is not null or actions is instanceof('callable') -%}
+                                    <div class="btn-group" role="group" aria-label="{{ 'common.edit'|trans }}">
+                                        {%- if actions is instanceof('callable') -%}
+                                            {{- render_menu(call(actions, entity, parent|default(null)), '@ChamberOrchestraCms/menu/actions.html.twig') -}}
+                                        {%- endif -%}
+                                        {%- if update is not null -%}
+                                            <a href="{{ path(update.route, update.route_params|merge({id: entity.id})) }}"
+                                               {#
+                                               #}data-bs-toggle="tooltip" {#
+                                               #}data-bs-container="body" {#
+                                               #}data-bs-boundary="viewport" {#
+                                               #}class="btn btn-primary" {#
+                                               #}title="{{ 'common.edit'|trans }}" {#
+                                               #}aria-label="{{ 'common.edit'|trans }}" {#
+                                            #}>
+                                                <i class="far fa-fw fa-edit"></i>
+                                            </a>
+                                        {%- endif -%}
+                                    </div>
+                                {%- endif -%}
+                            </div>
+                        </td>
+                    {%- endif -%}
+                    {%- if (move is defined and move is not null) -%}
+                        <td colspan="table-shrink">
+                            <div class="btn-toolbar flex-lg-nowrap" role="toolbar" {#
+                            #}aria-label="{{ 'common.entity_sort_actions'|trans }}">
+                                <div class="btn-group " role="group" aria-label="{{ 'common.move'|trans }}">
+                                    <a href="{{ path(move.route, move.route_params|merge({id: entity.id, direction: 'up'})) }}"
+                                       {#
+                                       #}data-toggle="move" {#
+                                       #}data-direction="up" {#
+                                       #}class="btn btn-warning" {#
+                                       #}title="{{ 'common.move_up'|trans }}" {#
+                                       #}aria-label="{{ 'common.move_up'|trans }}" {#
+                                    #}>
+                                        <i class="far fa-fw fa-angle-up"></i>
+                                    </a>
+                                    <a href="{{ path(move.route, move.route_params|merge({id: entity.id, direction: 'down'})) }}"
+                                       {#
+                                       #}data-toggle="move" {#
+                                       #}data-direction="down" {#
+                                       #}class="btn btn-warning" {#
+                                       #}title="{{ 'common.move_down'|trans }}" {#
+                                       #}aria-label="{{ 'common.move_down'|trans }}" {#
+                                    #}>
+                                        <i class="far fa-fw fa-angle-down"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </td>
+                    {%- endif -%}
+                    {%- if copy is defined and copy is not null and class is instanceof('\\ChamberOrchestra\\CmsBundle\\Contracts\\Entity\\CopyInterface') -%}
+                    <td class="table-shrink text-center">
+                        <a href="{{ path(copy.route, copy.route_params|merge({id: entity.id})) }}"
+                           {#
+                           #}data-toggle="copy" {#
+                           #}class="btn btn-warning" {#
+                           #}title="{{ 'common.copy'|trans }}" {#
+                           #}aria-label="{{ 'common.copy'|trans }}" {#
+                        #}>
+                            <i class="far fa-fw fa-copy"></i>
+                        </a>
+                    </td>
+                    {% endif %}
+                    {%- if toggle is defined and toggle is not null and class is instanceof('\\ChamberOrchestra\\DoctrineExtensionsBundle\\Contracts\\Entity\\ToggleInterface') -%}
+                        <td class="table-shrink text-center">
+                            <a href="{{ path(toggle.route, toggle.route_params|merge({id: entity.id})) }}"
+                               class="btn {{ entity.enabled ? 'btn-info' : 'btn-outline-info' }}"
+                               data-bs-toggle="tooltip"
+                               title="{{ entity.enabled ? 'common.toggle_off'|trans : 'common.toggle_on'|trans }}"
+                               aria-label="{{ entity.enabled ? 'common.toggle_off'|trans : 'common.toggle_on'|trans }}"
+                            >
+                                {%- if entity.enabled -%}
+                                    <i class="far fa-fw fa-eye-slash"></i>
+                                {%- else -%}
+                                    <i class="far fa-fw fa-eye"></i>
+                                {%- endif -%}
+                            </a>
+                        </td>
+                    {%- endif -%}
+
+                    {%- if delete_form is defined and delete_form -%}
+                        <td class="table-shrink text-center">
+                            <button type="button" class="btn btn-danger" {#
+                            #}title="{{ 'common.delete'|trans }}" {#
+                                    #}data-bs-toggle="modal" {#
+                                    #}data-bs-target="#modal-delete" {#
+                                    #}data-form="#delete" {#
+                                    #}data-values="{{ {"entity": entity.id}|json_encode }}">
+                                <i class="far fa-fw fa-times"></i>
+                            </button>
+                        </td>
+                    {%- endif -%}
+                </tr>
+            {%- else -%}
+                <tr>
+                    <td colspan="100">
+                        <div class="alert alert-warning text-center mb-0">
+                            <p class="mb-0">{{- "common.text.no_entities"|trans -}}</p>
+                        </div>
+                    </td>
+                </tr>
+            {%- endfor -%}
+            </tbody>
+        </table>
+    </div>
+
+{%- endblock -%}
+
+{%- block content_aside -%}
+    {%- if filter_form is defined and filter_form -%}
+        <aside class="aside-filter collapse" id="aside-filter">
+            <button class="btn btn-toggle text-nowrap" {#
+            #}data-bs-toggle="collapse" {#
+                    #}data-bs-target="#aside-filter" {#
+                    #}type="button">
+                <i class="far fa-fw fa-cogs fa-spin"></i>
+                <span class="visually-hidden">{{- 'filter.search'|trans -}}</span>
+            </button>
+            <div class="aside-filter-inner">
+                {%- block aside_filter_inner -%}
+                    {%- form_theme filter_form with ['@ChamberOrchestraCms/form/inline.html.twig'] only -%}
+                    {{- form_start(filter_form, {'attr': {'data-type': 'manual', 'class': 'h-100'}}) -}}
+                    <div class="card bg-transparent border-0 h-100 d-flex flex-column">
+                        <div class="card-header flex-grow-0">
+                            <h4 class="text-center mb-0">{{- "filter.title"|trans -}}</h4>
+                        </div>
+                        <div class="card-body flex-grow-1 overflow-auto">
+                            {{- form_rest(filter_form) -}}
+                        </div>
+                        <div class="card-footer flex-grow-0">
+                            <button type="submit" class="btn btn-primary w-100">
+                                {{- 'filter.search'|trans -}}
+                            </button>
+                        </div>
+                    </div>
+                    {{- form_end(filter_form) -}}
+                {%- endblock -%}
+            </div>
+        </aside>
+    {%- endif -%}
+{%- endblock -%}
+
+
+{%- block content_footer -%}
+    {% set has_parent_link = block('parent_link') is defined %}
+    {%- if pagination is defined or has_parent_link -%}
+        <div class="card-footer">
+            {%- if pagination is defined and pagination is not null -%}
+                {{- render_pagination(pagination, "@ChamberOrchestraCms/pagination/base.html.twig") -}}
+            {%- endif -%}
+        </div>
+    {%- endif -%}
+{%- endblock -%}
+
+{%- block body -%}
+    {{- parent() -}}
+    {%- if bulk_operation_form is defined and bulk_operation_form is not null -%}
+        {%- form_theme bulk_operation_form with ['form_div_layout.html.twig'] only -%}
+        {{- form_start(bulk_operation_form, {attr: {id: 'bulk-operation-form', 'data-manuall': 'true'}}) -}}
+        {%- for e in bulk_operation_form -%}
+            {{- form_widget(e) -}}
+        {%- endfor -%}
+        {{- form_end(bulk_operation_form) -}}
+    {%- endif -%}
+{%- endblock -%}
+
+
+{%- block modals -%}
+    {%- if delete_form is defined and delete_form -%}
+        {%- include '@ChamberOrchestraCms/crud/delete.modal.html.twig' with {form: delete_form} only -%}
+    {%- endif -%}
+{%- endblock -%}
+
+
+{%- block javascripts -%}
+    {{ vite_entry_script_tags('crud/index', {}, 'cms') }}
+{%- endblock -%}
+
+{%- block stylesheets -%}
+    {{ vite_entry_link_tags('crud/index', {}, 'cms') }}
+{%- endblock -%}
+
+
+{%- block row_attributes -%}
+    {%- set attr = attr|default({})|merge({id: entity.id}) -%}
+    {%- if (move is defined and move is not null) and entity.sortOrder is defined -%}
+        {%- set attr = attr|merge({"data-sort-order": entity.sortOrder }) -%}
+    {%- endif -%}
+    {{ block('attributes') }}
+{%- endblock row_attributes -%}
+
+{% block attributes -%}
+    {%- for attrname, attrvalue in attr -%}
+        {{- " " -}}
+        {%- if attrname in ['placeholder', 'title'] -%}
+            {{- attrname }}="{{ translation_domain is same as(false) ? attrvalue : attrvalue|trans(attr_translation_parameters, translation_domain) }}"
+        {%- elseif attrvalue is same as(true) -%}
+            {{- attrname }}="{{ attrname }}"
+        {%- elseif attrvalue is not same as(false) -%}
+            {{- attrname }}="{{ attrvalue }}"
+        {%- endif -%}
+    {%- endfor -%}
+{%- endblock attributes -%}

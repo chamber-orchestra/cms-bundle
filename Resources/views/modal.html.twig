@@ -1,0 +1,41 @@
+{%- import '@ChamberOrchestraCms/macro/html.html.twig' as html -%}
+{%- trans_default_domain 'cms' -%}
+{%- set attr = attr|default({})|merge({
+    class: ('modal fade ' ~ attr.class|default(''))|trim ,
+}) -%}
+
+{%- set dialog_attr = {
+    class: ('modal-dialog ' ~ dialog_attr.class|default(''))|trim ,
+    role: 'document'
+} -%}
+
+{%- block modal -%}
+    <div tabindex="-1" role="dialog" {{ html.attributes(attr) }}>
+        <div {{ html.attributes(dialog_attr) }} >
+            <div class="modal-content">
+                {%- block content -%}
+                    {%- block header_outer -%}
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                {%- block title -%}{%- endblock -%}
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="{{ 'modal.close'|trans }}">
+                                <i class="far fa-times fa-fw"></i>
+                            </button>
+                        </div>
+                    {%- endblock -%}
+
+                    {%- block body_outer -%}
+                        <div class="modal-body">
+                            {%- block body -%}{%- endblock -%}
+                        </div>
+                    {%- endblock -%}
+
+                    {%- block footer_outer -%}
+                    {%- endblock -%}
+                {%- endblock -%}
+            </div>
+        </div>
+    </div>
+{%- endblock -%}
