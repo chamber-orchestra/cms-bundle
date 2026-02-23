@@ -2,5 +2,6 @@
 /var/
 composer.lock
 .php-cs-fixer.cache
+.twig-cs-fixer.cache
 .phpunit.cache/
 .claude/
