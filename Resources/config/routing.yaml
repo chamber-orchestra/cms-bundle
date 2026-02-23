@@ -1,3 +1,0 @@
-_chamber_orchestra_cms_file:
-    resource: "../../Controller/FileManagerController.php"
-    type: 'attribute'

@@ -25,13 +25,10 @@
     </testsuites>
     <source>
         <include>
-            <directory suffix=".php">.</directory>
+            <directory suffix=".php">src</directory>
         </include>
         <exclude>
-            <directory>tests</directory>
-            <directory>vendor</directory>
-            <directory>bin</directory>
-            <directory>Resources</directory>
+            <directory>src/Resources</directory>
         </exclude>
     </source>
 </phpunit>

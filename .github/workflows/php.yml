@@ -2,9 +2,9 @@ name: PHP Composer
 
 on:
   push:
-    branches: ["main", "8.0"]
+    branches: ["main"]
   pull_request:
-    branches: ["main", "8.0"]
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -12,22 +12,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_USER: runner
-          POSTGRES_PASSWORD: ""
-          POSTGRES_DB: cms_bundle_test
-          POSTGRES_HOST_AUTH_METHOD: trust
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - uses: actions/checkout@v6
@@ -37,7 +21,6 @@ jobs:
         with:
           php-version: "8.5"
           tools: composer:v2
-          extensions: pdo_pgsql
           coverage: none
 
       - name: Validate composer.json and composer.lock
@@ -57,6 +40,10 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-interaction
 
       - name: Run test suite
-        env:
-          CMS_BUNDLE_TEST_DB_URL: "postgresql://runner@127.0.0.1/cms_bundle_test?serverVersion=17"
         run: composer run-script test
+
+      - name: Run PHPStan
+        run: composer run-script analyse
+
+      - name: Run PHP-CS-Fixer
+        run: composer run-script cs-check

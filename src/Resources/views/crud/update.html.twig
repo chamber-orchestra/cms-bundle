@@ -1,0 +1,38 @@
+{%- extends '@ChamberOrchestraCms/crud/create.html.twig' -%}
+{%- trans_default_domain translation_domain|default('cms') %}
+{%- import '@ChamberOrchestraCms/macro/html.html.twig' as html -%}
+{# @var title string #}
+{# @var label_format string #}
+{%- block page_title -%}
+    {{- (parent_entity_title is defined and parent_entity_title ? parent_entity_title|trans ~ ' • ') ~ (parent_entity_label is defined and parent_entity_label ? parent_entity_label ~ ' • ') ~ title|trans({}, translation_domain)|default(class|humanize) ~ (entity_label is defined and entity_label ? ' • ' ~ entity_label) -}}
+{%- endblock -%}
+{%- block content_title -%}
+    {{- "common.title.edit"|trans -}}
+{%- endblock -%}
+
+{%- block actions_inner -%}
+    <div class="col-12 col-lg-10 offset-lg-2">
+        <button type="submit" class="btn btn-success px-5">{{- 'common.btn.save'|trans -}}</button>
+    </div>
+
+    {%- if delete_form is defined -%}
+        <div class="col-2">
+            <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal"
+                    data-bs-target="#modal-delete">{{- 'common.btn.delete'|trans -}}</button>
+        </div>
+    {%- endif -%}
+{%- endblock -%}
+
+{%- block modals -%}
+    {%- if delete_form is defined -%}
+        {%- include '@ChamberOrchestraCms/crud/delete.modal.html.twig' with {form: delete_form} only -%}
+    {%- endif -%}
+{%- endblock -%}
+
+
+{%- block javascripts -%}
+    {{ vite_entry_script_tags('crud/edit', {}, 'cms') }}
+{%- endblock -%}
+{%- block stylesheets -%}
+    {{ vite_entry_link_tags('crud/edit', {}, 'cms') }}
+{%- endblock -%}

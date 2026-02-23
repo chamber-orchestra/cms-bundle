@@ -1,0 +1,8 @@
+parameters:
+    level: max
+    paths:
+        - src/
+    excludePaths:
+        - src/Form/Dto/MetaTranslatableDto.php
+        - src/Generator/CsvGenerator.php
+        - src/Resources/

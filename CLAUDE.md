@@ -6,20 +6,44 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A Symfony bundle providing a full CMS admin panel with CRUD operations, form handling, entity management, and admin UI components. Built around trait-based operation composition — controllers opt into list, create, update, delete, copy, move, toggle, export, and meta operations by using corresponding `Supports*Operation` traits.
 
+**Package:** `chamber-orchestra/cms-bundle`
 **Requirements:** PHP ^8.5, Symfony 8.0 components
-
-**Namespace:** `ChamberOrchestra\CmsBundle` (PSR-4 from package root — no `src/` directory)
+**Namespace:** `ChamberOrchestra\CmsBundle` (PSR-4 from `src/`)
+**Bundle class:** `ChamberOrchestraCmsBundle`
+**Main branch:** `main`
 
 ## Commands
 
 ```bash
-composer install                        # Install dependencies
-./bin/phpunit                           # Run all tests
-./bin/phpunit --filter ClassName        # Run a specific test class
-./bin/phpunit --filter testMethodName   # Run a specific test method
-composer test                           # Alias for vendor/bin/phpunit
-vendor/bin/php-cs-fixer fix             # Fix code style (php-cs-fixer.dist.php)
-php -l path/to/File.php                 # Quick syntax lint
+# Install dependencies
+composer install
+
+# Run all tests
+composer test                           # or: ./bin/phpunit
+
+# Run specific test file
+./bin/phpunit tests/Unit/SomeTest.php
+
+# Run tests in specific directory
+./bin/phpunit tests/Unit/
+
+# Run single test method
+./bin/phpunit --filter testMethodName
+
+# Check code style (dry-run)
+vendor/bin/php-cs-fixer fix --dry-run
+
+# Auto-fix code style
+vendor/bin/php-cs-fixer fix
+
+# Quick syntax lint
+php -l path/to/File.php
+
+# Check Twig code style (dry-run)
+composer twig-check                     # or: vendor/bin/twig-cs-fixer lint
+
+# Auto-fix Twig code style
+composer twig-fix                       # or: vendor/bin/twig-cs-fixer fix
 ```
 
 ## Architecture
@@ -72,23 +96,23 @@ Actions (`create`, `update`, `view`, `meta`, `delete`, `copy`, `move`, `toggle`,
 
 ### Key Layers
 
-- **Controller/**: Abstract controllers + operation traits; `OriginPathTrait` for redirect-back logic
-- **Configurator/**: `CrudControllerConfigurator` — OptionsResolver-based wiring of all controller options
-- **Processor/**: `CrudProcessor` (core CRUD logic + transactions), `SortProcessorTrait` (move up/down for `SortInterface` entities), `Instantiator`, `Reflector`, `RuntimeReflectionClass`
-- **Form/**: DTOs in `Dto/` (`EntityDto`, `DeleteDto`, `BulkOperationDto`, `DtoCollection`, `AbstractDto`); form types in `Type/` (`EntityType`, `DeleteType`, `BulkOperationForm`, `JsonType`, `YamlType`, `WysiwygType`, `AbstractFilterType`); transformers and normalizers
-- **EntityRepository/**: `EntityRepositoryWrapper` + `FilterHelper`, `SortHelper`
-- **Events/**: `CreateEvent`, `UpdateEvent`, `DeleteEvent`, `SyncEvent`, `PostSyncEvent` — all extend `AbstractEvent(ClassMetadata, object)`
-- **EventSubscriber/**: `InversedCollectionSubscriber`, `OwningCollectionSubscriber`, `SetVersionSubscriber`
-- **Twig/**: `CmsExtension`/`CmsRuntime`, `CoreExtension`, `EmailExtension`, `PhoneExtension`
-- **Generator/**: `CsvGenerator` for export operations
-- **Resources/**: Twig templates (`views/`), SCSS/JS assets (`assets/`), service configs (`config/`)
+- **src/Controller/**: Abstract controllers + operation traits; `OriginPathTrait` for redirect-back logic
+- **src/Configurator/**: `CrudControllerConfigurator` — OptionsResolver-based wiring of all controller options
+- **src/Processor/**: `CrudProcessor` (core CRUD logic + transactions), `SortProcessorTrait` (move up/down for `SortInterface` entities), `Instantiator`, `Reflector`, `RuntimeReflectionClass`
+- **src/Form/**: DTOs in `Dto/` (`EntityDto`, `DeleteDto`, `BulkOperationDto`, `DtoCollection`, `AbstractDto`); form types in `Type/` (`EntityType`, `DeleteType`, `BulkOperationForm`, `JsonType`, `YamlType`, `WysiwygType`, `AbstractFilterType`); transformers and normalizers
+- **src/EntityRepository/**: `EntityRepositoryWrapper` + `FilterHelper`, `SortHelper`
+- **src/Events/**: `CreateEvent`, `UpdateEvent`, `DeleteEvent`, `SyncEvent`, `PostSyncEvent` — all extend `AbstractEvent(ClassMetadata, object)`
+- **src/EventSubscriber/**: `InversedCollectionSubscriber`, `OwningCollectionSubscriber`, `SetVersionSubscriber`
+- **src/Twig/**: `CmsExtension`/`CmsRuntime`, `CoreExtension`, `EmailExtension`, `PhoneExtension`
+- **src/Generator/**: `CsvGenerator` for export operations
+- **src/Resources/**: Twig templates (`views/`), SCSS/JS assets (`assets/`), service configs (`config/`)
 
 ### Frontend Assets
 
-- SCSS in `Resources/assets/scss/` — customized Bootstrap 5.3 source files with CMS-specific overrides in `bootstrap/` subdirectory
+- SCSS in `src/Resources/assets/scss/` — customized Bootstrap 5.3 source files with CMS-specific overrides in `bootstrap/` subdirectory
 - JavaScript: jQuery, TinyMCE 5, Select2, Flatpickr, nestable, Chart.js
-- Twig templates in `Resources/views/` — base layout, CRUD views, form themes (Bootstrap 5), modals, menus
-- Entry points in `Resources/assets/entry/` — per-page JS/SCSS bundles
+- Twig templates in `src/Resources/views/` — base layout, CRUD views, form themes (Bootstrap 5), modals, menus
+- Entry points in `src/Resources/assets/entry/` — per-page JS/SCSS bundles
 
 ### Twig Templates
 
@@ -100,19 +124,90 @@ Actions (`create`, `update`, `view`, `meta`, `delete`, `copy`, `move`, `toggle`,
 
 ### Service Configuration
 
-- `Resources/config/services.yaml` — main service definitions
-- `Resources/config/dev/services.yaml` — dev-only services
+- `src/Resources/config/services.yaml` — main service definitions
+- `src/Resources/config/dev/services.yaml` — dev-only services
 
 ## Testing
 
-- PHPUnit 13.x; tests in `tests/` autoloaded as `Tests\`
-- Unit tests go in `tests/Unit/` extending `TestCase`
+- PHPUnit 13.x with `failOnRisky` and `failOnWarning`; tests autoloaded as `Tests\`
+- Two test suites: `Unit` (`tests/Unit/`) and `Integrational` (`tests/Integrational/`)
+- Use PHPUnit 13 attributes (`#[Test]`)
+- CI: GitHub Actions on `main` / `8.0` branches, PHP 8.5, PostgreSQL 17
 - The `tests/` directory is currently empty — no existing tests to follow as precedent
 
-## Code Conventions
+### Testing Conventions
 
-- PSR-12, `declare(strict_types=1)`, 4-space indent; CS Fixer enforces `@PER-CS`, `@Symfony`, and `native_function_invocation` (backslash-prefixed PHP functions in all scopes)
+- Use music thematics for test fixtures and naming (e.g., entity names like `Composition`, `Instrument`, `Rehearsal`, `Score`; file names like `symphony_no_5.pdf`, `violin_concerto.mp3`, `moonlight_sonata.jpg`; prefixes like `scores`, `recordings`)
+
+## Code Style
+
+- PHP 8.5+ with strict types (`declare(strict_types=1);`)
+- PSR-4 autoloading: `ChamberOrchestra\CmsBundle\` → `src/`
+- `@PER-CS` + `@Symfony` PHP-CS-Fixer rulesets
+- Native function invocations must be backslash-prefixed (e.g., `\array_merge()`, `\sprintf()`, `\count()`)
+- No global namespace imports — never use `use function` or `use const`
+- Ordered imports (alpha), no unused imports, single quotes, trailing commas in multiline
+- 4-space indent
 - Typed properties and return types; favor `readonly`
 - Constructor injection only; autowiring and autoconfiguration
-- All PHP native functions must be called with a leading `\` (enforced by CS Fixer)
-- Commit style: short, action-oriented with optional bracketed scope — `[fix] ...`, `[master] ...`
+- Commit style: short, action-oriented with optional bracketed scope — `[fix] ...`, `[8.0] ...`
+
+## Workflow Orchestration
+
+### 1. Plan Mode Default
+- Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
+- If something goes sideways, STOP and re-plan immediately — don't keep pushing
+- Use plan mode for verification steps, not just building
+- Write detailed specs upfront to reduce ambiguity
+
+### 2. Subagent Strategy
+- Use subagents liberally to keep main context window clean
+- Offload research, exploration, and parallel analysis to subagents
+- For complex problems, throw more compute at it via subagents
+- One task per subagent for focused execution
+
+### 3. Self-Improvement Loop
+- After ANY correction from the user: update `tasks/lessons.md` with the pattern
+- Write rules for yourself that prevent the same mistake
+- Ruthlessly iterate on these lessons until mistake rate drops
+- Review lessons at session start for relevant project
+
+### 4. Verification Before Done
+- Never mark a task complete without proving it works
+- Diff behavior between main and your changes when relevant
+- Ask yourself: "Would a staff engineer approve this?"
+- Run tests, check logs, demonstrate correctness
+
+### 5. Demand Elegance (Balanced)
+- For non-trivial changes: pause and ask "is there a more elegant way?"
+- If a fix feels hacky: "Knowing everything I know now, implement the elegant solution"
+- Skip this for simple, obvious fixes — don't over-engineer
+- Challenge your own work before presenting it
+
+### 6. Autonomous Bug Fixing
+- When given a bug report: just fix it. Don't ask for hand-holding
+- Point at logs, errors, failing tests — then resolve them
+- Zero context switching required from the user
+- Go fix failing CI tests without being told how
+
+## Task Management
+
+1. **Plan First**: Write plan to `tasks/todo.md` with checkable items
+2. **Verify Plan**: Check in before starting implementation
+3. **Track Progress**: Mark items complete as you go
+4. **Explain Changes**: High-level summary at each step
+5. **Document Results**: Add review section to `tasks/todo.md`
+6. **Capture Lessons**: Update `tasks/lessons.md` after corrections
+
+## Core Principles
+
+- **Simplicity First**: Make every change as simple as possible. Impact minimal code.
+- **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
+- **Minimal Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
+
+## Dependencies
+
+- Requires PHP 8.5, Symfony 8.0 components (`event-dispatcher`, `form`, `framework-bundle`, `http-foundation`, `http-kernel`, `options-resolver`, `property-access`, `routing`, `string`, `twig-bundle`, `uid`, `yaml`), Doctrine ORM 3.x, Doctrine Collections 2.x
+- Chamber Orchestra bundles: `doctrine-extensions-bundle`, `doctrine-sort-bundle`, `file-bundle`, `form-bundle`, `menu-bundle`, `meta`, `metadata-bundle`, `pagination-bundle`
+- Dev: PHPUnit 13, `doctrine-bundle`, `symfony/test-pack`
+- Suggests: `studio-42/elfinder` for file manager integration
