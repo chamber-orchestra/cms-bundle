@@ -589,14 +589,14 @@ abstract class AbstractCrudController extends AbstractController implements Crud
     /**
      * @param array<string, mixed> $options
      */
-    public function createBreadcrumbs(string $action, ?object $entity = null, array $options = []): ?Breadcrumbs // @phpstan-ignore class.notFound
+    public function createBreadcrumbs(string $action, ?object $entity = null, array $options = []): ?Breadcrumbs
     {
         $callable = $options['breadcrumbs'];
         if (false === $callable) {
             return null;
         }
 
-        $breadcrumbs = new Breadcrumbs(); // @phpstan-ignore class.notFound
+        $breadcrumbs = new Breadcrumbs();
         if (null !== ($controller = $options['parent_controller'])) {
             /** @var AbstractCrudController $controller */
             $breadcrumbs = $controller->createBreadcrumbs('update', $this->getForceParent($entity, $options), $controller->resolve());

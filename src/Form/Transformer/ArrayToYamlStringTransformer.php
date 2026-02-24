@@ -27,10 +27,6 @@ readonly class ArrayToYamlStringTransformer implements DataTransformerInterface
             return '';
         }
 
-        if (!\is_array($value)) {
-            throw new TransformationFailedException(\sprintf('Expected an array, got "%s".', \get_debug_type($value)));
-        }
-
         return Yaml::dump($value);
     }
 

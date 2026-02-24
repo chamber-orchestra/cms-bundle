@@ -25,10 +25,6 @@ readonly class ArrayToJsonStringTransformer implements DataTransformerInterface
             return '';
         }
 
-        if (!\is_array($value)) {
-            throw new TransformationFailedException(\sprintf('Expected an array, got "%s".', \get_debug_type($value)));
-        }
-
         return (string) \json_encode($value, \JSON_PRETTY_PRINT | \JSON_THROW_ON_ERROR);
     }
 
