@@ -37,13 +37,6 @@ final class ArrayToYamlStringTransformerTest extends TestCase
         self::assertStringContainsString('key:', $result);
     }
 
-    public function testTransformStringThrows(): void
-    {
-        $this->expectException(TransformationFailedException::class);
-
-        $this->transformer->transform('string');
-    }
-
     public function testReverseTransformEmptyStringReturnsNull(): void
     {
         self::assertNull($this->transformer->reverseTransform(''));

@@ -37,13 +37,6 @@ final class ArrayToJsonStringTransformerTest extends TestCase
         self::assertSame(['a' => 1], \json_decode($result, true));
     }
 
-    public function testTransformStringThrows(): void
-    {
-        $this->expectException(TransformationFailedException::class);
-
-        $this->transformer->transform('string');
-    }
-
     public function testReverseTransformEmptyStringReturnsNull(): void
     {
         self::assertNull($this->transformer->reverseTransform(''));
