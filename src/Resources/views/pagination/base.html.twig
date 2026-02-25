@@ -1,0 +1,127 @@
+{#
+@var current int
+@var pagesCount int
+@var elementsCount int,
+@var startPage int
+@var endPage int
+@var previous int
+@var next int
+@var pages array
+#}
+{%- trans_default_domain "pagination" %}
+{%- if pagesCount > 1 %}
+    {%- set _route = app.request.attributes.get("_route") %}
+    {%- set _route_params = app.request.attributes.get("_route_params")|merge(app.request.query.all()) %}
+    {%- set _route_params = _route_params|merge({(pageParameter): null}) %}
+    <nav class="text-center pagination-container my-0 d-inline-block" {#
+    #}aria-label="{{- 'pagination.label'|trans -}}">
+        <ul class="pagination my-0">
+            {%- if previous is defined %}
+                <li class="page-item">
+                    {%- if previous > 1 %}
+                        <a class="page-link" rel="prev" aria-label="{{- "pagination.previous"|trans -}}" {#
+                        #}href="{{- path(_route, _route_params|merge({(pageParameter): previous})) -}}">
+                            <i class="fa fa-fw fa-angle-double-left me-1"></i>
+                            {{- 'pagination.previous'|trans -}}
+                        </a>
+                    {%- else %}
+                        <a class="page-link" rel="prev" aria-label="{{- "pagination.previous"|trans -}}" {#
+                        #}href="{{- path(_route, _route_params|merge({(pageParameter): null})) -}}">
+                            <i class="fa fa-fw fa-angle-double-left me-1"></i>
+                            {{- 'pagination.previous'|trans -}}
+                        </a>
+                    {%- endif %}
+                </li>
+            {%- else %}
+                <li class="page-item disabled" aria-label="{{- "pagination.previous"|trans -}}">
+                    <span class="page-link">
+                        <i class="fa fa-fw fa-angle-double-left me-1"></i>
+                        {{- 'pagination.previous'|trans -}}
+                    </span>
+                </li>
+            {%- endif %}
+
+            {%- if startPage > 1 %}
+                <li class="page-item">
+                    <a class="page-link" {#
+                    #}href="{{- path(_route, _route_params|merge({(pageParameter): null})) -}}">1</a>
+                </li>
+                {%- if startPage == 3 %}
+                    <li class="page-item">
+                        <a class="page-link" {#
+                        #}href="{{- path(_route, _route_params|merge({(pageParameter): 2})) -}}">2</a>
+                    </li>
+                {%- elseif startPage != 2 %}
+                    <li class="page-item disabled">
+                        <a class="page-link" tabindex="-1">
+                            <i class="fa fa-fw fa-ellipsis-h"></i>
+                        </a>
+                    </li>
+                {%- endif %}
+            {%- endif %}
+
+            {%- for page in pages %}
+                {%- if page != current %}
+                    <li class="page-item">
+                        {%- if page > 1 %}
+                            <a class="page-link" {#
+                            #}href="{{- path(_route, _route_params|merge({(pageParameter): page})) -}}">{{- page -}}</a>
+                        {%- else %}
+                            <a class="page-link" {#
+                            #}href="{{- path(_route, _route_params|merge({(pageParameter): null})) -}}">{{- page -}}</a>
+                        {%- endif %}
+                    </li>
+                {%- else %}
+                    <li class="page-item active">
+                        <span class="page-link">
+                            {{- page -}}
+                            <span class="visually-hidden">{{- "pagination.current"|trans -}}</span>
+                        </span>
+                    </li>
+                {%- endif %}
+            {%- endfor %}
+
+            {%- if pagesCount > endPage %}
+                {%- if pagesCount > (endPage + 1) %}
+                    {%- if pagesCount > (endPage + 2) %}
+                        <li class="page-item disabled">
+                            <a class="page-link">
+                                <i class="fa fa-fw fa-ellipsis-h"></i>
+                            </a>
+                        </li>
+                    {%- else %}
+                        <li class="page-item">
+                            <a class="page-link" {#
+                            #}href="{{- path(_route, _route_params|merge({(pageParameter): (pagesCount - 1)})) -}}">
+                                {{- pagesCount - 1 -}}
+                            </a>
+                        </li>
+                    {%- endif %}
+                {%- endif %}
+                <li class="page-item">
+                    <a class="page-link" {#
+                    #}href="{{- path(_route, _route_params|merge({(pageParameter): pagesCount})) -}}">
+                        {{- pagesCount -}}
+                    </a>
+                </li>
+            {%- endif %}
+
+            {%- if next is defined %}
+                <li class="page-item">
+                    <a rel="next" class="page-link" aria-label="{{- "pagination.next"|trans -}}" {#
+                    #}href="{{- path(_route, _route_params|merge({(pageParameter): next})) -}}">
+                        {{- 'pagination.next'|trans -}}
+                        <i class="fa fa-fw fa-angle-double-right ms-1"></i>
+                    </a>
+                </li>
+            {%- else %}
+                <li class="page-item disabled" aria-label="{{- "pagination.next"|trans -}}">
+                    <span class="page-link">
+                        {{- 'pagination.next'|trans -}}
+                        <i class="fa fa-fw fa-angle-double-right ms-1"></i>
+                    </span>
+                </li>
+            {%- endif %}
+        </ul>
+    </nav>
+{%- endif %}

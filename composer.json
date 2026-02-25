@@ -38,40 +38,47 @@
   ],
   "require": {
     "php": "^8.5",
-    "chamber-orchestra/doctrine-extensions-bundle": "^8.0",
-    "chamber-orchestra/doctrine-sort-bundle": "^8.0",
-    "chamber-orchestra/file-bundle": "^8.0",
-    "chamber-orchestra/form-bundle": "^8.0",
-    "chamber-orchestra/menu-bundle": "^8.0",
-    "chamber-orchestra/meta-bundle": "^8.0",
-    "chamber-orchestra/metadata-bundle": "^8.0",
-    "chamber-orchestra/pagination-bundle": "^8.0",
+    "chamber-orchestra/breadcrumbs": "8.0.*",
+    "chamber-orchestra/doctrine-extensions-bundle": "8.0.*",
+    "chamber-orchestra/doctrine-sort-bundle": "8.0.*",
+    "chamber-orchestra/file-bundle": "8.0.*",
+    "chamber-orchestra/image-bundle": "8.0.*",
+    "chamber-orchestra/form-bundle": "8.0.*",
+    "chamber-orchestra/menu-bundle": "8.0.*",
+    "chamber-orchestra/meta": "8.0.*",
+    "chamber-orchestra/metadata-bundle": "8.0.*",
+    "chamber-orchestra/pagination-bundle": "8.0.*",
     "doctrine/collections": "^2.0",
     "doctrine/orm": "^3.0",
-    "symfony/event-dispatcher": "^8.0",
-    "symfony/form": "^8.0",
-    "symfony/framework-bundle": "^8.0",
-    "symfony/http-foundation": "^8.0",
-    "symfony/http-kernel": "^8.0",
-    "symfony/options-resolver": "^8.0",
-    "symfony/property-access": "^8.0",
-    "symfony/routing": "^8.0",
-    "symfony/string": "^8.0",
-    "symfony/twig-bundle": "^8.0",
-    "symfony/uid": "^8.0",
-    "symfony/yaml": "^8.0"
+    "symfony/event-dispatcher": "8.0.*",
+    "symfony/form": "8.0.*",
+    "symfony/framework-bundle": "8.0.*",
+    "symfony/http-foundation": "8.0.*",
+    "symfony/http-kernel": "8.0.*",
+    "symfony/options-resolver": "8.0.*",
+    "symfony/property-access": "8.0.*",
+    "symfony/routing": "8.0.*",
+    "symfony/string": "8.0.*",
+    "symfony/twig-bridge": "8.0.*",
+    "symfony/twig-bundle": "8.0.*",
+    "symfony/uid": "8.0.*",
+    "symfony/yaml": "8.0.*",
+    "twig/html-extra": "^3.23"
   },
   "require-dev": {
     "doctrine/doctrine-bundle": "^3.2",
+    "friendsofphp/php-cs-fixer": "^3.94",
+    "phpstan/phpstan": "^2.1",
     "phpunit/phpunit": "^13.0",
-    "symfony/test-pack": "^1.2"
+    "symfony/test-pack": "^1.2",
+    "vincentlanglet/twig-cs-fixer": "^3.13"
   },
   "suggest": {
     "studio-42/elfinder": "^2.1: File manager integration for media uploads in the admin UI"
   },
   "autoload": {
     "psr-4": {
-      "ChamberOrchestra\\CmsBundle\\": ""
+      "ChamberOrchestra\\CmsBundle\\": "src/"
     },
     "exclude-from-classmap": [
       "/tests/"
@@ -84,9 +91,16 @@
   },
   "minimum-stability": "stable",
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "symfony/runtime": true
+    }
   },
   "scripts": {
-    "test": "vendor/bin/phpunit"
+    "test": "vendor/bin/phpunit",
+    "analyse": "vendor/bin/phpstan analyse --memory-limit=512M",
+    "cs-check": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+    "twig-check": "vendor/bin/twig-cs-fixer lint",
+    "twig-fix": "vendor/bin/twig-cs-fixer fix"
   }
 }

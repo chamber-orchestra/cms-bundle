@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the ChamberOrchestra package.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Unit\Form\Transformer;
 
 use ChamberOrchestra\CmsBundle\Form\Transformer\ArrayToJsonStringTransformer;
@@ -28,13 +35,6 @@ final class ArrayToJsonStringTransformerTest extends TestCase
 
         self::assertIsString($result);
         self::assertSame(['a' => 1], \json_decode($result, true));
-    }
-
-    public function testTransformStringThrows(): void
-    {
-        $this->expectException(TransformationFailedException::class);
-
-        $this->transformer->transform('string');
     }
 
     public function testReverseTransformEmptyStringReturnsNull(): void

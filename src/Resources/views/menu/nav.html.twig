@@ -1,0 +1,26 @@
+{%- trans_default_domain "cms" -%}
+{# @var matcher \ChamberOrchestra\MenuBundle\Matcher\Matcher #}
+{# @var root \ChamberOrchestra\MenuBundle\Menu\ItemInterface #}
+{%- import _self as menu -%}
+{%- macro attributes(attributes) -%}
+    {%- for name, value in attributes -%}
+        {%- if value is not none and value is not same as(false) -%}
+            {{- ' %s="%s"'|format(name, value is same as(true) ? name|e : value|e)|raw -}}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endmacro -%}
+{%- apply spaceless -%}
+    {%- for child in root -%}
+        {%- set attr = child.option('attr')|default([]) -%}
+        {%- set classes = ["nav-link"] -%}
+        {%- set active = matcher.current(child) or matcher.ancestor(child) -%}
+        {%- if active -%}
+            {%- set classes = classes|merge(["active"]) -%}
+        {%- endif -%}
+
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ ' ' ~ classes|join(' '))|trim}) -%}
+        <a {{- menu.attributes(attr) -}} href="{{- child.uri -}}">
+            {{- child.label|raw -}}
+        </a>
+    {%- endfor -%}
+{%- endapply -%}

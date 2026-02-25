@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the ChamberOrchestra package.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Integrational;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
@@ -31,9 +38,11 @@ final class TestKernel extends Kernel
             'test' => true,
         ]);
 
+        $dbUrl = $_ENV['CMS_BUNDLE_TEST_DB_URL'] ?? $_SERVER['CMS_BUNDLE_TEST_DB_URL'] ?? null;
+
         $container->extension('doctrine', [
-            'dbal' => isset($_ENV['CMS_BUNDLE_TEST_DB_URL'])
-                ? ['url' => $_ENV['CMS_BUNDLE_TEST_DB_URL']]
+            'dbal' => null !== $dbUrl
+                ? ['url' => $dbUrl]
                 : [
                     'driver' => 'pdo_pgsql',
                     'host' => '/var/run/postgresql',

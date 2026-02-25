@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the ChamberOrchestra package.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Integrational\Processor;
 
 use ChamberOrchestra\CmsBundle\Events\CreateEvent;
@@ -166,8 +173,15 @@ final class CrudProcessorTest extends KernelTestCase
 
         // Use a minimal DTO pointing to TestSoftDeleteArticle
         $dto = new class implements \ChamberOrchestra\CmsBundle\Form\Dto\DtoInterface {
-            public function getId(): ?\Symfony\Component\Uid\Uuid { return null; }
-            public function getEntityClass(): string { return TestSoftDeleteArticle::class; }
+            public function getId(): ?\Symfony\Component\Uid\Uuid
+            {
+                return null;
+            }
+
+            public function getEntityClass(): string
+            {
+                return TestSoftDeleteArticle::class;
+            }
         };
 
         $removed = false;

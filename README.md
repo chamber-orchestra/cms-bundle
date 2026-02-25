@@ -78,7 +78,7 @@ Shortcut traits are available for common combinations:
 
 ### Controller options
 
-The `$options` array passed to the constructor drives all behaviour:
+The `$options` array passed to the constructor drives all behaviour. Every option is resolved through `CrudControllerConfigurator` (powered by Symfony's `OptionsResolver`), so defaults are applied, types validated, and values normalised automatically.
 
 ```php
 parent::__construct([
@@ -109,6 +109,196 @@ parent::__construct([
     'copy'   => null,
     'export' => null,
 ]);
+```
+
+### Options reference
+
+#### Core options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `class` | `string` (class-string) | **required** | FQCN of the managed entity |
+| `controller_class` | `string` (class-string) | **required** | FQCN of the controller. Auto-set by `AbstractCrudController::resolve()` to `static::class` |
+| `translation_domain` | `string` | `'cms'` | Symfony translation domain for all labels |
+
+#### Parent / hierarchy options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `parent_controller_class` | `?string` | `null` | FQCN of a parent `AbstractCrudController` for hierarchical CRUD |
+| `parent_controller` | `?object` | `null` | Auto-resolved from `parent_controller_class` via the controllers service locator. Do not set manually |
+| `parent` | `?object` | `null` | The parent entity instance (for nested CRUD views). When set, its `getId()` is added to `route_params` |
+| `_parent` | `null\|object\|callable\|string` | `null` | Determines how to extract the parent entity from a child. **string** — name of a property on the child entity (resolved via reflection). **callable** — `fn(object $entity): ?object`. **object** — used directly. **null** — auto-detected by matching the parent controller's entity class against the child entity's property types |
+
+#### Entity label options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `entity_label` | `?callable` | auto | A `callable(object $entity): ?string` that returns the display label for an entity. Default tries `__toString()`, then reads `name`, `title`, or `id` properties via reflection. The result is passed through `strip_tags()` |
+| `label_format` | `?string` | `null` | Symfony form label format passed to form types |
+
+#### Form & DTO options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `form_class` | `?string` | `''` | Symfony FormType FQCN for create/update forms |
+| `data_class` | `callable\|string\|null` | `null` | DTO class or factory. **string** — class-string implementing `DtoInterface`; instantiated via `Instantiator` with `['entityClass' => ..., 'parent' => ...]`. **callable** — `fn(string $entityClass, array $options): DtoInterface`. **null** — no DTO |
+| `form_themes` | `array` | `['@ChamberOrchestraCms/form/horizontal.html.twig', '@ChamberOrchestraFile/cms/form/horizontal.html.twig']` | Twig form themes applied to all forms |
+
+#### Routing options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `route_prefix` | `?string` | auto | Base route name for all actions. Auto-detected from `#[Route]` attribute's `name` parameter, or derived as `cms_{snake_entity_name}` if unset. Trailing `_` is stripped |
+| `route_params` | `array` | `[]` | Additional route parameters merged into every action's `route_params`. When `parent` is set, `['parent' => $parent->getId()]` is appended automatically |
+
+#### View / template options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `view_prefix` | `?string` | `null` | Base path for Twig templates. When `null`, defaults to `@ChamberOrchestraCms/crud/`. When set, templates are resolved as `{view_prefix}/{action}.html.twig` |
+| `view_params` | `array` | `[]` | Extra template variables merged into every action's view params. Auto-populated with `class`, `parent`, `title`, `label_format`, `translation_domain`, `form_themes` |
+| `title` | `?string` | auto | Human-readable title for the managed entity (used in breadcrumbs, nav). Default: short class name extracted from `class` (e.g. `App\Entity\Article` becomes `Article`) |
+
+#### Navigation options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `nav` | `null\|bool\|callable\|string` | `null` | Sidebar navigation customisation. **`false`** — disables nav entirely. **callable** — `fn(MenuBuilder $builder, ?object $entity, array $options)` for custom items. **string** — FQCN of a navigation class (instantiated automatically). **null** — default nav (index, export, create + update/meta for existing entities) |
+| `breadcrumbs` | `null\|bool\|callable\|string` | `null` | Breadcrumb customisation. **`false`** — disables breadcrumbs. **callable** — `fn(Breadcrumbs $crumbs, array $options)`. **string** — FQCN instantiated automatically. **null** — default breadcrumbs based on current action |
+
+#### Index (list) options
+
+The `index` key accepts an array of sub-options that configure the list page:
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `index.fields` | `?array` | `[]` | Column definitions for the list table. Accepts several formats (see [Fields format](#fields-format) below) |
+| `index.actions` | `?callable` | `null` | Row-level action buttons. `fn(MenuBuilder $builder, object $entity, ?object $parent): void` |
+| `index.filter` | `?string` | `null` | FQCN of a `FormTypeInterface` subclass for the list filter form |
+| `index.filter_mapping` | `array` | `[]` | Maps filter form field names to DQL expressions. String values rename the field; callables receive `(QueryBuilder $qb, mixed $value)` for full control |
+| `index.query_builder` | `QueryBuilder\|Closure\|null` | `null` | Custom query builder for the list. **Closure** — `fn(EntityRepository $repo): QueryBuilder`. **QueryBuilder** — used directly. **null** — default `$repo->createQueryBuilder('r')` |
+| `index.order_by` | `array` | `[]` | Default sort order, e.g. `['createdAt' => 'DESC']` |
+| `index.order_by_mapping` | `?array` | `[]` | Fields allowed for column sorting. Auto-generated from `index.fields` by default; fields named `image`, `video`, `preview`, prefixed with `!`, or containing `.` without a callable are excluded. Set `false` for a field to explicitly exclude it |
+| `index.export` | `?array` | `[]` | Export field configuration |
+| `index.alias` | `?array` | `[]` | Field aliases for the list view |
+| `index.bulk_operation` | `bool` | `true` | Whether to show bulk operation checkboxes |
+| `index.bulk_nav` | `?callable` | `null` | Custom bulk operation navigation. `fn(MenuBuilder $builder, array $options): void`. Auto-disabled when `bulk_operation` is `false` |
+| `index.view` | `string` | `'{view_prefix}/index.html.twig'` | Template for the list page |
+| `index.view_params` | `array` | `[]` | Extra template variables (auto-merged with `fields`, `actions`, `alias`) |
+| `index.route` | `string` | `'{route_prefix}_index'` | Route name |
+| `index.route_params` | `array` | inherited | Route parameters |
+| `index.title` | `?string` | `null` | Title override for breadcrumbs/nav |
+
+##### Fields format
+
+The `index.fields` option supports multiple formats:
+
+```php
+'fields' => [
+    // Simple list — field name only
+    'title',
+    'enabled',
+
+    // Named field with format options
+    'title' => ['format' => 'truncate:50'],
+
+    // Named field with sub-formats array
+    'createdAt' => ['format' => 'date:d.m.Y'],
+
+    // Transform callbacks — applied to each row
+    'fullName' => [fn($entity) => $entity->getFirst().' '.$entity->getLast()],
+
+    // Mixed — simple and configured in one array
+    'title',
+    'category' => ['format' => 'relation'],
+    'enabled',
+],
+```
+
+When processed, each field is normalised to `['field_name' => ['format' => ..., 'transform' => [...]]]`. Callable values in a numeric-keyed position are collected under the `transform` key.
+
+#### Action options
+
+Actions are divided into two groups: **actions with views** (have template + route) and **actions without views** (route only).
+
+**Set any action to `null` to disable it entirely.**
+
+##### Actions with views
+
+`create`, `update`, `view`, `meta`, `export` — each accepts `null` to disable, or an array with these sub-options:
+
+| Sub-option | Type | Default | Description |
+|------------|------|---------|-------------|
+| `title` | `?string` | `null` | Title override. Can contain nested keys for context: `['breadcrumbs' => '...', 'nav' => '...']` |
+| `view` | `string` | `'{view_prefix}/{action}.html.twig'` | Twig template path |
+| `view_params` | `array` | inherited from top-level `view_params` | Template variables |
+| `route` | `string` | `'{route_prefix}_{action}'` | Route name |
+| `route_params` | `array` | inherited from top-level `route_params` | Route parameters |
+
+##### Actions without views
+
+`delete`, `bulk_delete`, `move`, `toggle`, `copy` — each accepts `null` to disable, or an array:
+
+| Sub-option | Type | Default | Description |
+|------------|------|---------|-------------|
+| `route` | `string` | `'{route_prefix}_{action}'` | Route name |
+| `route_params` | `array` | inherited from top-level `route_params` | Route parameters |
+
+`bulk_delete` is automatically disabled when `index.bulk_operation` is `false`.
+
+#### Full example
+
+```php
+#[Route('/cms/articles', name: 'cms_article_')]
+class ArticleController extends AbstractCrudController
+{
+    use SupportsLcudOperation;
+    use SupportsCopyOperation;
+    use SupportsToggleOperation;
+    use SupportsExportOperation;
+    use SupportsUpdateMetaOperation;
+
+    public function __construct(CrudProcessor $processor)
+    {
+        parent::__construct($processor, [
+            'class'                  => Article::class,
+            'form_class'             => ArticleType::class,
+            'data_class'             => ArticleDto::class,
+            'parent_controller_class' => CategoryController::class,
+            'translation_domain'     => 'admin',
+
+            'index' => [
+                'fields' => [
+                    'title',
+                    'category' => ['format' => 'relation'],
+                    'enabled',
+                    'createdAt' => ['format' => 'date:d.m.Y'],
+                ],
+                'order_by'       => ['createdAt' => 'DESC'],
+                'filter'         => ArticleFilterType::class,
+                'filter_mapping' => [
+                    'category' => 'category.id',
+                    'search'   => fn ($qb, $v) => $qb->andWhere('LOWER(r.title) LIKE :search')
+                                                      ->setParameter('search', '%'.mb_strtolower($v).'%'),
+                ],
+                'query_builder' => fn ($repo) => $repo->createQueryBuilder('r')
+                                                      ->leftJoin('r.category', 'c'),
+            ],
+
+            'nav' => function (MenuBuilder $builder, ?object $entity, array $options): void {
+                $builder->add('custom_link', [
+                    'label' => 'Dashboard',
+                    'route' => 'cms_dashboard',
+                ]);
+            },
+
+            // Disable unused actions
+            'move'   => null,
+            'export' => null,
+        ]);
+    }
+}
 ```
 
 ### DTO ↔ Entity sync

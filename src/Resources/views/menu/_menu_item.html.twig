@@ -1,0 +1,69 @@
+{%- import '@ChamberOrchestraCms/macro/html.html.twig' as html %}
+{# @var matcher \ChamberOrchestra\MenuBundle\Matcher\Matcher #}
+{# @var root \ChamberOrchestra\MenuBundle\Menu\ItemInterface #}
+{%- if accessor.access(child) -%}
+    {%- set classes = ["nav-item"] %}
+    {%- set active = matcher.current(child) or matcher.ancestor(child) %}
+    {%- if active %}
+        {%- set classes = classes|merge(["open"]) %}
+    {%- endif %}
+    {%- set content -%}
+        {%- if child.option('icon') -%}
+            <i class="far fa-fw {{ child.option('icon') }}"></i>
+        {%- else -%}
+            <i class="fas fa-hashtag"></i>
+        {%- endif -%}
+        <span>
+            {%- if child.option('badge') -%}
+                <span class="badge rounded-pill text-bg-warning me-2">{{- child.option('badge') -}}</span>
+            {%- endif -%}
+            {{- child.label|raw -}}
+        </span>
+    {%- endset -%}
+
+    <li {{- html.attributes({"class": classes|join(" ")}) -}}>
+        {%- set has_children = child.children|length and accessor.accessToChildren(child.children) -%}
+        {%- if has_children %}
+            <a class="nav-link {{ active ? 'active' }}" {#
+            #}data-bs-toggle="collapse" {#
+               #}data-bs-parent="#nav-aside" {#
+               #}href="{{- child.uri -}}" {#
+               #}role="button" {#
+               #}aria-haspopup="true" {#
+               #}aria-expanded="false">
+                {{- content -}}
+                <i class="far fa-angle-left"></i>
+            </a>
+        {%- else %}
+            <a class="nav-link {{ active ? 'active' }}" href="{{- child.uri -}}">
+                {{- content -}}
+            </a>
+        {%- endif %}
+        {%- if has_children %}
+            <ul class="nav flex-column collapse {{ active ? 'show' }}">
+                {%- for _child in child %}
+
+                    {%- if accessor.access(_child) -%}
+                        {%- set _active = matcher.isCurrent(_child) or matcher.isAncestor(_child) %}
+                        <li class="nav-item ">
+                            <a href="{{- _child.uri -}}" {#
+                            #}class="nav-link {{ _active ? 'active' }}">
+                                {%- if _child.option('icon') -%}
+                                    <i class="far fa-fw {{ _child.option('icon') }}"></i>
+                                {%- else -%}
+                                    <i class="fas fa-hashtag"></i>
+                                {%- endif -%}
+                                {%- if _child.option('badge') -%}
+                                    <span class="badge rounded-pill text-bg-warning me-2">{{- _child.option('badge') -}}</span>
+                                {%- endif -%}
+                                <span>
+                                    {{- _child.label|raw -}}
+                                </span>
+                            </a>
+                        </li>
+                    {%- endif -%}
+                {%- endfor %}
+            </ul>
+        {%- endif %}
+    </li>
+{%- endif -%}

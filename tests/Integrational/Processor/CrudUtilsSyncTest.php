@@ -2,16 +2,21 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of the ChamberOrchestra package.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Tests\Integrational\Processor;
 
-use ChamberOrchestra\CmsBundle\Form\Dto\DtoInterface;
 use ChamberOrchestra\CmsBundle\Processor\Instantiator;
 use ChamberOrchestra\CmsBundle\Processor\Utils\CrudUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Uid\Uuid;
 
 final class CrudUtilsSyncTest extends TestCase
 {

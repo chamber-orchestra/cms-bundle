@@ -1,0 +1,66 @@
+{%- trans_default_domain "cms" -%}
+{# @var matcher \ChamberOrchestra\MenuBundle\Matcher\Matcher #}
+{# @var root \ChamberOrchestra\MenuBundle\Menu\ItemInterface #}
+{%- import _self as menu -%}
+{%- macro attributes(attributes) -%}
+    {%- for name, value in attributes -%}
+
+        {%- if name in ['title'] -%}
+            {%- set value = value|trans -%}
+        {%- endif -%}
+
+        {%- if value is not none and value is not same as(false) -%}
+            {{- ' %s="%s"'|format(name, value is same as(true) ? name|e : value|e)|raw -}}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endmacro -%}
+
+{%- macro nav_item(item, attr) -%}
+
+    {%- if item.option('icon') -%}
+        {%- set attr = attr|merge({
+            'data-bs-toggle': 'tooltip',
+            'title': item.name|trans,
+            'aria-label': item.name|trans,
+        }) -%}
+    {%- endif -%}
+
+
+    {%- set classes = ["btn"] -%}
+    {%- if 'btn-' not in attr.class|default([]) -%}
+        {%- set classes = classes|merge(['btn-info']) -%}
+    {%- endif -%}
+    {%- set attr = attr|merge({class: (attr.class|default('')) ~ ' ' ~ classes|join(' ')}) -%}
+
+    <a {{- menu.attributes(attr) -}}>
+        {%- if item.option('icon') -%}
+            <i class="far fa-fw {{ item.option('icon') }}"></i>
+        {%- else -%}
+            {{- item.name|trans -}}
+        {%- endif -%}
+    </a>
+{%- endmacro -%}
+
+
+
+{%- apply spaceless -%}
+    {%- for child in root -%}
+
+        {%- set attr = child.option('attr')|default({})|merge({
+            href: child.uri,
+        }) -%}
+
+        {%- if attr.disabled is defined and attr.disabled -%}
+            <span class="d-inline-block" tabindex="0" {#
+            #} {{- menu.attributes(attr) -}}>
+                {%- set attr = attr|merge({
+                    style: 'pointer-events: none',
+                    class: (attr.class|default('') ~ ' ' ~ 'disabled')|trim
+                }) -%}
+                {{- menu.nav_item(child, attr) -}}
+            </span>
+        {%- else -%}
+            {{- menu.nav_item(child, attr) -}}
+        {%- endif -%}
+    {%- endfor -%}
+{%- endapply -%}
