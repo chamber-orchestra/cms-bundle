@@ -17,9 +17,11 @@ use Symfony\Component\Validator\Constraints\Range;
 
 trait CollectionEntrySortTypeTrait // @phpstan-ignore trait.unused
 {
+    /** @param array<string, mixed> $options */
     private function addSortOrderChild(FormBuilderInterface $builder, array $options = []): void
     {
-        $builder->add('sortOrder', HiddenType::class, \array_replace_recursive([
+        /** @var array<string, mixed> $mergedOptions */
+        $mergedOptions = \array_replace_recursive([
             'priority' => 1000,
             'label' => false,
             'required' => true,
@@ -27,6 +29,7 @@ trait CollectionEntrySortTypeTrait // @phpstan-ignore trait.unused
             'constraints' => [
                 new Range(min: 0),
             ],
-        ], $options));
+        ], $options);
+        $builder->add('sortOrder', HiddenType::class, $mergedOptions);
     }
 }

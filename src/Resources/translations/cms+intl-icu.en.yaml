@@ -58,6 +58,7 @@ common:
     move: Move
     toggle: Toggle
     copy: Copy
+    content_entries: Content Blocks
     toggle_on: Enable
     toggle_off: Disable
     entity_actions: Actions

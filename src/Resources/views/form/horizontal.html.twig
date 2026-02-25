@@ -22,6 +22,8 @@
 {% block form_row -%}
     {%- if expanded is defined and expanded -%}
         {{ block('fieldset_form_row') }}
+    {%- elseif compound is defined and compound and label is same as(false) -%}
+        {{- form_widget(form) -}}
     {%- else -%}
         {%- set widget_attr = {} -%}
         <div class="form-group row{% if (not compound or force_error|default(false)) and not valid %} is-invalid{% endif %}">

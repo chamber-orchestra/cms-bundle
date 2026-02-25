@@ -55,6 +55,7 @@ class Collection {
 
         this._tags = decode(el.dataset[Data.TAGS]);
         this._prototype = decode(el.dataset[Data.PROTOTYPE]);
+        this._prototypeKey = el.dataset.prototypeKey || '__name__';
 
         this._attachListeners();
     }
@@ -117,7 +118,8 @@ class Collection {
         widget.setAttribute(Attr.ELEMENT, true)
 
 
-        const fragment = createFragmentFromHtml(this._prototype.replace(Pattern.NAME, this.count));
+        const pattern = new RegExp(this._prototypeKey, 'g');
+        const fragment = createFragmentFromHtml(this._prototype.replace(pattern, this.count));
         widget.innerHTML = fragment.innerHTML;
 
         const name = this.$el.dataset[Data.PROTOTYPE_NAME];

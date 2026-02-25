@@ -1,0 +1,17 @@
+{%- extends '@ChamberOrchestraCms/crud/create.html.twig' -%}
+
+{%- block content_header -%}
+    <header class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="card-title mb-0">{{- block('content_title') -}}</h2>
+        {%- if content_types is defined and content_types is not empty -%}
+            <div class="d-flex gap-2">
+                {%- for contentType in content_types -%}
+                    <a href="{{ path(route_prefix ~ '_entries_create', {id: owner.id, contentType: contentType.id}) }}"
+                       class="btn btn-sm btn-outline-success">
+                        <i class="fas fa-plus"></i> {{ contentType.name }}
+                    </a>
+                {%- endfor -%}
+            </div>
+        {%- endif -%}
+    </header>
+{%- endblock -%}

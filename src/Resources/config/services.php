@@ -9,6 +9,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
+use ChamberOrchestra\CmsBundle\Controller\ContentTypeController;
 use ChamberOrchestra\CmsBundle\Controller\CrudControllerInterface;
 use ChamberOrchestra\CmsBundle\EventSubscriber\SetVersionSubscriber;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
@@ -26,7 +27,11 @@ return static function (ContainerConfigurator $container): void {
         ->private();
 
     $services->load('ChamberOrchestra\\CmsBundle\\', '../../')
-        ->exclude('../../{DependencyInjection,Resources,Exception,Maker,Controller,Events,Form/Dto,Form/Normalizer,Form/Transformer,Regex,Processor/Reflection,Configurator,EntityRepository,tests}');
+        ->exclude('../../{DependencyInjection,Resources,Exception,Maker,Controller,Events,Form/Dto,Form/Normalizer,Form/Transformer,Regex,Processor/Reflection,Configurator,EntityRepository,Entity,Api/View,tests}');
+
+    $services->set(ContentTypeController::class)
+        ->autowire()
+        ->autoconfigure();
 
     $services->set(SetVersionSubscriber::class)
         ->autoconfigure()
