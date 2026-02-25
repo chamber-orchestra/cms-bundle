@@ -39,10 +39,10 @@ class FileType extends AbstractType
             'required' => false,
             'multiple' => false,
             'mime_types' => [],
-            'attr' => fn (Options $options): array => [
+            'attr' => static fn (Options $options): array => [
                 'accept' => \implode(',', (array) $options['mime_types']),
             ],
-            'constraints' => function (Options $options): array {
+            'constraints' => static function (Options $options): array {
                 /** @var array<string> $mimeTypes */
                 $mimeTypes = $options['mime_types'];
                 $constraints = [
@@ -63,7 +63,7 @@ class FileType extends AbstractType
             },
         ]);
 
-        $resolver->setOptions('delete_options', function (OptionsResolver $resolver): void {
+        $resolver->setOptions('delete_options', static function (OptionsResolver $resolver): void {
             $resolver->setDefaults([
                 'required' => false,
                 'error_bubbling' => false,
@@ -71,7 +71,7 @@ class FileType extends AbstractType
             ]);
         });
 
-        $resolver->setOptions('entry_options', function (OptionsResolver $resolver, Options $parent): void {
+        $resolver->setOptions('entry_options', static function (OptionsResolver $resolver, Options $parent): void {
             $keys = [
                 'attr',
                 'label',
@@ -114,12 +114,13 @@ class FileType extends AbstractType
         $that = $this;
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,
-            function (FormEvent $event) use ($that): void {
+            static function (FormEvent $event) use ($that): void {
                 $form = $event->getForm();
                 /** @var string $attr */
                 $attr = $form->getConfig()->getAttribute(self::ATTR_HOLDER);
                 $that->originalFile[$attr] = $form->getData();
-            });
+            }
+        );
 
         $builder->addEventListener(
             FormEvents::PRE_SUBMIT,
@@ -129,15 +130,16 @@ class FileType extends AbstractType
                 $data = $event->getData();
                 /** @var string $attr */
                 $attr = $form->getConfig()->getAttribute(self::ATTR_HOLDER);
-                $data['file'] = $data['file'] ?? $this->originalFile[$attr];
+                $data['file'] ??= $this->originalFile[$attr];
 
                 $event->setData($data);
-            });
+            }
+        );
 
         if (false === $options['required']) {
             $builder->addEventListener(
                 FormEvents::POST_SET_DATA,
-                function (FormEvent $event) use ($options): void {
+                static function (FormEvent $event) use ($options): void {
                     $form = $event->getForm();
                     $file = $form->getData();
 
@@ -147,9 +149,10 @@ class FileType extends AbstractType
                         'required' => false,
                         'disabled' => null === $file,
                     ], $deleteOptions));
-                });
+                }
+            );
 
-            $reverseCallback = function (array $data) {
+            $reverseCallback = static function (array $data) {
                 if (isset($data['delete']) && $data['delete']) {
                     return null;
                 }
@@ -157,14 +160,12 @@ class FileType extends AbstractType
                 return $data['file'];
             };
         } else {
-            $reverseCallback = function (array $data) {
-                return $data['file'];
-            };
+            $reverseCallback = static fn (array $data) => $data['file'];
         }
 
         // empty form after submit
         $builder->addViewTransformer(new CallbackTransformer(
-            function ($value = null): array {
+            static function ($value = null): array {
                 if (null === $value || $value instanceof UploadedFile || \is_array($value)) {
                     return ['file' => null];
                 }

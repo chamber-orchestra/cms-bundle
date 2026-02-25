@@ -56,7 +56,8 @@ class PhoneExtension extends AbstractExtension
             '<a href="tel:%country%%code%%number%" %attr%>'
             .'<span>%country%&nbsp;(%code%)</span>&nbsp;%number%'
             .'</a>',
-            $attr);
+            $attr
+        );
     }
 
     /**
@@ -71,7 +72,8 @@ class PhoneExtension extends AbstractExtension
                 'country' => \sprintf('+%s', $matches['country']),
                 'code' => $matches['code'],
                 'number' => \sprintf('%s-%s-%s', $matches['part_1'], $matches['part_2'], $matches['part_3']),
-                'full' => \sprintf('+%s%s%s%s%s',
+                'full' => \sprintf(
+                    '+%s%s%s%s%s',
                     $matches['country'],
                     $matches['code'],
                     $matches['part_1'],
@@ -98,9 +100,7 @@ class PhoneExtension extends AbstractExtension
         $replace['attr'] = \implode(' ', $atr);
 
         $search = \array_keys($replace);
-        $search = \array_map(function (string $value): string {
-            return '%'.$value.'%';
-        }, $search);
+        $search = \array_map(static fn (string $value): string => '%'.$value.'%', $search);
 
         return \str_replace($search, \array_values($replace), $template);
     }

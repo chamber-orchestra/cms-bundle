@@ -49,7 +49,7 @@ class CsvGenerator implements CsvGeneratorInterface
     {
         $er = $this->em->getRepository($options['class']);
 
-        return (new EntityRepositoryWrapper($er))->filterBy(
+        return new EntityRepositoryWrapper($er)->filterBy(
             $er->createQueryBuilder('r'),
             $options['parent'] ? ['parent' => $options['parent']] : [],
             $options['index']['filter_mapping'],

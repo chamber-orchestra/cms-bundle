@@ -44,7 +44,7 @@ class ReflectionPropertyAccessor implements PropertyAccessorInterface
                 throw $exception;
             }
 
-            if ($propertyReflectionProperty->getDeclaringClass()->getName() !== \get_class($objectOrArray)) {
+            if ($propertyReflectionProperty->getDeclaringClass()->getName() !== $objectOrArray::class) {
                 $propertyReflectionProperty->setValue($objectOrArray, $value);
 
                 return;
@@ -52,7 +52,7 @@ class ReflectionPropertyAccessor implements PropertyAccessorInterface
 
             /** @var \Closure $setPropertyClosure */
             $setPropertyClosure = \Closure::bind(
-                function (object $object) use ($propertyPathStr, $value): void {
+                static function (object $object) use ($propertyPathStr, $value): void {
                     $object->{$propertyPathStr} = $value;
                 },
                 $objectOrArray,
@@ -81,15 +81,13 @@ class ReflectionPropertyAccessor implements PropertyAccessorInterface
                 throw $exception;
             }
 
-            if ($propertyReflectionProperty->getDeclaringClass()->getName() !== \get_class($objectOrArray)) {
+            if ($propertyReflectionProperty->getDeclaringClass()->getName() !== $objectOrArray::class) {
                 return $propertyReflectionProperty->getValue($objectOrArray);
             }
 
             /** @var \Closure $getPropertyClosure */
             $getPropertyClosure = \Closure::bind(
-                function (object $object) use ($propertyPathStr): mixed {
-                    return $object->{$propertyPathStr};
-                },
+                static fn (object $object): mixed => $object->{$propertyPathStr},
                 $objectOrArray,
                 $objectOrArray
             );

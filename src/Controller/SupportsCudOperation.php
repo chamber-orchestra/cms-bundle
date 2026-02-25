@@ -17,6 +17,6 @@ namespace ChamberOrchestra\CmsBundle\Controller;
 trait SupportsCudOperation // @phpstan-ignore trait.unused
 {
     use SupportsCreateOperation;
-    use SupportsUpdateOperation;
     use SupportsDeleteOperation;
+    use SupportsUpdateOperation;
 }

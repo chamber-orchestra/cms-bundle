@@ -98,7 +98,7 @@ final class FilterHelperTest extends KernelTestCase
 
         $helper(
             ['title' => 'value'],
-            ['title' => function (\Doctrine\ORM\QueryBuilder $passedQb) use ($qb, &$called): void {
+            ['title' => static function (\Doctrine\ORM\QueryBuilder $passedQb) use ($qb, &$called): void {
                 $called = true;
                 self::assertSame($qb, $passedQb);
             }]
