@@ -25,9 +25,9 @@ use Doctrine\ORM\Mapping as ORM;
 class ContentEntry implements SoftDeleteInterface, SortInterface
 {
     use GeneratedIdTrait;
-    use TimestampTrait;
     use SoftDeleteTrait;
     use SortTrait;
+    use TimestampTrait;
 
     /** @var array<string, mixed> */
     #[ORM\Column(type: 'json', nullable: false)]

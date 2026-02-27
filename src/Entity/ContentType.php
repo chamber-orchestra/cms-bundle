@@ -25,8 +25,8 @@ use Doctrine\ORM\Mapping as ORM;
 class ContentType implements SoftDeleteInterface
 {
     use GeneratedIdTrait;
-    use TimestampTrait;
     use SoftDeleteTrait;
+    use TimestampTrait;
 
     #[ORM\Column(length: 255)]
     private string $name = '';

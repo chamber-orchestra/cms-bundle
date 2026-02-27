@@ -667,7 +667,7 @@ class CrudControllerConfigurator
             ->define('entries')
             ->default(null)
             ->allowedTypes('null', 'array')
-            ->normalize(function (Options $options, ?array $value): ?array {
+            ->normalize(static function (Options $options, ?array $value): ?array {
                 if (null === $value) {
                     return null;
                 }
