@@ -13,7 +13,7 @@ namespace ChamberOrchestra\CmsBundle\Form\Type;
 
 use ChamberOrchestra\CmsBundle\Form\Dto\ContentEntryDto;
 use ChamberOrchestra\FileBundle\Model\File as FileModel;
-use ChamberOrchestra\FileBundle\Storage\StorageInterface;
+use ChamberOrchestra\FileBundle\Storage\StorageResolver;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -27,7 +27,7 @@ class DynamicEntryType extends AbstractType
 {
     use CollectionEntrySortTypeTrait;
 
-    public function __construct(private readonly StorageInterface $storage)
+    public function __construct(private readonly StorageResolver $storage)
     {
     }
 
@@ -157,9 +157,10 @@ class DynamicEntryType extends AbstractType
 
     private function uriToFsPath(string $uri): string
     {
-        $prefix = $this->storage->resolveUri('');
+        $storage = $this->storage->get('default');
+        $prefix = $storage->resolveUri('');
         if (null !== $prefix && \str_starts_with($uri, $prefix)) {
-            return $this->storage->resolvePath(\substr($uri, \strlen($prefix)));
+            return $storage->resolvePath(\substr($uri, \strlen($prefix)));
         }
 
         return $uri;
