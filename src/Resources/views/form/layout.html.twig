@@ -301,8 +301,9 @@
             {%- endset -%}
 
             {%- set attr = attr|merge({
-                'data-collection-name': _prototype.vars.full_name, '
-                 data-collection-id': _prototype.vars.id,
+                'data-collection-name': _prototype.vars.full_name,
+                'data-collection-id': _prototype.vars.id,
+                'data-prototype-key': _prototype.vars.name,
                 'data-counter': form|length,
                 'data-prototype': prototype|e('html_attr'),
                 'data-widget-tags': '<li data-collection-element></li>'|e('html_attr'),

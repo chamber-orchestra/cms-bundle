@@ -168,6 +168,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             'update' => $this->getRouteOptions($options, 'update'),
             'move' => $this->getRouteOptions($options, 'move'),
             'export' => $this->getRouteOptions($options, 'export'),
+            'entries' => $this->getRouteOptions($options, 'entries'),
             'bulk_operation_form' => $bulkOperationForm?->createView(),
             'order_by' => \array_keys($orderByMapping),
         ], $indexViewParams, $parameters));

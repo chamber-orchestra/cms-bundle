@@ -1,0 +1,22 @@
+# ContentType actions
+content_type.action.entries: Entries
+
+# ContentType form
+content_type.field.name: Name
+content_type.field.schema: Schema fields
+
+# Schema field builder
+schema_field.field.name: Field name
+schema_field.field.type: Type
+schema_field.field.required: Required
+
+# Schema field builder — collection-specific fields
+schema_field.field.schema: Item fields
+
+# Schema field type choices
+schema_field.type.text: Text
+schema_field.type.textarea: Textarea
+schema_field.type.wysiwyg: Rich text (WYSIWYG)
+schema_field.type.image: Image
+schema_field.type.file: File
+schema_field.type.collection: Collection

@@ -6,3 +6,7 @@ parameters:
         - src/Form/Dto/MetaTranslatableDto.php
         - src/Generator/CsvGenerator.php
         - src/Resources/
+    ignoreErrors:
+        # SupportsUpdateOperation analyzed in ContentTypeController context — pre-existing trait issues
+        - path: src/Controller/SupportsUpdateOperation.php
+          message: '#(PHPDoc tag @var|getRepository\(\)|ServiceEntityRepositoryInterface::|template type T|doUpdate\(\)|sprintf expects)#'

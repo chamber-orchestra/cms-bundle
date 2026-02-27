@@ -72,4 +72,5 @@ class FieldsFilter {
     }
 }
 
-new FieldsFilter(document.querySelector(Select.DROPDOWN))
+const el = document.querySelector(Select.DROPDOWN)
+if (el) new FieldsFilter(el)

@@ -66,6 +66,9 @@
                 {%- if move is defined and move is not null -%}
                     <th class="table-shrink text-center">*</th>
                 {%- endif -%}
+                {%- if entries is defined and entries is not null -%}
+                    <th class="table-shrink text-center">*</th>
+                {%- endif -%}
                 {%- if toggle is defined and toggle is not null and class is instanceof('\\ChamberOrchestra\\DoctrineExtensionsBundle\\Contracts\\Entity\\ToggleInterface') -%}
                     <th class="table-shrink text-center">*</th>
                 {%- endif -%}
@@ -153,6 +156,18 @@
                                     </a>
                                 </div>
                             </div>
+                        </td>
+                    {%- endif -%}
+                    {%- if (entries is defined and entries is not null) -%}
+                        <td class="table-shrink text-center">
+                            <a href="{{ path(entries.route, entries.route_params|merge({id: entity.id})) }}"
+                               class="btn btn-secondary"
+                               data-bs-toggle="tooltip"
+                               title="{{ 'common.content_entries'|trans }}"
+                               aria-label="{{ 'common.content_entries'|trans }}"
+                            >
+                                <i class="far fa-fw fa-layer-group"></i>
+                            </a>
                         </td>
                     {%- endif -%}
                     {%- if copy is defined and copy is not null and class is instanceof('\\ChamberOrchestra\\CmsBundle\\Contracts\\Entity\\CopyInterface') -%}

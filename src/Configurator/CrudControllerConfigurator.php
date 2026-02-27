@@ -316,14 +316,21 @@ class CrudControllerConfigurator
             });
 
         $resolver
+            ->define('parent_route_param')
+            ->default('parent')
+            ->allowedTypes('string');
+
+        $resolver
             ->define('route_params')
             ->default([])
             ->allowedTypes('array')
             ->normalize(function (Options $options, array $value): array {
                 /** @var object|null $parent */
                 $parent = $options['parent'];
+                /** @var string $parentRouteParam */
+                $parentRouteParam = $options['parent_route_param'];
 
-                return \array_replace($value, $parent ? ['parent' => $parent->getId()] : []); // @phpstan-ignore method.notFound
+                return \array_replace($value, $parent ? [$parentRouteParam => $parent->getId()] : []); // @phpstan-ignore method.notFound
             });
     }
 
@@ -660,5 +667,27 @@ class CrudControllerConfigurator
                     return null !== $value ? \array_replace_recursive($createDefaultActionOptions($action, $options), $value) : null;
                 });
         }
+
+        // entries is opt-in: null by default so controllers without SupportsContentEntriesOperation
+        // don't try to generate a link to a non-existent route. Set to [] to enable.
+        $resolver
+            ->define('entries')
+            ->default(null)
+            ->allowedTypes('null', 'array')
+            ->normalize(function (Options $options, ?array $value): ?array {
+                if (null === $value) {
+                    return null;
+                }
+
+                /** @var string $routePrefix */
+                $routePrefix = $options['route_prefix'];
+                /** @var array<string, mixed> $routeParams */
+                $routeParams = $options['route_params'];
+
+                return \array_replace_recursive([
+                    'route' => \sprintf('%s_entries_index', $routePrefix),
+                    'route_params' => $routeParams,
+                ], $value);
+            });
     }
 }
