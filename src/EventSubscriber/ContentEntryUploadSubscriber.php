@@ -14,7 +14,7 @@ namespace ChamberOrchestra\CmsBundle\EventSubscriber;
 use ChamberOrchestra\CmsBundle\Entity\ContentEntry;
 use ChamberOrchestra\FileBundle\Model\File as FileModel;
 use ChamberOrchestra\FileBundle\NamingStrategy\HashingNamingStrategy;
-use ChamberOrchestra\FileBundle\Storage\StorageInterface;
+use ChamberOrchestra\FileBundle\Storage\StorageResolver;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\PrePersistEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 final class ContentEntryUploadSubscriber
 {
     public function __construct(
-        private readonly StorageInterface $storage,
+        private readonly StorageResolver $storage,
         private readonly HashingNamingStrategy $strategy,
     ) {
     }
@@ -121,8 +121,9 @@ final class ContentEntryUploadSubscriber
     {
         foreach ($data as $key => $value) {
             if ($value instanceof UploadedFile) {
-                $data[$key] = $this->storage->resolveUri(
-                    $this->storage->upload($value, $this->strategy),
+                $storage = $this->storage->get('default');
+                $data[$key] = $storage->resolveUri(
+                    $storage->upload($value, $this->strategy),
                 );
                 $changed = true;
             } elseif ($value instanceof FileModel) {
