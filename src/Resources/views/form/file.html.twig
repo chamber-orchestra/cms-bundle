@@ -1,0 +1,84 @@
+{%- trans_default_domain 'cms' -%}
+
+{% block file_widget -%}
+    {%- set type = type|default('file') -%}
+    {%- set attr = attr|merge({hidden: true}) -%}
+    <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{% endblock %}
+
+{%- block chamber_orchestra_file_widget_inner -%}
+    {%- apply spaceless -%}
+        {%- set type = type|default("file") -%}
+        {%- set target = "#" ~ form.file.vars.id -%}
+        <div class="input-group file-group">
+                {%- if form.vars.value.file.uri|default(false) -%}
+                    <a href="{{ form.vars.value.file.uri }}" class="btn btn-outline-info" target="_blank">
+                        <i class="fad fa-fw fa-external-link"></i>
+                    </a>
+                {%- endif -%}
+                <button type="button" class="btn btn-outline-primary" {#
+                #} data-upload="{{- type -}}" {#
+                #} data-target="{{- target -}}">
+                    <i class="fad fa-fw fa-upload"></i>
+                </button>
+            <div class="form-control text-truncate">
+                {{- form.vars.value.file.basename|default("") -}}
+            </div>
+            {%- if form.delete is defined -%}
+                        {%- set label -%}<i class="far fa-fw fa-times"></i>{%- endset -%}
+                        {%- set isDisabled = form.delete.vars.disabled -%}
+                        {%- set label_attr = {
+                            class: "mb-0 btn btn-outline-danger" ~ (isDisabled ? ' disabled' : ''),
+                            'data-detach': 'file',
+                            disabled: isDisabled
+                        } -%}
+                        {%- if form.delete.vars.label is not same as(false) -%}
+                            {%- set label_attr = label_attr|merge({
+                                'data-bs-toggle': 'tooltip',
+                                'title': translation_domain is same as(false) ? form.delete.vars.label : form.delete.vars.label|trans(label_translation_parameters, translation_domain)
+                            }) -%}
+                        {%- endif -%}
+                        {{- form_widget(form.delete, {
+                            "label": label,
+                            'translation_domain': false,
+                            "force_inline": true,
+                            'label_attr': label_attr,
+                            "attr": {"autocomplete": "off", 'class': 'visually-hidden'} }) -}}
+            {%- endif -%}
+        </div>
+    {%- form_theme form.file _self -%}
+        {{- form_widget(form.file) -}}
+    {%- endapply -%}
+{%- endblock -%}
+
+{%- block chamber_orchestra_file_widget -%}
+    {%- apply spaceless -%}
+        <fieldset {{ block('widget_container_attributes') }}>
+            {{- block('chamber_orchestra_file_widget_inner') -}}
+        </fieldset>
+    {%- endapply -%}
+{%- endblock -%}
+
+{%- block dev_image_widget -%}
+    {%- apply spaceless -%}
+        {# display: flex; does not work on <fieldset> #}
+        <fieldset {{ block('widget_container_attributes') }}>
+            <div class="row image-group">
+                <div class="col-4 col-md-3 mb-4 mb-lg-0">
+                    <div class="ratio ratio-1x1">
+                        {%- if form.vars.value.file -%}
+                            <div style="background-image: url('{{- asset(form.vars.value.file.uri|default(""), 'file') -}}'); background-size: cover; background-position: center;"></div>
+                        {%- else -%}
+                            <div></div>
+                        {%- endif -%}
+                    </div>
+                </div>
+                {%- set type="image" -%}
+                <div class="col-12 col-md-9 d-flex justify-content-between flex-column h-100">
+                    <div class="mb-2">{{- block('chamber_orchestra_file_widget_inner') -}}</div>
+                    {%- if inner is defined -%}{{- inner -}}{%- endif -%}
+                </div>
+            </div>
+        </fieldset>
+    {%- endapply -%}
+{%- endblock -%}

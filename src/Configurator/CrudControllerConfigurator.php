@@ -285,7 +285,7 @@ class CrudControllerConfigurator
             ->define('form_themes')
             ->default([
                 '@ChamberOrchestraCms/form/horizontal.html.twig',
-                '@ChamberOrchestraFile/cms/form/horizontal.html.twig',
+                '@ChamberOrchestraCms/form/file.html.twig',
             ])
             ->allowedTypes('array');
     }
