@@ -170,7 +170,7 @@ class InversedCollectionSubscriber implements EventSubscriberInterface
 
     private function addToCollection(object $object, string $field, object $value): void
     {
-        $this->updateCollection($object, $field, function (Collection $collection) use ($value) {
+        $this->updateCollection($object, $field, static function (Collection $collection) use ($value): void {
             if (!$collection->contains($value)) {
                 $collection->add($value);
             }
@@ -179,7 +179,7 @@ class InversedCollectionSubscriber implements EventSubscriberInterface
 
     private function removeFromCollection(object $object, string $field, object $value): void
     {
-        $this->updateCollection($object, $field, function (Collection $collection) use ($value) {
+        $this->updateCollection($object, $field, static function (Collection $collection) use ($value): void {
             if ($collection->contains($value)) {
                 $collection->removeElement($value);
             }
@@ -194,7 +194,7 @@ class InversedCollectionSubscriber implements EventSubscriberInterface
         $mapping = $meta->getAssociationMapping($field);
 
         if (!$mapping instanceof OwningSideMapping || null === $mapping->inversedBy) {
-            throw new LogicException(\sprintf('To support CRUD auto insertion/deletion to/from parent collection please specify `inversedBy` annotation properties.'));
+            throw new LogicException('To support CRUD auto insertion/deletion to/from parent collection please specify `inversedBy` annotation properties.');
         }
 
         return $mapping->inversedBy;

@@ -25,7 +25,7 @@ trait TimestampCreateTypeTrait // @phpstan-ignore trait.unused
             'html5' => true,
             'widget' => 'single_text',
             'input' => 'datetime_immutable',
-            'empty_data' => (new DatePoint())->format('c'),
+            'empty_data' => new DatePoint()->format('c'),
         ], $options));
     }
 }

@@ -39,7 +39,7 @@ trait SlugTypeTrait // @phpstan-ignore trait.unused
             ], $options))
             ->add('slug', TextType::class);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event): void {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, static function (FormEvent $event): void {
             /** @var AbstractDto $data */
             $data = $event->getData();
             $form = $event->getForm();
@@ -64,7 +64,7 @@ trait SlugTypeTrait // @phpstan-ignore trait.unused
                             exclude: ['id' => $data->getId()],
                         ),
                         new Callback(
-                            callback: function ($value, ExecutionContextInterface $context, $payload) {
+                            callback: static function ($value, ExecutionContextInterface $context, $payload): void {
                                 if (null === $value) {
                                     return;
                                 }

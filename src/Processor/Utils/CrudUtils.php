@@ -151,7 +151,7 @@ readonly class CrudUtils
             $refl = $this->reflector->create($target);
             $props = $refl->getAccessibleProperties();
 
-            $getFirstNonEmptyValue = function (string ...$candidates) use ($target, $props): mixed {
+            $getFirstNonEmptyValue = static function (string ...$candidates) use ($target, $props): mixed {
                 foreach ($props as $prop) {
                     foreach ($candidates as $keyword) {
                         if (\str_contains(\mb_strtolower($prop->getName()), $keyword)) {
@@ -187,7 +187,7 @@ readonly class CrudUtils
                 if ($value) {
                     /** @var string $valueStr */
                     $valueStr = $value;
-                    $value = (string) (new UnicodeString(\strip_tags($valueStr)))->truncate(255);
+                    $value = (string) new UnicodeString(\strip_tags($valueStr))->truncate(255);
                     $metaDescProp = $refl->getAccessibleProperty('metaDescription');
                     $metaDescProp->setValue($target, $value);
                 }

@@ -27,7 +27,7 @@ class ContentEntryDto extends AbstractDto
         parent::__construct(ContentEntry::class);
         $this->contentType = $contentType;
         if (null !== $owner) {
-            $this->ownerClass = \get_class($owner);
+            $this->ownerClass = $owner::class;
             // @phpstan-ignore-next-line
             $this->ownerId = (string) $owner->getId();
         }

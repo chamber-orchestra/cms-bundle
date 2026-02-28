@@ -91,7 +91,7 @@ class CrudControllerConfigurator
         if ([] !== $extra) {
             \array_walk_recursive($extra, static function (mixed &$v): void {
                 if (\is_object($v)) {
-                    $v = \get_class($v).'#'.\spl_object_id($v);
+                    $v = $v::class.'#'.\spl_object_id($v);
                 } elseif (\is_callable($v) && !\is_string($v)) {
                     $v = 'fn#'.\spl_object_id(\Closure::fromCallable($v));
                 }
@@ -113,14 +113,14 @@ class CrudControllerConfigurator
             ->info('The controller class')
             ->required()
             ->allowedTypes('string')
-            ->allowedValues(fn (string $v): bool => \class_exists($v));
+            ->allowedValues(static fn (string $v): bool => \class_exists($v));
 
         $resolver
             ->define('parent_controller_class')
             ->info('The parent controller class')
             ->allowedTypes('null', 'string')
             ->default(null)
-            ->allowedValues(fn (?string $v): bool => null === $v || \class_exists($v));
+            ->allowedValues(static fn (?string $v): bool => null === $v || \class_exists($v));
 
         $resolver
             ->define('parent_controller')
@@ -134,7 +134,7 @@ class CrudControllerConfigurator
             ->info('The class which is controlled')
             ->required()
             ->allowedTypes('string')
-            ->allowedValues(fn (string $v): bool => \class_exists($v));
+            ->allowedValues(static fn (string $v): bool => \class_exists($v));
 
         $resolver
             ->define('parent')
@@ -147,7 +147,7 @@ class CrudControllerConfigurator
             ->info('The parent object of the controlled class')
             ->allowedTypes('null', 'object', 'callable', 'string')
             ->default(null)
-            ->normalize(function (Options $o, object|callable|string|null $v): object|callable|null {
+            ->normalize(static function (Options $o, object|callable|string|null $v): object|callable|null {
                 if ($o['parent']) {
                     /** @var object $parent */
                     $parent = $o['parent'];
@@ -165,7 +165,7 @@ class CrudControllerConfigurator
                     $class = new \ReflectionClass($entityClass);
                     $property = $class->getProperty($v);
 
-                    return fn (object $entity) => $property->getValue($entity);
+                    return static fn (object $entity) => $property->getValue($entity);
                 }
 
                 /** @var AbstractCrudController|null $controller */
@@ -174,10 +174,10 @@ class CrudControllerConfigurator
                     $parentClass = $controller->resolve()['class'];
                     /** @var class-string $childClass */
                     $childClass = $o['class'];
-                    foreach ((new \ReflectionClass($childClass))->getProperties() as $property) {
+                    foreach (new \ReflectionClass($childClass)->getProperties() as $property) {
                         if (($type = $property->getType()) && $type instanceof \ReflectionNamedType) {
                             if ($type->getName() === $parentClass) {
-                                return fn (object $entity) => $property->getValue($entity);
+                                return static fn (object $entity) => $property->getValue($entity);
                             }
                         }
                     }
@@ -229,15 +229,13 @@ class CrudControllerConfigurator
             ->define('nav')
             ->default(null)
             ->allowedTypes('null', 'bool', 'callable', 'string')
-            ->normalize(function (Options $options, bool|callable|string|null $value): bool|callable|object|null {
-                return \is_string($value) ? new $value() : $value;
-            });
+            ->normalize(static fn (Options $options, bool|callable|string|null $value): bool|callable|object|null => \is_string($value) ? new $value() : $value);
 
         $resolver
             ->define('breadcrumbs')
             ->default(null)
             ->allowedTypes('null', 'bool', 'string', 'callable')
-            ->normalize(function (Options $options, bool|callable|string|null $value): bool|callable|object|null {
+            ->normalize(static function (Options $options, bool|callable|string|null $value): bool|callable|object|null {
                 if (null === $value) {
                     return null;
                 }
@@ -259,22 +257,22 @@ class CrudControllerConfigurator
             ->info('Form Data class.')
             ->default(null)
             ->allowedTypes('callable', 'string', 'null')
-            ->allowedValues(function (mixed $value): bool {
+            ->allowedValues(static function (mixed $value): bool {
                 if (\is_string($value)) {
                     return \class_exists($value) && \in_array(DtoInterface::class, \class_implements($value) ?: [], true);
                 }
 
                 return true;
             })
-            ->normalize(function (Options $options, callable|string|null $value): ?callable {
+            ->normalize(static function (Options $options, callable|string|null $value): ?callable {
                 if (\is_string($value)) {
-                    return function (string $dataClass, array $options = []) use ($value) {
+                    return static function (string $dataClass, array $options = []) use ($value) {
                         $defined = [
                             'entityClass' => $dataClass,
                             'parent' => $options['parent'],
                         ];
 
-                        return (new Instantiator())->instantiate($value, $defined);
+                        return new Instantiator()->instantiate($value, $defined);
                     };
                 }
 
@@ -296,14 +294,14 @@ class CrudControllerConfigurator
             ->define('route_prefix')
             ->default(null)
             ->allowedTypes('null', 'string')
-            ->normalize(function (Options $options, ?string $value): string {
+            ->normalize(static function (Options $options, ?string $value): string {
                 if (null !== $value) {
                     return \rtrim($value, '_');
                 }
 
                 /** @var class-string $controllerClass */
                 $controllerClass = $options['controller_class'];
-                if (null !== ($attr = \current((new \ReflectionClass($controllerClass))->getAttributes(Route::class)) ?: null)) {
+                if (null !== ($attr = \current(new \ReflectionClass($controllerClass)->getAttributes(Route::class)) ?: null)) {
                     return \rtrim((string) $attr->newInstance()->name, '_');
                 }
 
@@ -324,7 +322,7 @@ class CrudControllerConfigurator
             ->define('route_params')
             ->default([])
             ->allowedTypes('array')
-            ->normalize(function (Options $options, array $value): array {
+            ->normalize(static function (Options $options, array $value): array {
                 /** @var object|null $parent */
                 $parent = $options['parent'];
                 /** @var string $parentRouteParam */
@@ -340,15 +338,13 @@ class CrudControllerConfigurator
             ->define('view_prefix')
             ->allowedTypes('null', 'string')
             ->default(null)
-            ->normalize(function (Options $options, ?string $value): ?string {
-                return null !== $value ? \rtrim($value, '/') : null;
-            });
+            ->normalize(static fn (Options $options, ?string $value): ?string => null !== $value ? \rtrim($value, '/') : null);
 
         $resolver
             ->define('view_params')
             ->default([])
             ->allowedTypes('array')
-            ->normalize(function (Options $options, array $value): array {
+            ->normalize(static function (Options $options, array $value): array {
                 /** @var array<string, mixed> $defined */
                 $defined = [];
                 $default = [
@@ -371,7 +367,7 @@ class CrudControllerConfigurator
             ->define('title')
             ->default(null)
             ->allowedTypes('null', 'string')
-            ->normalize(function (Options $options, ?string $value): string {
+            ->normalize(static function (Options $options, ?string $value): string {
                 if (null !== $value) {
                     return $value;
                 }
@@ -414,7 +410,7 @@ class CrudControllerConfigurator
                 ->define('fields')
                 ->default([])
                 ->allowedTypes('null', 'array')
-                ->normalize(function (Options $options, ?array $value): ?array {
+                ->normalize(static function (Options $options, ?array $value): ?array {
                     if (null === $value) {
                         return null;
                     }
@@ -459,32 +455,31 @@ class CrudControllerConfigurator
                 ->define('actions')
                 ->default(null)
                 ->allowedTypes('null', 'callable')
-                ->normalize(function (Options $options, ?callable $value): ?callable {
+                ->normalize(static function (Options $options, ?callable $value): ?callable {
                     if (null === $value) {
                         return null;
                     }
 
-                    return function (object $entity, ?object $parent = null) use ($value): NavigationInterface {
+                    return static function (object $entity, ?object $parent = null) use ($value): NavigationInterface {
                         return new ClosureNavigation(
-                            function (MenuBuilder $builder) use ($value, $entity, $parent): void {
+                            static function (MenuBuilder $builder) use ($value, $entity, $parent): void {
                                 \call_user_func($value, $builder, $entity, $parent);
-                            });
+                            }
+                        );
                     };
                 });
 
             $resolver->setAllowedTypes('view_params', []);
-            $resolver->setNormalizer('view_params', function (Options $options, array $value): array {
-                return \array_merge([
-                    'fields' => $options['fields'],
-                    'actions' => $options['actions'],
-                    'alias' => $options['alias'],
-                ], $value);
-            });
+            $resolver->setNormalizer('view_params', static fn (Options $options, array $value): array => \array_merge([
+                'fields' => $options['fields'],
+                'actions' => $options['actions'],
+                'alias' => $options['alias'],
+            ], $value));
 
             $resolver
                 ->define('filter')
                 ->default(null)
-                ->allowedValues(function (mixed $value): bool {
+                ->allowedValues(static function (mixed $value): bool {
                     if (null === $value) {
                         return true;
                     }
@@ -523,7 +518,7 @@ class CrudControllerConfigurator
                 ->define('order_by')
                 ->default([])
                 ->allowedTypes('array')
-                ->normalize(function (Options $options, array $value): array {
+                ->normalize(static function (Options $options, array $value): array {
                     /** @var array<string, mixed> $orderBy */
                     $orderBy = $options['orderBy'];
 
@@ -540,7 +535,7 @@ class CrudControllerConfigurator
                 ->define('order_by_mapping')
                 ->default([])
                 ->allowedTypes('array', 'null')
-                ->normalize(function (Options $options, ?array $value): array {
+                ->normalize(static function (Options $options, ?array $value): array {
                     if (null === $value) {
                         return [];
                     }
@@ -549,7 +544,7 @@ class CrudControllerConfigurator
                     $fields = $options['fields'];
                     $defaults = \array_keys($fields);
                     /** @var \Closure(array<int|string, mixed>): array<string, mixed> $normalise */
-                    $normalise = function (array $values): array {
+                    $normalise = static function (array $values): array {
                         $normalised = [];
                         foreach ($values as $k => $v) {
                             if (\is_numeric($k)) {
@@ -610,7 +605,7 @@ class CrudControllerConfigurator
                 ->define('bulk_nav')
                 ->default(null)
                 ->allowedTypes('null', 'callable')
-                ->normalize(function (Options $options, ?callable $value): ?callable {
+                ->normalize(static function (Options $options, ?callable $value): ?callable {
                     /** @var bool $bulkOperation */
                     $bulkOperation = $options['bulk_operation'];
 
@@ -627,9 +622,7 @@ class CrudControllerConfigurator
                 ->define($action)
                 ->default([])
                 ->allowedTypes('null', 'array')
-                ->normalize(function (Options $options, ?array $value) use ($action, $createDefaultActionOptions): ?array {
-                    return null !== $value ? \array_replace_recursive($createDefaultActionOptions($action, $options), $value) : null;
-                });
+                ->normalize(static fn (Options $options, ?array $value): ?array => null !== $value ? \array_replace_recursive($createDefaultActionOptions($action, $options), $value) : null);
         }
 
         /**
@@ -638,7 +631,7 @@ class CrudControllerConfigurator
         $actions = ['move', 'delete', 'bulk_delete', 'toggle', 'copy'];
 
         // configure actions without view
-        $createDefaultActionOptions = function (string $prefix, Options $options): array {
+        $createDefaultActionOptions = static function (string $prefix, Options $options): array {
             /** @var string $routePrefix */
             $routePrefix = $options['route_prefix'];
             /** @var array<string, mixed> $routeParams */
@@ -655,7 +648,7 @@ class CrudControllerConfigurator
                 ->define($action)
                 ->default([])
                 ->allowedTypes('null', 'array')
-                ->normalize(function (Options $options, ?array $value) use ($action, $createDefaultActionOptions): ?array {
+                ->normalize(static function (Options $options, ?array $value) use ($action, $createDefaultActionOptions): ?array {
                     if ('bulk_delete' === $action) {
                         /** @var array<string, mixed> $index */
                         $index = $options['index'];
@@ -674,7 +667,7 @@ class CrudControllerConfigurator
             ->define('entries')
             ->default(null)
             ->allowedTypes('null', 'array')
-            ->normalize(function (Options $options, ?array $value): ?array {
+            ->normalize(static function (Options $options, ?array $value): ?array {
                 if (null === $value) {
                     return null;
                 }

@@ -71,7 +71,7 @@ class Instantiator
             if (\is_array($data)) {
                 foreach ($data as $key => $value) {
                     if (\is_object($value)) {
-                        $class = \get_class($value);
+                        $class = $value::class;
                         do {
                             $dataByType[$class][(string) $key] = $value;
                         } while ($class = \get_parent_class($class));
@@ -84,7 +84,7 @@ class Instantiator
                     if ($prop->isInitialized($data)) {
                         $value = $prop->getValue($data);
                         if (\is_object($value)) {
-                            $class = \get_class($value);
+                            $class = $value::class;
                             do {
                                 $dataByType[$class][$prop->getName()] = $value;
                             } while ($class = \get_parent_class($class));

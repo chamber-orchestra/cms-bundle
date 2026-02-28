@@ -36,7 +36,8 @@ class EmailExtension extends AbstractExtension
             '<a href="mailto:%email%" %attr%>'
             .'%email%'
             .'</a>',
-            $attr);
+            $attr
+        );
     }
 
     /**
@@ -65,9 +66,7 @@ class EmailExtension extends AbstractExtension
         $replace['attr'] = \implode(' ', $atr);
 
         $search = \array_keys($replace);
-        $search = \array_map(function (string $value): string {
-            return '%'.$value.'%';
-        }, $search);
+        $search = \array_map(static fn (string $value): string => '%'.$value.'%', $search);
 
         return \str_replace($search, \array_values($replace), $template);
     }

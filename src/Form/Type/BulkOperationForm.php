@@ -37,7 +37,7 @@ class BulkOperationForm extends AbstractType
                 'required' => false,
             ]);
 
-        $builder->get('all')->addModelTransformer(new CallbackTransformer(fn (?bool $v) => (int) $v, fn (?string $v) => (bool) $v));
+        $builder->get('all')->addModelTransformer(new CallbackTransformer(static fn (?bool $v) => (int) $v, static fn (?string $v) => (bool) $v));
     }
 
     public function configureOptions(OptionsResolver $resolver): void
