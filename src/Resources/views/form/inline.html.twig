@@ -1,1 +1,9 @@
 {%- use "@ChamberOrchestraCms/form/layout.html.twig" -%}
+
+{%- block checkbox_row -%}
+    <div class="form-group">
+        {{- form_widget(form) -}}
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock checkbox_row -%}

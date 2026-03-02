@@ -72,13 +72,13 @@ final class CrudProcessorTest extends KernelTestCase
     public function testCreateFiresEventsInOrder(): void
     {
         $firedEvents = [];
-        $this->dispatcher->addListener(CreateEvent::class, function () use (&$firedEvents): void {
+        $this->dispatcher->addListener(CreateEvent::class, static function () use (&$firedEvents): void {
             $firedEvents[] = 'create';
         });
-        $this->dispatcher->addListener(SyncEvent::class, function () use (&$firedEvents): void {
+        $this->dispatcher->addListener(SyncEvent::class, static function () use (&$firedEvents): void {
             $firedEvents[] = 'sync';
         });
-        $this->dispatcher->addListener(PostSyncEvent::class, function () use (&$firedEvents): void {
+        $this->dispatcher->addListener(PostSyncEvent::class, static function () use (&$firedEvents): void {
             $firedEvents[] = 'post_sync';
         });
 
@@ -119,13 +119,13 @@ final class CrudProcessorTest extends KernelTestCase
         $entity = $this->processor->create($dto);
 
         $firedEvents = [];
-        $this->dispatcher->addListener(UpdateEvent::class, function () use (&$firedEvents): void {
+        $this->dispatcher->addListener(UpdateEvent::class, static function () use (&$firedEvents): void {
             $firedEvents[] = 'update';
         });
-        $this->dispatcher->addListener(SyncEvent::class, function () use (&$firedEvents): void {
+        $this->dispatcher->addListener(SyncEvent::class, static function () use (&$firedEvents): void {
             $firedEvents[] = 'sync';
         });
-        $this->dispatcher->addListener(PostSyncEvent::class, function () use (&$firedEvents): void {
+        $this->dispatcher->addListener(PostSyncEvent::class, static function () use (&$firedEvents): void {
             $firedEvents[] = 'post_sync';
         });
 
@@ -144,13 +144,13 @@ final class CrudProcessorTest extends KernelTestCase
         $id = $entity->getId();
 
         $firedEvents = [];
-        $this->dispatcher->addListener(DeleteEvent::class, function () use (&$firedEvents): void {
+        $this->dispatcher->addListener(DeleteEvent::class, static function () use (&$firedEvents): void {
             $firedEvents[] = 'delete';
         });
-        $this->dispatcher->addListener(SyncEvent::class, function () use (&$firedEvents): void {
+        $this->dispatcher->addListener(SyncEvent::class, static function () use (&$firedEvents): void {
             $firedEvents[] = 'sync';
         });
-        $this->dispatcher->addListener(PostSyncEvent::class, function () use (&$firedEvents): void {
+        $this->dispatcher->addListener(PostSyncEvent::class, static function () use (&$firedEvents): void {
             $firedEvents[] = 'post_sync';
         });
 
@@ -215,7 +215,7 @@ final class CrudProcessorTest extends KernelTestCase
 
     public function testCreateRollsBackOnException(): void
     {
-        $this->dispatcher->addListener(CreateEvent::class, function (): void {
+        $this->dispatcher->addListener(CreateEvent::class, static function (): void {
             throw new \RuntimeException('Listener failed');
         });
 

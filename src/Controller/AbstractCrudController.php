@@ -85,7 +85,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
      * @param ServiceLocator<mixed> $controllersLocator
      */
     #[Required]
-    public function withCmsControllers(#[AutowireLocator(AbstractCrudController::CRUD_CONTROLLER_TAG)] ServiceLocator $controllersLocator): void
+    public function withCmsControllers(#[AutowireLocator(self::CRUD_CONTROLLER_TAG)] ServiceLocator $controllersLocator): void
     {
         $this->crudControllersLocator = $controllersLocator;
         $this->configurator->withControllersLocator($controllersLocator);
@@ -168,6 +168,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             'update' => $this->getRouteOptions($options, 'update'),
             'move' => $this->getRouteOptions($options, 'move'),
             'export' => $this->getRouteOptions($options, 'export'),
+            'entries' => $this->getRouteOptions($options, 'entries'),
             'bulk_operation_form' => $bulkOperationForm?->createView(),
             'order_by' => \array_keys($orderByMapping),
         ], $indexViewParams, $parameters));
@@ -222,7 +223,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
         /** @var class-string $entityClass */
         $entityClass = $resolved['class'];
 
-        $entities = (new EntityRepositoryWrapper($this->em->getRepository($entityClass)))->filterBy(
+        $entities = new EntityRepositoryWrapper($this->em->getRepository($entityClass))->filterBy(
             $queryBuilder,
             $filter,
             $filterMapping,
@@ -705,7 +706,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return null;
         }
 
-        return new ClosureNavigation(function (MenuBuilder $root) use ($entity, $options) {
+        return new ClosureNavigation(function (MenuBuilder $root) use ($entity, $options): void {
             if (($parent = $this->getForceParent($entity, $options)) && ($controller = $options['parent_controller'])) {
                 /** @var AbstractCrudController $controller */
                 $parentOptions = $controller->resolve();
@@ -779,7 +780,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
             return null;
         }
 
-        return new ClosureNavigation(function (MenuBuilder $root) use ($options, $nav) {
+        return new ClosureNavigation(static function (MenuBuilder $root) use ($options, $nav): void {
             /** @param array<string, mixed> $attr */
             $addRoute = static function (MenuBuilder $builder, string $prefix, array $attr = []) use ($options): void {
                 /** @var array<string, mixed> $prefixOptions */

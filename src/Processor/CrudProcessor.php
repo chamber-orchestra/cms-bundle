@@ -36,8 +36,8 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class CrudProcessor implements CrudProcessorInterface
 {
-    use SortProcessorTrait;
     use MetadataConfigurationTrait;
+    use SortProcessorTrait;
 
     public function __construct(
         protected EntityManagerInterface $em,

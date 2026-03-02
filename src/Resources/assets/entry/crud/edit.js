@@ -19,3 +19,5 @@ observer.once('[data-bs-toggle="tooltip"]', () => {
 observer.once('[data-bs-toggle="button"]', () => {
     import("../../js/bootstrap/button")
 });
+
+import('../../js/schemaField/index');

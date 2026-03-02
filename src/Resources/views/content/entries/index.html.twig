@@ -1,0 +1,166 @@
+{%- extends '@ChamberOrchestraCms/base.html.twig' -%}
+{%- trans_default_domain 'cms' -%}
+{%- import '@ChamberOrchestraImage/macro/image.html.twig' as image -%}
+
+{%- block page_title -%}
+    {{- (parent_entity_title is defined and parent_entity_title ? parent_entity_title|trans ~ ' • ') -}}
+    {{- (parent_entity_label is defined and parent_entity_label ? parent_entity_label ~ ' • ') -}}
+    {{- 'common.title.list'|trans -}}
+{%- endblock -%}
+
+{%- block content_header -%}
+    <header class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="card-title mb-0">{{ 'common.title.list'|trans }}</h2>
+        <div class="d-flex gap-2">
+            {%- for contentType in content_types -%}
+                <a href="{{ path(route_prefix ~ '_entries_create', {id: parent.id, contentType: contentType.id}) }}"
+                   class="btn btn-sm btn-outline-success">
+                    <i class="fas fa-plus"></i> {{ contentType.name }}
+                </a>
+            {%- endfor -%}
+        </div>
+    </header>
+{%- endblock -%}
+
+{%- block content_body -%}
+    {%- if delete_form is defined and delete_form -%}
+        {%- include '@ChamberOrchestraCms/crud/delete.modal.html.twig' with {form: delete_form} only -%}
+    {%- endif -%}
+
+    {%- if entities is empty -%}
+        <div class="p-4 text-center text-muted">{{ 'common.list.empty'|trans }}</div>
+    {%- else -%}
+        <div class="p-3 d-flex flex-column gap-3">
+            {%- for entry in entities -%}
+                <div class="card border shadow-sm" data-sort-order="{{ entry.sortOrder }}">
+                    <div class="card-header d-flex justify-content-between align-items-center py-2">
+                        <span class="badge bg-secondary">{{ entry.contentType.name }}</span>
+                        <div class="btn-group btn-group-sm">
+                            {%- if move is defined and move is not null -%}
+                                <a href="{{ path(move.route, move.route_params|merge({entryId: entry.id, direction: 'up'})) }}"
+                                   data-toggle="move" data-direction="up"
+                                   class="btn btn-warning btn-sm" title="{{ 'common.move_up'|trans }}">
+                                    <i class="far fa-fw fa-angle-up"></i>
+                                </a>
+                                <a href="{{ path(move.route, move.route_params|merge({entryId: entry.id, direction: 'down'})) }}"
+                                   data-toggle="move" data-direction="down"
+                                   class="btn btn-warning btn-sm" title="{{ 'common.move_down'|trans }}">
+                                    <i class="far fa-fw fa-angle-down"></i>
+                                </a>
+                            {%- endif -%}
+                            <a href="{{ path(route_prefix ~ '_entries_update', {id: parent.id, entryId: entry.id}) }}"
+                               class="btn btn-primary btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {%- if delete_form is defined and delete_form -%}
+                                <button type="button"
+                                        class="btn btn-danger btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modal-delete"
+                                        data-form="#delete"
+                                        data-values="{{ {"entity": entry.id}|json_encode }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            {%- endif -%}
+                        </div>
+                    </div>
+                    {%- if entry.data is not empty -%}
+                        <div class="card-body py-3">
+                            {%- for field in entry.contentType.schema -%}
+                                {%- set val = entry.data[field.name] is defined ? entry.data[field.name] : null -%}
+                                {%- set type = field.type|default('text') -%}
+                                {%- if val is not null and val is not same as('') and val is not same as(false) -%}
+                                    {%- if type == 'image' or type == 'file' -%}
+                                        {%- set uri = val is instanceof('string') ? val : (val.uri is defined and val.uri is instanceof('string') ? val.uri : null) -%}
+                                        {%- if uri -%}
+                                            {%- if type == 'image' -%}
+                                                {{- image.fill(uri, 900, 480, {class: 'img-fluid rounded mb-2', alt: field.name}) -}}
+                                            {%- else -%}
+                                                <p class="mb-1"><i class="fas fa-file me-1"></i><a href="{{ uri }}" target="_blank">{{ uri|split('/')|last }}</a></p>
+                                            {%- endif -%}
+                                        {%- endif -%}
+                                    {%- elseif type == 'wysiwyg' -%}
+                                        {%- if val is instanceof('string') -%}
+                                            <div class="content-preview border-start border-3 ps-3 mb-2"
+                                                 style="max-height: 120px; overflow: hidden; font-size: .875rem;">
+                                                {{- val|raw -}}
+                                            </div>
+                                        {%- endif -%}
+                                    {%- elseif type == 'textarea' -%}
+                                        {%- if val is instanceof('string') -%}
+                                            <p class="mb-2" style="font-size: .875rem; white-space: pre-line; max-height: 80px; overflow: hidden;">{{ val|striptags|slice(0, 300) }}</p>
+                                        {%- endif -%}
+                                    {%- elseif type == 'collection' -%}
+                                        {%- if val is iterable and val is not empty -%}
+                                            {%- set subSchema = field.schema is defined ? field.schema : [] -%}
+                                            {%- set columns = min(val|length, 4) -%}
+                                            {%- set thumbWidth = (660 / columns)|round -%}
+                                            {%- set thumbHeight = (thumbWidth * 3 / 4)|round -%}
+                                            {%- set maxShow = 6 -%}
+                                            {%- set totalCount = val|length -%}
+                                            <div style="display:grid; grid-template-columns:repeat({{ columns }},1fr); gap:.5rem; margin-top:.25rem; margin-bottom:.25rem;">
+                                                {%- for item in val|slice(0, maxShow) -%}
+                                                    {%- if item is iterable -%}
+                                                        <div class="border rounded overflow-hidden bg-light" style="font-size: .75rem; min-width: 0;">
+                                                            {%- if subSchema is not empty -%}
+                                                                {%- for subField in subSchema -%}
+                                                                    {%- set sName = subField.name -%}
+                                                                    {%- set sType = subField.type|default('text') -%}
+                                                                    {%- set sVal = item[sName] is defined ? item[sName] : null -%}
+                                                                    {%- if sVal is not null and sVal is not same as('') -%}
+                                                                        {%- if sType == 'image' -%}
+                                                                            {%- set sUri = sVal is instanceof('string') ? sVal : (sVal.uri is defined ? sVal.uri : null) -%}
+                                                                            {%- if sUri -%}
+                                                                                {{- image.fill(sUri, thumbWidth, thumbHeight, {alt: sName, style: 'display:block; width:100%; height:auto'}) -}}
+                                                                            {%- endif -%}
+                                                                        {%- elseif sType == 'file' -%}
+                                                                            {%- set sUri = sVal is instanceof('string') ? sVal : null -%}
+                                                                            {%- if sUri -%}
+                                                                                <p class="px-1 pt-1 mb-0 text-truncate"><i class="fas fa-file me-1"></i><a href="{{ sUri }}" target="_blank">{{ sUri|split('/')|last }}</a></p>
+                                                                            {%- endif -%}
+                                                                        {%- else -%}
+                                                                            {%- if sVal is instanceof('string') -%}
+                                                                                <p class="px-1 py-1 mb-0 text-truncate text-muted">{{ sVal|striptags|slice(0, 25) }}</p>
+                                                                            {%- endif -%}
+                                                                        {%- endif -%}
+                                                                    {%- endif -%}
+                                                                {%- endfor -%}
+                                                            {%- else -%}
+                                                                {%- for k, v in item -%}
+                                                                    {%- if v is instanceof('string') -%}
+                                                                        <p class="px-1 py-1 mb-0 text-truncate text-muted">{{ v|striptags|slice(0, 25) }}</p>
+                                                                    {%- endif -%}
+                                                                {%- endfor -%}
+                                                            {%- endif -%}
+                                                        </div>
+                                                    {%- endif -%}
+                                                {%- endfor -%}
+                                                {%- if totalCount > maxShow -%}
+                                                    <div class="d-flex align-items-center justify-content-center border rounded text-muted bg-light"
+                                                         style="font-size: .75rem;">
+                                                        +{{ totalCount - maxShow }} more
+                                                    </div>
+                                                {%- endif -%}
+                                            </div>
+                                        {%- endif -%}
+                                    {%- else -%}
+                                        {%- if val is instanceof('string') -%}
+                                            <p class="mb-1" style="font-size: .9375rem;">{{ val|striptags|slice(0, 200) }}</p>
+                                        {%- endif -%}
+                                    {%- endif -%}
+                                {%- endif -%}
+                            {%- endfor -%}
+                        </div>
+                    {%- endif -%}
+                </div>
+            {%- endfor -%}
+        </div>
+    {%- endif -%}
+{%- endblock -%}
+
+{%- block javascripts -%}
+    {{ vite_entry_script_tags('crud/index', {}, 'cms') }}
+{%- endblock -%}
+{%- block stylesheets -%}
+    {{ vite_entry_link_tags('crud/index', {}, 'cms') }}
+{%- endblock -%}

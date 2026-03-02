@@ -26,10 +26,12 @@
 .form-group {
     margin-bottom: $form-group-margin-bottom;
     position: relative;
+}
 
-    &:last-child {
-        margin-bottom: 0;
-    }
+// Only remove bottom margin when form-group is a direct child of <form> (e.g. no save button below),
+// not inside compound fieldset wrappers where it would eliminate the gap before the save button.
+form > .form-group:last-child {
+    margin-bottom: 0;
 }
 
 // Custom: required field indicator

@@ -39,11 +39,12 @@
   "require": {
     "php": "^8.5",
     "chamber-orchestra/breadcrumbs": "8.0.*",
+    "chamber-orchestra/doctrine-clock-bundle": "8.0.*",
     "chamber-orchestra/doctrine-extensions-bundle": "8.0.*",
     "chamber-orchestra/doctrine-sort-bundle": "8.0.*",
     "chamber-orchestra/file-bundle": "8.0.*",
-    "chamber-orchestra/image-bundle": "8.0.*",
     "chamber-orchestra/form-bundle": "8.0.*",
+    "chamber-orchestra/image-bundle": "8.0.*",
     "chamber-orchestra/menu-bundle": "8.0.*",
     "chamber-orchestra/meta": "8.0.*",
     "chamber-orchestra/metadata-bundle": "8.0.*",
