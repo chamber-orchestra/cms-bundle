@@ -12,7 +12,8 @@
 
 // input-group
 .input-group .select2-container--bootstrap-5 {
-    flex-grow: 1;
+    flex: 1 1 0%;
+    min-width: 0;
 }
 
 // BS5: input-group-prepend removed, use :not(:first-child) selector

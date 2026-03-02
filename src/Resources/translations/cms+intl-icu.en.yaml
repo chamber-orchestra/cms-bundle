@@ -102,6 +102,21 @@ security:
         email: E-mail
         password: Password
 
+meta:
+    field:
+        title: Title
+        metaTitle: Meta Title
+        metaDescription: Meta Description
+        metaKeywords: Meta Keywords
+        metaImage: Meta Image
+        robotsBehaviour: Robots Behaviour
+
+robots_behaviour:
+    indexfollow: 'Index, Follow'
+    indexnofollow: 'Index, No Follow'
+    noindexfollow: 'No Index, Follow'
+    noindexnofollow: 'No Index, No Follow'
+
 crud:
     flash:
         created: Object has been successfully created

@@ -17,7 +17,9 @@
 
 {%- macro nav_item(item, attr) -%}
 
-    {%- if item.option('icon') -%}
+    {%- set icon = item.getExtra('icon') -%}
+
+    {%- if icon -%}
         {%- set attr = attr|merge({
             'data-bs-toggle': 'tooltip',
             'title': item.name|trans,
@@ -33,8 +35,8 @@
     {%- set attr = attr|merge({class: (attr.class|default('')) ~ ' ' ~ classes|join(' ')}) -%}
 
     <a {{- menu.attributes(attr) -}}>
-        {%- if item.option('icon') -%}
-            <i class="far fa-fw {{ item.option('icon') }}"></i>
+        {%- if icon -%}
+            <i class="far fa-fw {{ icon }}"></i>
         {%- else -%}
             {{- item.name|trans -}}
         {%- endif -%}

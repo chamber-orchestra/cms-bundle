@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace ChamberOrchestra\CmsBundle\Form\Type;
 
 use ChamberOrchestra\CmsBundle\Form\Dto\MetaDto;
-use ChamberOrchestra\MetaBundle\Entity\Helper\RobotsBehaviour;
+use ChamberOrchestra\Meta\Entity\Helper\RobotsBehaviour;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -55,13 +55,13 @@ class MetaType extends AbstractType
                 ],
             ])
             ->add('robotsBehaviour', EnumType::class, [
-                'class' => RobotsBehaviour::class, // @phpstan-ignore class.notFound
+                'class' => RobotsBehaviour::class,
                 'required' => true,
-                'choice_label' => static fn (RobotsBehaviour $case): string => match ($case) { // @phpstan-ignore class.notFound, match.unhandled
-                    RobotsBehaviour::IndexFollow => 'robots_behaviour.indexfollow', // @phpstan-ignore class.notFound
-                    RobotsBehaviour::IndexNoFollow => 'robots_behaviour.indexnofollow', // @phpstan-ignore class.notFound
-                    RobotsBehaviour::NoIndexFollow => 'robots_behaviour.noindexfollow', // @phpstan-ignore class.notFound
-                    RobotsBehaviour::NoIndexNoFollow => 'robots_behaviour.noindexnofollow', // @phpstan-ignore class.notFound
+                'choice_label' => static fn (RobotsBehaviour $case): string => match ($case) {
+                    RobotsBehaviour::IndexFollow => 'robots_behaviour.indexfollow',
+                    RobotsBehaviour::IndexNoFollow => 'robots_behaviour.indexnofollow',
+                    RobotsBehaviour::NoIndexFollow => 'robots_behaviour.noindexfollow',
+                    RobotsBehaviour::NoIndexNoFollow => 'robots_behaviour.noindexnofollow',
                 },
                 'constraints' => [
                     new NotBlank(),
