@@ -421,7 +421,9 @@ readonly class CrudUtils
     {
         $traits = [];
         do {
-            $traits = \array_merge(\class_uses($class) ?: [], $traits);
+            /** @var array<class-string, class-string> $classUses */
+            $classUses = \class_uses($class) ?: [];
+            $traits = \array_merge($classUses, $traits);
         } while ($class = \get_parent_class($class));
         foreach ($traits as $trait) {
             $traits = \array_merge($this->classUsesRecursive($trait), $traits);
