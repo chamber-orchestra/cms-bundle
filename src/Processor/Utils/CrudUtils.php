@@ -16,7 +16,7 @@ use ChamberOrchestra\CmsBundle\Form\Dto\DtoCollection;
 use ChamberOrchestra\CmsBundle\Form\Dto\DtoInterface;
 use ChamberOrchestra\CmsBundle\Processor\Instantiator;
 use ChamberOrchestra\CmsBundle\Processor\Reflector;
-use ChamberOrchestra\MetaBundle\Entity\MetaInterface;
+use ChamberOrchestra\Meta\Entity\MetaTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
@@ -147,7 +147,7 @@ readonly class CrudUtils
             $this->setPropertyValue($target, $name, $sourceValue);
         }
 
-        if ($target instanceof MetaInterface) { // @phpstan-ignore class.notFound
+        if (\in_array(MetaTrait::class, $this->classUsesRecursive($target::class), true)) {
             $refl = $this->reflector->create($target);
             $props = $refl->getAccessibleProperties();
 
@@ -166,34 +166,35 @@ readonly class CrudUtils
                 return null;
             };
 
-            if (!$target->getTitle()) { // @phpstan-ignore class.notFound
+            $titleProp = $refl->getAccessibleProperty('title');
+            if (empty($titleProp->getValue($target))) {
                 $value = $getFirstNonEmptyValue('name');
                 if ($value) {
-                    $metaTitleProp = $refl->getAccessibleProperty('title');
-                    $metaTitleProp->setValue($target, $value);
+                    $titleProp->setValue($target, $value);
                 }
             }
 
-            if (!$target->getMetaTitle()) { // @phpstan-ignore class.notFound
+            $metaTitleProp = $refl->getAccessibleProperty('metaTitle');
+            if (empty($metaTitleProp->getValue($target))) {
                 $value = $getFirstNonEmptyValue('title', 'name');
                 if ($value) {
-                    $metaTitleProp = $refl->getAccessibleProperty('metaTitle');
                     $metaTitleProp->setValue($target, $value);
                 }
             }
 
-            if (!$target->getMetaDescription()) { // @phpstan-ignore class.notFound
+            $metaDescProp = $refl->getAccessibleProperty('metaDescription');
+            if (empty($metaDescProp->getValue($target))) {
                 $value = $getFirstNonEmptyValue('description');
                 if ($value) {
                     /** @var string $valueStr */
                     $valueStr = $value;
                     $value = (string) (new UnicodeString(\strip_tags($valueStr)))->truncate(255);
-                    $metaDescProp = $refl->getAccessibleProperty('metaDescription');
                     $metaDescProp->setValue($target, $value);
                 }
             }
 
-            if (!$target->getMetaImage()) { // @phpstan-ignore class.notFound
+            $metaImageProp = $refl->getAccessibleProperty('metaImage');
+            if (empty($metaImageProp->getValue($target))) {
                 foreach ($props as $prop) {
                     if (!\str_contains(\mb_strtolower($prop->getName()), 'image')) {
                         continue;
@@ -206,7 +207,6 @@ readonly class CrudUtils
                     $image = $prop->getValue($target);
                     if ($image instanceof File) {
                         $newFile = $this->copyFile($image);
-                        $metaImageProp = $refl->getAccessibleProperty('metaImage');
                         $metaImageProp->setValue($target, $newFile);
                         break;
                     }
@@ -410,6 +410,24 @@ readonly class CrudUtils
         );
 
         return \array_values(\array_intersect($sourceProperties, $targetProperties));
+    }
+
+    /**
+     * @param class-string $class
+     *
+     * @return array<class-string, class-string>
+     */
+    private function classUsesRecursive(string $class): array
+    {
+        $traits = [];
+        do {
+            $traits = \array_merge(\class_uses($class) ?: [], $traits);
+        } while ($class = \get_parent_class($class));
+        foreach ($traits as $trait) {
+            $traits = \array_merge($this->classUsesRecursive($trait), $traits);
+        }
+
+        return $traits;
     }
 
     public function copyFile(File $file): File
