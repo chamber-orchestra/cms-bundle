@@ -188,7 +188,7 @@ readonly class CrudUtils
                 if ($value) {
                     /** @var string $valueStr */
                     $valueStr = $value;
-                    $value = (string) (new UnicodeString(\strip_tags($valueStr)))->truncate(255);
+                    $value = (string) new UnicodeString(\strip_tags($valueStr))->truncate(255);
                     $metaDescProp->setValue($target, $value);
                 }
             }
