@@ -721,7 +721,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
                             'label' => $this->getEntityLabel($parent, $parentOptions),
                         ], 'cms'),
                         'route' => $parentUpdate['route'],
-                        'route_params' => $parentUpdateRouteParams + ['id' => (string) $parent->getId()], // @phpstan-ignore method.notFound
+                        'route_params' => $parentUpdateRouteParams + ['id' => (string) $parent->getId()], // @phpstan-ignore method.notFound, cast.mixed
                     ]);
                 }
             }
@@ -732,7 +732,7 @@ abstract class AbstractCrudController extends AbstractController implements Crud
                 /** @var array<string, mixed> $params */
                 $params = $prefixOptions['route_params'];
                 if (null !== $entity) {
-                    $params['id'] = (string) $entity->getId(); // @phpstan-ignore method.notFound
+                    $params['id'] = (string) $entity->getId(); // @phpstan-ignore method.notFound, cast.mixed
                 }
 
                 /** @var string $transId */
