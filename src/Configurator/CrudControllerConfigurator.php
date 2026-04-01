@@ -328,7 +328,7 @@ class CrudControllerConfigurator
                 /** @var string $parentRouteParam */
                 $parentRouteParam = $options['parent_route_param'];
 
-                return \array_replace($value, $parent ? [$parentRouteParam => $parent->getId()] : []); // @phpstan-ignore method.notFound
+                return \array_replace($value, $parent ? [$parentRouteParam => (string) $parent->getId()] : []); // @phpstan-ignore method.notFound
             });
     }
 
