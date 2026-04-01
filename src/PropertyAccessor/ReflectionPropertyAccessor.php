@@ -31,7 +31,7 @@ class ReflectionPropertyAccessor implements PropertyAccessorInterface
      */
     public function setValue(object|array &$objectOrArray, string|PropertyPathInterface $propertyPath, mixed $value): void
     {
-        try { // @phpstan-ignore paramOut.type
+        try {
             $this->decorated->setValue($objectOrArray, $propertyPath, $value); // @phpstan-ignore paramOut.type
         } catch (NoSuchPropertyException $exception) {
             if (!\is_object($objectOrArray)) {

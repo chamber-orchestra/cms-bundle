@@ -40,7 +40,7 @@ class FileType extends AbstractType
             'multiple' => false,
             'mime_types' => [],
             'attr' => static fn (Options $options): array => [
-                'accept' => \implode(',', (array) $options['mime_types']),
+                'accept' => \implode(',', (array) $options['mime_types']), // @phpstan-ignore argument.type
             ],
             'constraints' => static function (Options $options): array {
                 /** @var array<string> $mimeTypes */
