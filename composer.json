@@ -51,7 +51,7 @@
     "chamber-orchestra/pagination-bundle": "8.0.*",
     "doctrine/collections": "^2.0",
     "doctrine/orm": "^3.0",
-    "symfony/event-dispatcher": "8.0.*",
+    "symfony/event-dispatcher": "8.1.*",
     "symfony/form": "8.0.*",
     "symfony/framework-bundle": "8.0.*",
     "symfony/http-foundation": "8.0.*",
