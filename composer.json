@@ -63,7 +63,7 @@
     "symfony/twig-bridge": "8.0.*",
     "symfony/twig-bundle": "8.0.*",
     "symfony/uid": "8.0.*",
-    "symfony/yaml": "8.0.*",
+    "symfony/yaml": "8.1.*",
     "twig/html-extra": "^3.23"
   },
   "require-dev": {
