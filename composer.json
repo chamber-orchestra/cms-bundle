@@ -61,7 +61,7 @@
     "symfony/routing": "8.0.*",
     "symfony/string": "8.0.*",
     "symfony/twig-bridge": "8.0.*",
-    "symfony/twig-bundle": "8.0.*",
+    "symfony/twig-bundle": "8.1.*",
     "symfony/uid": "8.0.*",
     "symfony/yaml": "8.0.*",
     "twig/html-extra": "^3.23"
