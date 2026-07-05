@@ -26,8 +26,6 @@ class ReflectionPropertyAccessor implements PropertyAccessorInterface
 
     /**
      * @param object|array<string, mixed> $objectOrArray
-     *
-     * @phpstan-ignore missingType.iterableValue
      */
     public function setValue(object|array &$objectOrArray, string|PropertyPathInterface $propertyPath, mixed $value): void
     {
