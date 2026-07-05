@@ -43,7 +43,7 @@
                             'translation_domain': false,
                             "force_inline": true,
                             'label_attr': label_attr,
-                            "attr": {"autocomplete": "off", 'class': 'visually-hidden'} }) -}}
+                            "attr": {"autocomplete": "off", 'class': 'visually-hidden'}}) -}}
             {%- endif -%}
         </div>
     {%- form_theme form.file _self -%}
@@ -73,7 +73,7 @@
                         {%- endif -%}
                     </div>
                 </div>
-                {%- set type="image" -%}
+                {%- set type = "image" -%}
                 <div class="col-12 col-md-9 d-flex justify-content-between flex-column h-100">
                     <div class="mb-2">{{- block('chamber_orchestra_file_widget_inner') -}}</div>
                     {%- if inner is defined -%}{{- inner -}}{%- endif -%}

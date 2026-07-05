@@ -14,15 +14,15 @@
 {%- for field in entry.contentType.schema -%}
     {%- set name = field.name -%}
     {%- set type = field.type|default('text') -%}
-    {%- set val  = entry.data[name] is defined ? entry.data[name] : null -%}
+    {%- set val = entry.data[name] is defined ? entry.data[name] : null -%}
 
     {%- if val is not null and val is not same as('') and val is not same as(false) -%}
 
         {%- if type == 'collection' -%}
             {%- set subSchema = field.schema|default([]) -%}
-            {%- set hasImg    = subSchema|filter(f => f.type is defined and f.type == 'image')|length > 0 -%}
+            {%- set hasImg = subSchema|filter(f => f.type is defined and f.type == 'image')|length > 0 -%}
             {%- set nonImgFields = subSchema|filter(f => f.type is not defined or f.type != 'image') -%}
-            {%- set titleField   = nonImgFields|first -%}
+            {%- set titleField = nonImgFields|first -%}
 
             {%- if hasImg -%}
                 {# Card grid for image-based collections (gallery, team, etc.) #}
