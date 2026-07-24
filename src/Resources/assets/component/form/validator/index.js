@@ -175,8 +175,11 @@ export class Validator {
         this._setRootValidationConstraints([i18n.trans(response.message)]);
     }
 
-    setAcessDeniedResponseError() {
-        this._setRootValidationConstraints([i18n.trans('validator.access_denied')]);
+    setAcessDeniedResponseError(response) {
+        const message = response && response.localisedMessage
+            ? response.localisedMessage
+            : i18n.trans('validator.access_denied');
+        this._setRootValidationConstraints([message]);
     }
 
 
