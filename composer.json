@@ -68,9 +68,9 @@
   },
   "require-dev": {
     "doctrine/doctrine-bundle": "^3.2",
-    "friendsofphp/php-cs-fixer": "^3.94",
-    "phpstan/phpstan": "^2.1",
-    "phpunit/phpunit": "^13.0",
+    "friendsofphp/php-cs-fixer": "^3.95",
+    "phpstan/phpstan": "^2.2",
+    "phpunit/phpunit": "^13.3",
     "symfony/test-pack": "^1.2",
     "vincentlanglet/twig-cs-fixer": "^4.0"
   },
