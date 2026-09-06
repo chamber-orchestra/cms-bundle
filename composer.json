@@ -49,8 +49,8 @@
     "chamber-orchestra/meta": "8.1.*",
     "chamber-orchestra/metadata-bundle": "8.1.*",
     "chamber-orchestra/pagination-bundle": "8.1.*",
-    "doctrine/collections": "^2.3 || ^3.1",
-    "doctrine/orm": "^3.0",
+    "doctrine/collections": "^2.6 || ^3.1",
+    "doctrine/orm": "^3.6",
     "symfony/event-dispatcher": "8.1.*",
     "symfony/form": "8.1.*",
     "symfony/framework-bundle": "8.1.*",
@@ -64,15 +64,15 @@
     "symfony/twig-bundle": "8.1.*",
     "symfony/uid": "8.1.*",
     "symfony/yaml": "8.1.*",
-    "twig/html-extra": "^3.23"
+    "twig/html-extra": "^3.28"
   },
   "require-dev": {
-    "doctrine/doctrine-bundle": "^3.2",
+    "doctrine/doctrine-bundle": "^3.3",
     "friendsofphp/php-cs-fixer": "^3.95",
     "phpstan/phpstan": "^2.2",
     "phpunit/phpunit": "^13.3",
     "symfony/test-pack": "^1.2",
-    "vincentlanglet/twig-cs-fixer": "^4.0"
+    "vincentlanglet/twig-cs-fixer": "^4.1"
   },
   "suggest": {
     "studio-42/elfinder": "^2.1: File manager integration for media uploads in the admin UI"
