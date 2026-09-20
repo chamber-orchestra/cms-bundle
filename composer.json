@@ -64,10 +64,10 @@
     "symfony/twig-bundle": "8.1.*",
     "symfony/uid": "8.1.*",
     "symfony/yaml": "8.1.*",
-    "twig/html-extra": "^3.28"
+    "twig/html-extra": "^3.29"
   },
   "require-dev": {
-    "doctrine/doctrine-bundle": "^3.3",
+    "doctrine/doctrine-bundle": "3.3.*",
     "friendsofphp/php-cs-fixer": "^3.95",
     "phpstan/phpstan": "^2.2",
     "phpunit/phpunit": "^13.3",
