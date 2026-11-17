@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A Symfony bundle providing a full CMS admin panel with CRUD operations, form handling, entity management, and admin UI components. Built around trait-based operation composition — controllers opt into list, create, update, delete, copy, move, toggle, export, and meta operations by using corresponding `Supports*Operation` traits.
 
 **Package:** `chamber-orchestra/cms-bundle`
-**Requirements:** PHP ^8.5, Symfony 8.0 components
+**Requirements:** PHP ^8.5, Symfony 8.2 components
 **Namespace:** `ChamberOrchestra\CmsBundle` (PSR-4 from `src/`)
 **Bundle class:** `ChamberOrchestraCmsBundle`
 **Main branch:** `main`
@@ -207,7 +207,7 @@ Actions (`create`, `update`, `view`, `meta`, `delete`, `copy`, `move`, `toggle`,
 
 ## Dependencies
 
-- Requires PHP 8.5, Symfony 8.0 components (`event-dispatcher`, `form`, `framework-bundle`, `http-foundation`, `http-kernel`, `options-resolver`, `property-access`, `routing`, `string`, `twig-bundle`, `uid`, `yaml`), Doctrine ORM 3.x, Doctrine Collections 2.x
+- Requires PHP 8.5, Symfony 8.2 components (`event-dispatcher`, `form`, `framework-bundle`, `http-foundation`, `http-kernel`, `options-resolver`, `property-access`, `routing`, `string`, `twig-bundle`, `uid`, `yaml`), Doctrine ORM 3.x, Doctrine Collections 2.x
 - Chamber Orchestra bundles: `doctrine-extensions-bundle`, `doctrine-sort-bundle`, `file-bundle`, `form-bundle`, `menu-bundle`, `meta`, `metadata-bundle`, `pagination-bundle`
 - Dev: PHPUnit 13, `doctrine-bundle`, `symfony/test-pack`
 - Suggests: `studio-42/elfinder` for file manager integration

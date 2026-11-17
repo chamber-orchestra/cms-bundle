@@ -5,7 +5,7 @@
 - Autoloading is PSR-4 from the package root (no `src/` directory).
 - Key directories: `Controller/` (abstract + operation traits), `Configurator/`, `Contracts/`, `DependencyInjection/`, `EntityRepository/` (wrapper + helpers), `Events/`, `EventSubscriber/`, `Exception/`, `Form/` (DTOs, types, transformers), `Generator/`, `Processor/` (CRUD logic, reflection), `PropertyAccessor/`, `Regex/`, `Resources/` (views, assets, config), `Twig/`.
 - Tests belong in `tests/` (autoloaded as `Tests\`); tools are in `bin/` (`bin/phpunit`).
-- Requirements: PHP 8.5+, Symfony 8.0 components.
+- Requirements: PHP 8.5+, Symfony 8.2 components.
 
 ## Build, Test, and Development Commands
 - Install dependencies: `composer install`.
