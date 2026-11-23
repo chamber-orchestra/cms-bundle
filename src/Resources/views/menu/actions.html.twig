@@ -30,13 +30,13 @@
 
     {%- set classes = ["btn"] -%}
     {%- if 'btn-' not in attr.class|default([]) -%}
-        {%- set classes = classes|merge(['btn-info']) -%}
+        {%- set classes = classes|merge(['btn-solid theme-info']) -%}
     {%- endif -%}
     {%- set attr = attr|merge({class: (attr.class|default('')) ~ ' ' ~ classes|join(' ')}) -%}
 
     <a {{- menu.attributes(attr) -}}>
         {%- if icon -%}
-            <i class="far fa-fw {{ icon }}"></i>
+            <i class="fas fa-fw {{ icon }}"></i>
         {%- else -%}
             {{- item.name|trans -}}
         {%- endif -%}

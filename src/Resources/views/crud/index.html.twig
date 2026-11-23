@@ -13,7 +13,7 @@
     {%- set ASC = 'ASC' -%}
     {%- set DESC = 'DESC' -%}
     {%- for field in fields|keys -%}
-        <th class="text-center text-nowrap {{ not app.request.cookies.get(class|replace({'\\': '_'}) ~ '_' ~ field, 1) ? 'd-none' }}" data-heading="{{ field }}">
+        <th class="text-start text-nowrap {{ not app.request.cookies.get(class|replace({'\\': '_'}) ~ '_' ~ field, 1) ? 'd-none' }}" data-heading="{{ field }}">
             {%- set val -%}
                 {%- if alias[field] is defined -%}
                     <i class="{{ alias[field] }}" data-bs-toggle="tooltip" title="{{ html.field(field, label_format, translation_domain) }}"></i>
@@ -24,16 +24,25 @@
             {%- if field in order_by -%}
                 {%- set active = sort == field -%}
                 <a href="{{ path(route, app.request.query.all|merge(params)|merge({sort: field, order: active ? (order == ASC ? DESC : ASC) : ASC})) }}" {#
-                #} class="{{ not active ? 'text-dark' }}">
+                #} class="{{ not active ? 'fg-body' }}">
                     {{- val|raw -}}
+                    {#- the sort icon: the arrow of the direction on the column that is sorted, two dim arrows on the others (icons of the free set of Font Awesome) -#}
                     {%- if active -%}
-                        <i class="ms-1 fad fa-fw {{ order == ASC ? 'fa-arrow-square-down' : 'fa-arrow-square-up' }}"></i>
+                        <i class="ms-1 fas fa-fw {{ order == ASC ? 'fa-sort-up' : 'fa-sort-down' }} sort-icon sort-icon-on" aria-label="{{ order == ASC ? 'crud.index.sorted_asc'|trans : 'crud.index.sorted_desc'|trans }}"></i>
                     {%- else -%}
-                        <i class="ms-1 far fa-fw fa-square"></i>
+                        <i class="ms-1 fas fa-fw fa-sort sort-icon" aria-hidden="true"></i>
                     {%- endif -%}
                 </a>
             {%- else -%}
                 {{- val|raw -}}
+            {%- endif -%}
+            {#- quick search of the column: the magnifier opens a field under the heading; Enter searches -#}
+            {%- if searchable is defined and field in searchable -%}
+                {%- set looked = col[field]|default('') -%}
+                <button type="button" class="btn-colsearch {{ looked is not empty ? 'on' }}" data-action="colsearch#toggle" title="{{ 'crud.index.search_column'|trans }}" aria-label="{{ 'crud.index.search_column'|trans }}"><i class="fas fa-search"></i></button>
+                <div class="th-search" {{ looked is empty ? 'hidden' }}>
+                    <input type="search" value="{{ looked }}" class="form-control" data-no-copy data-field="{{ field }}" data-action="keydown->colsearch#key" placeholder="{{ 'crud.index.search_column'|trans }}" autocomplete="off">
+                </div>
             {%- endif -%}
 
         </th>
@@ -91,11 +100,11 @@
                 {%- set class_attr = call(options, origin_value, entity) -%}
             {%- endif -%}
             {%- set value -%}
-                <span class="badge text-bg-{{ class_attr }}">{{- value|raw -}}</span>
+                <span class="badge theme-{{ class_attr }}">{{- value|raw -}}</span>
             {%- endset -%}
         {%- elseif format == 'phone' -%}
             {%- set value = value|phone -%}
-            {%- set col_attr = col_attr|merge({class: col_attr.class ~ ' text-nowrap small text-center fw-bolder'}) -%}
+            {%- set col_attr = col_attr|merge({class: col_attr.class ~ ' text-nowrap small text-center'}) -%}
         {%- elseif format == 'trans' -%}
             {%- if options is instanceof('callable') -%}
                 {%- set value = call(options, origin_value, entity) -%}
@@ -122,13 +131,13 @@
             {%- endset -%}
         {%- elseif format == 'format_currency' -%}
             {%- set value = value|format_currency(options) -%}
-            {%- set col_attr = col_attr|merge({class: col_attr.class ~ ' text-nowrap small text-center fw-bolder'}) -%}
+            {%- set col_attr = col_attr|merge({class: col_attr.class ~ ' text-nowrap small text-center'}) -%}
         {%- elseif format == 'format_date' -%}
-            {%- set value = value|format_date() -%}
-            {%- set col_attr = col_attr|merge({class: col_attr.class ~ ' text-nowrap small text-center fw-bolder'}) -%}
+            {%- set value = options is instanceof('string') ? value|format_date(pattern: options) : value|format_date() -%}
+            {%- set col_attr = col_attr|merge({class: col_attr.class ~ ' text-nowrap small text-center'}) -%}
         {%- elseif format == 'format_datetime' -%}
-            {%- set value = value|format_datetime() -%}
-            {%- set col_attr = col_attr|merge({class: col_attr.class ~ ' text-nowrap small text-center fw-bolder'}) -%}
+            {%- set value = options is instanceof('string') ? value|format_datetime(pattern: options) : value|format_datetime() -%}
+            {%- set col_attr = col_attr|merge({class: col_attr.class ~ ' text-nowrap small text-center'}) -%}
         {%- elseif format == 'format_number' -%}
             {%- set value = value|format_number() -%}
             {%- set col_attr = col_attr|merge({class: col_attr.class ~ ' text-nowrap'}) -%}
@@ -154,15 +163,15 @@
                 {%- if value.image -%}
                     {%- set col_attr = col_attr|merge({class: col_attr.class ~ ' table-shrink'}) -%}
                     <a href="{{ asset(value.uri, 'file') }}" target="_blank">
-                        {{- image.fill(value, 60, 40) -}}
+                        {{- image.fill(value, 160, 90, {class: 'cms-thumb', alt: ''}) -}}
                     </a>
                 {%- else -%}
                     <a href="{{ asset(value.uri, 'file') }}"
-                       target="_blank">{{- value.extension|default('file')|upper -}}</a>
+                       target="_blank">{{- value.extension|default('file') -}}</a>
                 {%- endif -%}
             {%- else -%}
                 <span>
-                    <i class="fas fa-fw fa-ban text-danger me-2"></i>
+                    <i class="fas fa-fw fa-ban fg-danger me-2"></i>
                     {{- 'common.file_deleted'|trans -}}
                 </span>
             {%- endif -%}
@@ -173,31 +182,38 @@
         {%- endset -%}
     {%- elseif value is instanceof('array') -%}
         {%- set html_value -%}
-            <pre class="bg-light p-2 small fw-bold border mb-0">{{- value|yaml_encode(2) -}}</pre>
+            <pre class="bg-2 p-2 small fw-bold border mb-0">{{- value|yaml_encode(2) -}}</pre>
         {%- endset -%}
     {%- elseif value is instanceof('iterable') -%}
         {%- set html_value -%}
-            <pre class="bg-light p-2 small fw-bold border mb-0 mt-2">{{- value|yaml_encode(2)|nl2br -}}</pre>
+            <pre class="bg-2 p-2 small fw-bold border mb-0 mt-2">{{- value|yaml_encode(2)|nl2br -}}</pre>
         {%- endset -%}
     {%- elseif value is instanceof('bool') -%}
         {%- set col_attr = col_attr|merge({class: 'table-shrink text-center'}) -%}
         {%- set html_value -%}
             {%- if value -%}
-                <i class="fas fa-check-square text-success"></i>
+                <i class="fas fa-check-square fg-success"></i>
             {%- else -%}
-                <i class="far fa-square text-danger"></i>
+                <i class="fas fa-square fg-danger"></i>
             {%- endif -%}
         {%- endset -%}
     {%- else -%}
         {%- set html_value = value -%}
     {%- endif -%}
     {%- set col_attr = col_attr|merge({class: not app.request.cookies.get(class|replace({'\\': '_'}) ~ '_' ~ field, 1) ? col_attr.class ~ ' d-none' : col_attr.class}) -%}
-    <td {{ html.attributes(col_attr) }}>{{- html_value|raw -}}</td>
+    {#- the first column leads to the page of the row (see `primary` of the controller): the page of the entity or its edit form -#}
+    {%- if first_column|default(false) and primary is defined and primary is not null and html_value is not null and '<a ' not in html_value -%}
+        <td {{ html.attributes(col_attr) }}><a class="cms-row-link" href="{{ path(primary.route, primary.route_params|merge({id: entity.id})) }}">{{- html_value|raw -}}</a></td>
+    {%- else -%}
+        <td {{ html.attributes(col_attr) }}>{{- html_value|raw -}}</td>
+    {%- endif -%}
 {%- endblock -%}
 
 {%- block table_values -%}
     {%- for field, formats in fields -%}
-        {{- block('value') -}}
+        {%- with {first_column: loop.first} -%}
+            {{- block('value') -}}
+        {%- endwith -%}
     {%- endfor -%}
 {%- endblock -%}
 

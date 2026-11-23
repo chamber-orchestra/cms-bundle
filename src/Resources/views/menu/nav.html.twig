@@ -12,6 +12,7 @@
 {%- apply spaceless -%}
     {%- for child in root -%}
         {%- set attr = child.option('attr')|default([]) -%}
+        {%- if attr['data-head'] is not defined -%}
         {%- set classes = ["nav-link"] -%}
         {%- set active = matcher.current(child) or matcher.ancestor(child) -%}
         {%- if active -%}
@@ -22,5 +23,6 @@
         <a {{- menu.attributes(attr) -}} href="{{- child.uri -}}">
             {{- child.label|raw -}}
         </a>
+        {%- endif -%}
     {%- endfor -%}
 {%- endapply -%}

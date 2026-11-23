@@ -35,6 +35,10 @@ class BulkOperationForm extends AbstractType
             ->add('all', HiddenType::class, [
                 'label' => false,
                 'required' => false,
+            ])
+            ->add('query', HiddenType::class, [
+                'label' => false,
+                'required' => false,
             ]);
 
         $builder->get('all')->addModelTransformer(new CallbackTransformer(static fn (?bool $v) => (int) $v, static fn (?string $v) => (bool) $v));

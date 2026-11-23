@@ -381,6 +381,31 @@ Both helpers support callable and string mappings to rename or override fields:
 ],
 ```
 
+## Quick creation from a select
+
+A select that lists the entities of a reference book (a manufacturer, a category: an id, a name and a few fields) can create a new one without leaving the form. Name the route of the
+**create action** of the CRUD controller that manages the listed entity in the `quick_create` option of the field:
+
+```php
+$builder->add('vendor', EntityType::class, [        // Symfony\Bridge\Doctrine\Form\Type\EntityType
+    'class' => Vendor::class,
+    'choice_label' => 'name',
+    'required' => false,
+    'quick_create' => 'cms_vendor_create',            // route name = the route prefix of the controller + `create`
+]);
+```
+
+A "+" appears beside the select. It opens the create form of that controller in a dialog; when the form is saved, the new entity is added to the select and chosen. Nothing else is needed:
+
+- The listed entity needs a CRUD controller with the create operation (`SupportsCreateOperation` or `SupportsLcudOperation`); its form and DTO are used as they are. The route is
+  `<route prefix of the controller>create` (`#[Route('/abc/vendors', name: 'cms_vendor_')]` gives `cms_vendor_create`). Check it with `bin/console debug:router | grep create`.
+- The text of the new option is the `entity_label` option of that controller (`'entity_label' => static fn (Vendor $v): string => $v->name`); without it the option shows the id.
+- Under the hood the dialog loads `<create route>?quick=1`. `AbstractCrudController::doCreate` answers such a request with the form alone (`crud/create.quick.html.twig`: 422 and the form again
+  with its errors when it is invalid) and, for a valid post, saves the entity and answers `{"id": "...", "label": "..."}` instead of a redirect. The security of the controller (its firewall, its
+  voters) applies as to any create request; the quick form is not a separate endpoint.
+- Keep the form of a reference book short: the dialog shows the whole create form, with its editor and file fields (they work in a dialog too).
+- The option is for the Doctrine `EntityType`; the select must not be `multiple` and not `disabled`. The route is named only in the form type of your application: the bundle knows no route.
+
 ## Frontend assets (Vite)
 
 The bundle ships SCSS + JS source files under `Resources/assets/`. You build them yourself so you can customise variables and override styles.

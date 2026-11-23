@@ -1,0 +1,61 @@
+// Styles of the form components (uploads, the rich text field, flatpickr).
+.image-group {
+    .ratio > * {
+        border: var(--border-width) solid var(--border-color);
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+}
+
+// Allow tooltip on disabled buttons in file upload groups
+.file-group .btn.disabled[data-bs-toggle='tooltip'] {
+    pointer-events: auto;
+}
+
+.wysiwyg {
+    margin-bottom: 0.5rem;
+
+    .wysiwyg-toolbar {
+        flex-wrap: wrap;
+        margin-bottom: 0.4rem;
+    }
+
+    .wysiwyg-content {
+        min-height: 12rem;
+        padding: 0.6rem 0.8rem;
+        height: auto;
+
+        .ProseMirror {
+            outline: none;
+            min-height: 10rem;
+
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            td,
+            th {
+                border: 1px solid var(--border-color);
+                padding: 0.3rem 0.5rem;
+                min-width: 2rem;
+            }
+
+            th {
+                background: var(--bg-2);
+            }
+
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+
+            blockquote {
+                border-left: 3px solid var(--border-color);
+                padding-left: 0.8rem;
+                color: var(--fg-3);
+            }
+        }
+    }
+}

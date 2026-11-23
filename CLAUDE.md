@@ -2,12 +2,35 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Using the bundle in an application (read this first)
+
+The bundle is the **base**: the abstract CRUD controller and its operation traits, the list/form/page templates, the layout (bar, menu, cards), the Stimulus controllers and the theme. It is distributed through composer. **Everything that belongs to one application's admin lives in that application, in `src/Cms`, never in the bundle.**
+
+`src/Cms` mirrors `src/`: one folder per domain of the application, the same inner folders as in `src/`, and only what belongs to the admin.
+
+```
+src/Cms/<Domain>/Controller/   CRUD controllers (#[Route('/abc/<things>', name: 'cms_<thing>_')], extend AbstractCrudController, use Supports*Operation traits)
+src/Cms/<Domain>/Form/Type/    form and filter types
+src/Cms/<Domain>/Form/Dto/     DTOs (extend AbstractDto; synced to the entity by property name)
+src/Cms/<Domain>/Service/      services of the admin (statistics, search...)
+src/Cms/<Domain>/Twig/         Twig functions of the admin pages
+src/Cms/<Domain>/EventSubscriber/
+src/Cms/Menu/SidebarNavigation.php   the sidebar (named in the config `chamber_orchestra_cms.sidebar_menu`; the bundle itself names no class of the application)
+```
+
+- Namespace = path: `Cms\Order\Controller\OrderController`. `<Domain>` is the domain of the entity the section manages (`Order`, `User`, `Product`, `Promo` for news), as in `src/`. A feature that belongs to no single domain (the dashboard, the header search, the menu) gets a folder named after the feature; things that serve the whole admin go to `Cms\Shared`.
+- The application tells the layout what it has in `config/packages/chamber_orchestra_cms.yaml`: `sidebar_menu: <class of the navigation>` and `search_route: <route of the search box>` (null = none). The search route answers `?format=json` with `[{group, title, items: [{label, sub, url}]}]`. A group of the menu is `->add('group', ['label' => ...], false, true)->children()...->end()`.
+- A new section = a controller in `src/Cms/<Domain>/Controller`, its form/DTO beside it, a menu item in `Cms\Menu\SidebarNavigation`, English labels in the code and the Russian ones in the application's translation file (`cms` domain), page templates in the application's `templates/cms/<domain>/` (mirrors `src/Cms`: `cms/order/update.html.twig`), a test in `tests/Cms/`. No route or service config is needed: `config/routes/cms.yaml` loads every `#[Route]` under `src/Cms`, `config/services/cms.yaml` registers `Cms\` (autowire/autoconfigure; DTOs are excluded).
+- Do not put application code (a domain query, a route, a menu class) into `packages/cms-bundle`. The bundle may only get generic, reusable changes; write each of them in `CHANGES.md` so they can be ported to the bundle's repository for its next tag. If a bundle template needs something from the application (the route `cms_search`, the class `Cms\Menu\SidebarNavigation`), say so in `CHANGES.md`.
+- The admin is mounted at `/abc` (`ROLE_ADMIN`). Strings in code are English; Russian comes from translations.
+- Lists: set the options in the controller constructor (`index.fields`, `filter`, `filter_mapping`, `order_by`); a list's query is configured once per controller instance, so do not put request-dependent logic into option closures. Repositories of listed entities need `PaginationAwareTrait`.
+
 ## Project Overview
 
 A Symfony bundle providing a full CMS admin panel with CRUD operations, form handling, entity management, and admin UI components. Built around trait-based operation composition — controllers opt into list, create, update, delete, copy, move, toggle, export, and meta operations by using corresponding `Supports*Operation` traits.
 
 **Package:** `chamber-orchestra/cms-bundle`
-**Requirements:** PHP ^8.5, Symfony 8.0 components
+**Requirements:** PHP ^8.5, Symfony 8.2 components
 **Namespace:** `ChamberOrchestra\CmsBundle` (PSR-4 from `src/`)
 **Bundle class:** `ChamberOrchestraCmsBundle`
 **Main branch:** `main`
@@ -109,10 +132,9 @@ Actions (`create`, `update`, `view`, `meta`, `delete`, `copy`, `move`, `toggle`,
 
 ### Frontend Assets
 
-- SCSS in `src/Resources/assets/scss/` — customized Bootstrap 5.3 source files with CMS-specific overrides in `bootstrap/` subdirectory
-- JavaScript: jQuery, TinyMCE 5, Select2, Flatpickr, nestable, Chart.js
-- Twig templates in `src/Resources/views/` — base layout, CRUD views, form themes (Bootstrap 5), modals, menus
-- Entry points in `src/Resources/assets/entry/` — per-page JS/SCSS bundles
+- Vite entry `assets/cms.js` (separate from the application's public site): Bootstrap 6 alpha (Sass; responsive classes are `md:col-4`, buttons `btn btn-solid theme-primary`), Font Awesome Free, Stimulus controllers in `src/Resources/assets/controllers/` (eager) and `controllers/lazy/` (loaded where used, e.g. Tiptap `wysiwyg`). **No jQuery** (the old TinyMCE/Select2/Flatpickr/nestable stack is replaced; the owner's native form/upload/collection components load lazily from `entry/forms.js`). Keep JavaScript minimal: prefer HTML and CSS.
+- Theme: `src/Resources/assets/scss/theme/` (`_modern.scss` look, `_aside.scss` layout: menu open or a rail of icons by the cookie `aside-closed`, overlay on a phone; `_filter.scss`). Lists keep the action buttons of a row in one cell pinned to the right edge.
+- Twig templates in `src/Resources/views/`: layout `base.html.twig`, `crud/*`, `form/*`, `menu/*`, the header search `search_box.html.twig`.
 
 ### Twig Templates
 
@@ -140,6 +162,8 @@ Actions (`create`, `update`, `view`, `meta`, `delete`, `copy`, `move`, `toggle`,
 - Use music thematics for test fixtures and naming (e.g., entity names like `Composition`, `Instrument`, `Rehearsal`, `Score`; file names like `symphony_no_5.pdf`, `violin_concerto.mp3`, `moonlight_sonata.jpg`; prefixes like `scores`, `recordings`)
 
 ## Code Style
+
+- No UPPERCASE in the UI: no `text-transform: uppercase`, no `text-uppercase`, no `|upper` for display.
 
 - PHP 8.5+ with strict types (`declare(strict_types=1);`)
 - PSR-4 autoloading: `ChamberOrchestra\CmsBundle\` → `src/`
@@ -207,7 +231,7 @@ Actions (`create`, `update`, `view`, `meta`, `delete`, `copy`, `move`, `toggle`,
 
 ## Dependencies
 
-- Requires PHP 8.5, Symfony 8.0 components (`event-dispatcher`, `form`, `framework-bundle`, `http-foundation`, `http-kernel`, `options-resolver`, `property-access`, `routing`, `string`, `twig-bundle`, `uid`, `yaml`), Doctrine ORM 3.x, Doctrine Collections 2.x
+- Requires PHP 8.5, Symfony 8.2 components (`event-dispatcher`, `form`, `framework-bundle`, `http-foundation`, `http-kernel`, `options-resolver`, `property-access`, `routing`, `string`, `twig-bundle`, `uid`, `yaml`), Doctrine ORM 3.x, Doctrine Collections 2.x
 - Chamber Orchestra bundles: `doctrine-extensions-bundle`, `doctrine-sort-bundle`, `file-bundle`, `form-bundle`, `menu-bundle`, `meta`, `metadata-bundle`, `pagination-bundle`
 - Dev: PHPUnit 13, `doctrine-bundle`, `symfony/test-pack`
 - Suggests: `studio-42/elfinder` for file manager integration

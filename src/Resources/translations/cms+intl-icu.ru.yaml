@@ -1,0 +1,195 @@
+app:
+    signout: Выйти
+
+common:
+    total: 'Всего: {count}'
+    per_page: На странице
+    title:
+        list: "Список"
+        view: "Просмотр"
+        create: "Новая запись"
+        delete: "Удаление"
+        update: "Редактирование"
+        meta: "SEO"
+        settings: "Настройки"
+        edit: Редактировать
+        fields: Столбцы
+        dashboard: Обзор
+    flash:
+        create: "Запись создана"
+        update: "Запись сохранена"
+        delete: "Запись удалена"
+    form:
+        placeholder: "Выберите значение"
+    btn:
+        cancel: "Отмена"
+        new: "Создать"
+        save: "Сохранить"
+        back: "Назад"
+        delete: "Удалить"
+        close: "Закрыть"
+    text:
+        breadcrumbs: "Навигация"
+        delete: |
+            Вы собираетесь удалить запись.
+            Подтверждаете удаление?
+
+        no_entities: "Записей пока нет."
+    crumbs:
+        index: Список
+        create: Создание
+        update: Редактирование
+        meta: SEO
+    nav:
+        index: Список
+        parent: Родитель
+        create: Создать
+        update: Изменить
+        blocks: Блоки
+        images: Изображения
+        files: Файлы
+        meta: SEO
+        children: Вложенные
+        view: Просмотр
+        bulk_delete: <i class="fas fa-fw fa-times"></i> Удалить
+        bulk_update: <i class="fas fa-fw fa-pen"></i> Изменить
+        export: CSV
+    close: Закрыть
+    menu: Меню
+    move_up: Выше
+    move_down: Ниже
+    create: Создать
+    edit: Изменить
+    view: Просмотр
+    delete: Удалить
+    no_caption: Без подписи
+    move: Переместить
+    toggle: Переключить
+    copy: Копировать
+    content_entries: Блоки содержимого
+    toggle_on: Включить
+    toggle_off: Выключить
+    entity_actions: Действия
+    entity_sort_actions: Порядок
+    children: Вложенные
+    choose_value: Выберите одно из значений
+    logout: Выйти
+    details: Подробнее
+    file_deleted: Файл удалён или недоступен
+    required: Поле обязательно
+
+filter:
+    title: 'Фильтр'
+    open: 'Фильтр'
+    search: 'Найти'
+    search_placeholder: 'Поиск'
+    reset: 'Сбросить'
+modal:
+    close: Закрыть
+toast:
+    success: Готово!
+    error: Ошибка!
+
+collection:
+    field:
+        add: Добавить
+        delete: Удалить
+
+dashboard:
+    welcome: Добро пожаловать!
+    about: Это ваша собственная система управления сайтом.
+    welcome_text: |
+        Здесь можно редактировать содержимое сайта.
+
+security:
+    title:
+        login: Вход
+    btn:
+        login: Войти
+    error:
+        throttled: "Слишком много попыток входа. Подождите минуту и попробуйте снова."
+        csrf: "Форма устарела. Попробуйте ещё раз."
+        disabled: "Этот администратор отключён."
+        credentials: "Неверный email или пароль."
+    field:
+        email: Email
+        password: Пароль
+
+meta:
+    field:
+        title: Заголовок
+        metaTitle: Meta title
+        metaDescription: Meta description
+        metaKeywords: Meta keywords
+        metaImage: Картинка для соцсетей
+        robotsBehaviour: Индексация
+
+robots_behaviour:
+    indexfollow: 'Индексировать, следовать по ссылкам'
+    indexnofollow: 'Индексировать, не следовать'
+    noindexfollow: 'Не индексировать, следовать'
+    noindexnofollow: 'Не индексировать, не следовать'
+
+crud:
+    flash:
+        created: Запись создана
+        updated: Запись сохранена
+        deleted: Запись удалена
+        all_deleted: Все записи удалены
+        selected_deleted: Выбранные записи удалены
+        selected_updated: 'Выбранные записи изменены'
+        nothing_to_update: Не выбрано ни одного поля для изменения
+        enabled: Запись включена
+        disabled: Запись выключена
+    bulk:
+        delete_title: Удалить выбранное?
+        delete_text: 'Будет удалено записей: {count}. Это нельзя отменить.'
+        delete_all_text: 'Будут удалены все записи списка. Это нельзя отменить.'
+        delete_confirm: Удалить
+        cancel: Отмена
+        update_title: Изменить выбранное
+        update_text: 'Будет изменено записей: {count}. Поля, которые менять не нужно, оставьте как есть.'
+        update_all_text: 'Будут изменены все записи списка. Поля, которые менять не нужно, оставьте как есть.'
+        update_apply: Применить
+        keep: Не менять
+        yes: Да
+        no: Нет
+    index:
+        sorted_asc: отсортировано по возрастанию
+        sorted_desc: отсортировано по убыванию
+        search_column: 'Поиск по колонке'
+        select_all_on_page: 'Выбраны все записи на странице'
+        show_selected: 'Показать выбранные'
+        show_all: 'Показать все'
+        select_all: '<i class="fas fa-exclamation-triangle text-warning"></i> Выбраны все записи!'
+        selected: 'Выбрано записей: {count}'
+
+search:
+    placeholder: "Поиск по сайту"
+    recent: "Недавние поиски"
+
+audit:
+    title: Журнал действий
+    note: Кто и что изменил или удалил в админке. Удалённое можно вернуть.
+    when: Когда
+    actor: Кто
+    action: Действие
+    what: Что
+    changes: Изменения
+    all_actors: Все администраторы
+    all_actions: Все действия
+    all_kinds: Всё
+    search: Название или артикул
+    find: Найти
+    empty: Записей нет
+    restore: Восстановить
+    actions:
+        create: Создание
+        update: Изменение
+        delete: Удаление
+        restore: Восстановление
+    flash:
+        restored: Запись восстановлена
+        not_restorable: Эту запись уже нельзя восстановить
+        taken: Адрес записи уже занят другой, восстановить нельзя
+    pages: 'Страница {page} из {pages}, записей: {total}'

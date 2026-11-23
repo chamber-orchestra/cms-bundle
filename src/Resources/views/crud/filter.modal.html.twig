@@ -1,0 +1,31 @@
+{# @var form \Symfony\Component\Form\FormView #}
+{#- The filter of a list in a dialog: the fields one under another, "Search" applies, "Reset" goes back to the list without a filter. -#}
+{%- embed "@ChamberOrchestraCms/modal.html.twig" -%}
+    {%- trans_default_domain 'cms' %}
+    {%- set attr = ({id: 'modal-filter'}) -%}
+    {%- set dialog_attr = {} -%}
+    {%- block title -%}{{- 'filter.title'|trans -}}{%- endblock -%}
+    {%- form_theme form with ['form_div_layout.html.twig'] only -%}
+
+    {%- block body -%}
+        {#- the search field is the input of the bar of the list (it belongs to this form by its `form` attribute) -#}
+        {%- if form.search is defined -%}{%- do form.search.setRendered() -%}{%- endif -%}
+        {{- form_start(form, {attr: {id: 'cms-filter-form', class: 'cms-filter', 'data-type': 'manual', role: 'search'}}) -}}
+            {%- for child in form -%}
+                {%- set caption = child.vars.label is not empty ? child.vars.label|trans({}, child.vars.translation_domain|default('cms')) : '' -%}
+                {%- if 'checkbox' in child.vars.block_prefixes -%}
+                    <label class="cms-filter-check">{{- form_widget(child, {attr: {class: 'check'}}) -}}<span>{{ caption }}</span></label>
+                {%- elseif 'choice' in child.vars.block_prefixes -%}
+                    <div class="cms-filter-row"><label class="form-label" for="{{ child.vars.id }}">{{ caption }}</label>{{- form_widget(child, {attr: {class: 'form-select'}}) -}}</div>
+                {%- elseif not child.rendered and 'hidden' not in child.vars.block_prefixes -%}
+                    <div class="cms-filter-row"><label class="form-label" for="{{ child.vars.id }}">{{ caption }}</label>{{- form_widget(child, {attr: {class: 'form-control'}}) -}}</div>
+                {%- endif -%}
+            {%- endfor -%}
+            {{- form_rest(form) -}}
+            <div class="cms-filter-buttons">
+                <a class="btn btn-outline theme-secondary" href="{{ app.request.pathInfo }}">{{- 'filter.reset'|trans -}}</a>
+                <button type="submit" class="btn btn-solid theme-primary">{{- 'filter.search'|trans -}}</button>
+            </div>
+        {{- form_end(form) -}}
+    {%- endblock -%}
+{%- endembed -%}

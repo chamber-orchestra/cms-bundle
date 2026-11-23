@@ -1,0 +1,42 @@
+{#- The dialogs of the plate of the selected rows: the confirmation of a bulk delete and the form of a bulk update. The list script (bulk_controller.js) opens them and fills {count}.
+    Variables: bulk_delete (route options or null), bulk_update (route options or null), bulk_update_form (FormView or null). -#}
+{%- trans_default_domain translation_domain|default('cms') -%}
+{%- if bulk_delete is defined and bulk_delete -%}
+    {%- embed "@ChamberOrchestraCms/modal.html.twig" -%}
+        {%- trans_default_domain translation_domain|default('cms') -%}
+        {%- set attr = {id: 'modal-bulk-delete'} -%}
+        {%- set dialog_attr = {class: 'dialog-sm'} -%}
+        {%- block title -%}{{- 'crud.bulk.delete_title'|trans -}}{%- endblock -%}
+        {%- block body -%}
+            <p class="mb-3" data-bulk-text data-text="{{ 'crud.bulk.delete_text'|trans({'{count}': '{count}'}) }}" data-text-all="{{ 'crud.bulk.delete_all_text'|trans }}"></p>
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline theme-secondary" data-bs-dismiss="dialog">{{- 'crud.bulk.cancel'|trans -}}</button>
+                <button type="button" class="btn btn-solid theme-danger" data-bulk-confirm>{{- 'crud.bulk.delete_confirm'|trans -}}</button>
+            </div>
+        {%- endblock -%}
+    {%- endembed -%}
+{%- endif -%}
+{%- if bulk_update is defined and bulk_update and bulk_update_form is defined and bulk_update_form -%}
+    {%- embed "@ChamberOrchestraCms/modal.html.twig" with {bulk_update: bulk_update, bulk_update_form: bulk_update_form} -%}
+        {%- trans_default_domain translation_domain|default('cms') -%}
+        {%- set attr = {id: 'modal-bulk-update'} -%}
+        {%- set dialog_attr = {class: 'dialog-sm'} -%}
+        {%- block title -%}{{- 'crud.bulk.update_title'|trans -}}{%- endblock -%}
+        {%- form_theme bulk_update_form with ['@ChamberOrchestraCms/form/inline.html.twig'] only -%}
+        {%- block body -%}
+            {{- form_start(bulk_update_form, {action: path(bulk_update.route, bulk_update.route_params), attr: {id: 'bulk-update-form', 'data-manual': 'true'}}) -}}
+            <p class="mb-3" data-bulk-text data-text="{{ 'crud.bulk.update_text'|trans({'{count}': '{count}'}) }}" data-text-all="{{ 'crud.bulk.update_all_text'|trans }}"></p>
+            {{- form_widget(bulk_update_form.entities) -}}
+            {{- form_widget(bulk_update_form.all) -}}
+            {{- form_widget(bulk_update_form._token) -}}
+            {%- for field in bulk_update_form.values -%}
+                {{- form_row(field) -}}
+            {%- endfor -%}
+            <div class="d-flex justify-content-end gap-2 mt-3">
+                <button type="button" class="btn btn-outline theme-secondary" data-bs-dismiss="dialog">{{- 'crud.bulk.cancel'|trans -}}</button>
+                <button type="submit" class="btn btn-solid theme-primary">{{- 'crud.bulk.update_apply'|trans -}}</button>
+            </div>
+            {{- form_end(bulk_update_form, {render_rest: false}) -}}
+        {%- endblock -%}
+    {%- endembed -%}
+{%- endif -%}

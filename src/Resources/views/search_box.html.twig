@@ -1,0 +1,10 @@
+{# The search box in the bar (shown when the application configured `chamber_orchestra_cms.search_route`). Without JavaScript it is a plain form to the results page.
+   Its JSON answer (`?format=json`) is a list of groups: {group, title, items: [{label, sub, url}]}; the bundle knows no group of the application. Variable: q (optional). #}
+{% trans_default_domain 'cms' %}
+<form class="cms-search" action="{{ path(cms.search_route) }}" method="get" role="search" data-controller="search" data-search-url-value="{{ path(cms.search_route, {format: 'json'}) }}" data-recent-title="{{ 'search.recent'|trans }}" data-action="submit->search#submit">
+    <i class="fas fa-search" aria-hidden="true"></i>
+    <input type="search" name="q" value="{{ q|default('') }}" placeholder="{{ 'search.placeholder'|trans }}" aria-label="{{ 'search.placeholder'|trans }}" autocomplete="off"
+           data-search-target="input" data-action="input->search#suggest keydown->search#keys focus->search#focus">
+    <kbd aria-hidden="true">/</kbd>
+    <div class="cms-search-results" data-search-target="list" hidden></div>
+</form>

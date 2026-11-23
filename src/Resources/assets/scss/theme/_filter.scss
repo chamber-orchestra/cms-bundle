@@ -1,57 +1,171 @@
-$aside-filter-bg: rgba($gray-100, 0.9);
-$content-aside-width: 25%;
+// The filter of a list opens in a dialog (fields one under another); the quick search of a column is a magnifier in its heading.
+.cms-filter {
+    // each field takes the whole width: the label, then the field under it
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
 
-.aside-filter {
+    .cms-filter-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        width: 100%;
 
-    width: $content-aside-width;
-    display: block !important;
-    position: fixed;
-    right: 0;
-    left: 100%;
-    top: 0;
-    bottom: 0;
-    padding: $grid-gutter-width/2;
-    background: $aside-filter-bg;
-    @include box-shadow($box-shadow);
+        .form-label {
+            display: block;
+            width: 100%;
+            margin: 0;
+            font-size: 85%;
+            font-weight: 700;
+        }
 
-    z-index: $zindex-fixed;
-    margin-left: 0;
-    height: auto !important;
-    transition: $transition-base;
+        .form-control,
+        .form-select,
+        .cb,
+        .cb-input {
+            display: block;
+            width: 100%;
+            height: 2rem;
+        }
 
+        input.form-control,
+        .cb-input {
+            min-height: 0;
+            padding-block: 0;
+        }
 
-    .aside-filter-inner {
-        overflow-y: scroll;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        .cb {
+            height: auto;
+        }
     }
 
-    .btn-toggle {
-        background: $warning;
-        position: absolute;
-        padding: .5rem;
-        border-radius: 2rem 0 0 2rem;
-        font-size: 16px;
-        top: 20px;
-        left: -50px;
-        width: 50px;
-        color: $black;
+    .cms-filter-check {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
         cursor: pointer;
-        @include box-shadow($box-shadow);
     }
 
-    &.collapsing {
-        position: fixed;
-        overflow: visible;
-        height: auto;
-        display: block;
-    }
+    .cms-filter-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.25rem;
 
-    &.show {
-        margin-left: -$content-aside-width;
+        .btn-solid {
+            flex: 1;
+        }
     }
 }
 
+// The button of the filter under the title.
+.cms-filter-open {
+    height: var(--cms-h, 2rem);
+    padding: 0 0.8rem;
+    font-size: 0.82rem;
+}
+
+.cms-filter-reset {
+    font-size: 0.8rem;
+    color: var(--cms-muted);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+        color: #dc3545;
+    }
+}
+
+// The magnifier in a column heading and the field it opens under the heading.
+.btn-colsearch {
+    padding: 0 0.2rem;
+    font-size: 0.7rem;
+    color: var(--cms-muted);
+    background: none;
+    border: 0;
+    cursor: pointer;
+
+    &:hover,
+    &.on {
+        color: #4f46e5;
+    }
+}
+
+.th-search {
+    position: fixed;
+    z-index: 1040;
+    min-width: 14rem;
+    padding: 0.5rem;
+    font-weight: 400;
+    text-align: left;
+    background: var(--cms-card);
+    border: 0.125rem solid var(--cms-line);
+    border-radius: var(--cms-radius);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.18);
+
+    &[hidden] {
+        display: none;
+    }
+
+    // the field is a field of the admin (`.form-control`: its height, border and focus)
+    .form-control {
+        width: 100%;
+    }
+}
+
+// A select you can type into: the input in front of the (hidden) native select and its list.
+.cb {
+    position: relative;
+
+    .cb-input {
+        width: 100%;
+        height: 2rem;
+        padding-right: 1.6rem;
+        background: var(--cms-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%236c757d' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 0.6rem center / 0.6rem;
+        cursor: pointer;
+    }
+}
+
+// The native select behind the input: kept for the form, not shown.
+select.cb-native {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.cb-list {
+    position: fixed;
+    z-index: 2000;
+    max-height: 14rem;
+    margin: 0;
+    padding: 0.2rem 0;
+    overflow-y: auto;
+    list-style: none;
+    font-size: 0.82rem;
+    background: var(--cms-card);
+    border: 1px solid var(--cms-line);
+    border-radius: var(--cms-radius);
+    box-shadow: 0 0.35rem 0.9rem rgba(0, 0, 0, 0.18);
+
+    li {
+        padding: 0.3rem 0.7rem;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &.active {
+            color: #fff;
+            background: #4f46e5;
+        }
+
+        &.selected:not(.active) {
+            font-weight: 700;
+        }
+
+        &.cb-none {
+            color: var(--cms-muted);
+            cursor: default;
+        }
+    }
+}

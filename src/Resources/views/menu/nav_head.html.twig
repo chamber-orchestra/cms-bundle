@@ -1,0 +1,10 @@
+{%- trans_default_domain "cms" -%}
+{#- The actions of a page opposite its title (create, export): buttons; the other items of the menu are the tabs under the title (menu/nav.html.twig). -#}
+{%- apply spaceless -%}
+    {%- for child in root -%}
+        {%- set attr = child.option('attr')|default([]) -%}
+        {%- if attr['data-head'] is defined -%}
+            <a class="btn {{ 'create' in child.name ? 'btn-solid theme-primary' : 'btn-outline theme-secondary' }}" href="{{ child.uri }}{{ 'export' in child.name and app.request.queryString ? '?' ~ app.request.queryString : '' }}"{% if attr.title is defined %} title="{{ attr.title }}"{% endif %}>{{- child.label|raw -}}</a>
+        {%- endif -%}
+    {%- endfor -%}
+{%- endapply -%}

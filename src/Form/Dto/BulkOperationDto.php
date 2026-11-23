@@ -15,4 +15,6 @@ class BulkOperationDto
 {
     public ?string $entities = null;
     public ?bool $all = false;
+    /** The address query of the list (its filter and column search): what "all" means when every row of the filter is chosen. */
+    public ?string $query = null;
 }

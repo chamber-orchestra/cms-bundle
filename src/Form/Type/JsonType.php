@@ -29,6 +29,8 @@ class JsonType extends AbstractType
         $resolver->setDefaults([
             'attr' => [
                 'data-code-mode' => 'application/json',
+                'class' => 'font-monospace',
+                'rows' => 10,
             ],
         ]);
     }

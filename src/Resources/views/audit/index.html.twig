@@ -1,0 +1,64 @@
+{% extends '@ChamberOrchestraCms/base.html.twig' %}
+{% trans_default_domain 'cms' %}
+
+{% block meta_title %}{{ 'audit.title'|trans }}{% endblock %}
+{% block page_title %}{{ 'audit.title'|trans }}{% endblock %}
+
+{% block content_body_inner %}
+    <p class="text-muted">{{ 'audit.note'|trans }}</p>
+    <form method="get" class="d-flex flex-wrap gap-2 mb-3" role="search">
+        <select name="actor" class="form-select w-auto" aria-label="{{ 'audit.actor'|trans }}">
+            <option value="">{{ 'audit.all_actors'|trans }}</option>
+            {% for a in actors %}<option value="{{ a }}"{{ a == filter.actor ? ' selected' : '' }}>{{ a }}</option>{% endfor %}
+        </select>
+        <select name="action" class="form-select w-auto" aria-label="{{ 'audit.action'|trans }}">
+            <option value="">{{ 'audit.all_actions'|trans }}</option>
+            {% for a in ['create', 'update', 'delete', 'restore'] %}<option value="{{ a }}"{{ a == filter.action ? ' selected' : '' }}>{{ ('audit.actions.' ~ a)|trans }}</option>{% endfor %}
+        </select>
+        <select name="class" class="form-select w-auto" aria-label="{{ 'audit.what'|trans }}">
+            <option value="">{{ 'audit.all_kinds'|trans }}</option>
+            {% for c in classes %}<option value="{{ c.class }}"{{ c.class == filter.class ? ' selected' : '' }}>{{ c.label }}</option>{% endfor %}
+        </select>
+        <input type="search" name="q" value="{{ filter.q }}" class="form-control w-auto" placeholder="{{ 'audit.search'|trans }}" aria-label="{{ 'audit.search'|trans }}">
+        <button type="submit" class="btn btn-outline theme-secondary">{{ 'audit.find'|trans }}</button>
+    </form>
+    {% if rows is empty %}
+        <p class="text-muted">{{ 'audit.empty'|trans }}</p>
+    {% else %}
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead><tr><th>{{ 'audit.when'|trans }}</th><th>{{ 'audit.actor'|trans }}</th><th>{{ 'audit.action'|trans }}</th><th>{{ 'audit.what'|trans }}</th><th>{{ 'audit.changes'|trans }}</th><th></th></tr></thead>
+                <tbody>
+                {% for r in rows %}
+                    <tr>
+                        <td class="text-nowrap">{{ r.occurred_at|date('d.m.Y H:i') }}</td>
+                        <td>{{ r.actor }}</td>
+                        <td><span class="badge {{ r.action == 'delete' ? 'theme-danger' : (r.action == 'create' ? 'theme-success' : 'theme-secondary') }}">{{ ('audit.actions.' ~ r.action)|trans }}</span></td>
+                        <td>{{ r.kind }}: {{ r.entity_label }}</td>
+                        <td class="small">
+                            {% for field, pair in r.changes|slice(0, 4) %}
+                                <div><b>{{ field }}</b>: {% if r.action != 'create' %}<span class="text-muted">{{ pair[0] is null ? '—' : (pair[0] ~ '')|slice(0, 40) }}</span> → {% endif %}{{ pair[1] is null ? '—' : (pair[1] ~ '')|slice(0, 60) }}</div>
+                            {% endfor %}
+                            {% if r.changes|length > 4 %}<div class="text-muted">+{{ r.changes|length - 4 }}</div>{% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if r.deleted %}
+                                <form method="post" action="{{ path('audit_restore', {id: r.id}) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('audit_restore') }}">
+                                    <button type="submit" class="btn btn-sm btn-outline theme-primary">{{ 'audit.restore'|trans }}</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            {% set q = filter|filter(v => v is not empty) %}
+            {% if page > 1 %}<a class="btn btn-sm btn-outline theme-secondary" href="{{ path('audit_index', q|merge({page: page - 1})) }}">‹</a>{% endif %}
+            <span class="text-muted small">{{ 'audit.pages'|trans({page: page, pages: pages, total: total}) }}</span>
+            {% if page < pages %}<a class="btn btn-sm btn-outline theme-secondary" href="{{ path('audit_index', q|merge({page: page + 1})) }}">›</a>{% endif %}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,5 +1,0 @@
-@import "bootstrap/scss/functions";
-
-@function rem-to-px($size) {
-    @return calc($size / 1rem * 16px);
-}

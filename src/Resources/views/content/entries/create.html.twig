@@ -7,7 +7,7 @@
             <div class="d-flex gap-2">
                 {%- for contentType in content_types -%}
                     <a href="{{ path(route_prefix ~ '_entries_create', {id: owner.id, contentType: contentType.id}) }}"
-                       class="btn btn-sm btn-outline-success">
+                       class="btn btn-sm btn-outline theme-success">
                         <i class="fas fa-plus"></i> {{ contentType.name }}
                     </a>
                 {%- endfor -%}

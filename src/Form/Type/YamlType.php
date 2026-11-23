@@ -29,6 +29,8 @@ class YamlType extends AbstractType
         $resolver->setDefaults([
             'attr' => [
                 'data-code-mode' => 'yaml',
+                'class' => 'font-monospace',
+                'rows' => 10,
             ],
         ]);
     }

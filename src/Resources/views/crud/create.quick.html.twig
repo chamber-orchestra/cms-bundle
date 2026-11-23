@@ -1,0 +1,10 @@
+{#- The create form of a CRUD controller without the page around it: what the dialog of a quick creation (`quick_create` of a select) shows. -#}
+{%- trans_default_domain translation_domain|default('cms') -%}
+{%- form_theme form with ['@ChamberOrchestraCms/form/horizontal.html.twig', '@ChamberOrchestraCms/form/file.html.twig'] only -%}
+{{- form_start(form, {attr: {'data-quick-create-form': ''}}) -}}
+{{- form_rest(form) -}}
+<div class="d-flex justify-content-between gap-2">
+    <button type="button" class="btn btn-outline theme-secondary" data-bs-dismiss="dialog">{{- 'common.btn.cancel'|trans({}, 'cms') -}}</button>
+    <button type="submit" class="btn btn-solid theme-success px-5">{{- 'common.btn.save'|trans({}, 'cms') -}}</button>
+</div>
+{{- form_end(form) -}}

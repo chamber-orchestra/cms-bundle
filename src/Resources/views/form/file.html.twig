@@ -12,23 +12,23 @@
         {%- set target = "#" ~ form.file.vars.id -%}
         <div class="input-group file-group">
                 {%- if form.vars.value.file.uri|default(false) -%}
-                    <a href="{{ form.vars.value.file.uri }}" class="btn btn-outline-info" target="_blank">
-                        <i class="fad fa-fw fa-external-link"></i>
+                    <a href="{{ form.vars.value.file.uri }}" class="btn btn-outline theme-info" target="_blank">
+                        <i class="fas fa-fw fa-external-link"></i>
                     </a>
                 {%- endif -%}
-                <button type="button" class="btn btn-outline-primary" {#
+                <button type="button" class="btn btn-outline theme-primary" {#
                 #} data-upload="{{- type -}}" {#
                 #} data-target="{{- target -}}">
-                    <i class="fad fa-fw fa-upload"></i>
+                    <i class="fas fa-fw fa-upload"></i>
                 </button>
             <div class="form-control text-truncate">
                 {{- form.vars.value.file.basename|default("") -}}
             </div>
             {%- if form.delete is defined -%}
-                        {%- set label -%}<i class="far fa-fw fa-times"></i>{%- endset -%}
+                        {%- set label -%}<i class="fas fa-fw fa-times"></i>{%- endset -%}
                         {%- set isDisabled = form.delete.vars.disabled -%}
                         {%- set label_attr = {
-                            class: "mb-0 btn btn-outline-danger" ~ (isDisabled ? ' disabled' : ''),
+                            class: "mb-0 btn btn-outline theme-danger" ~ (isDisabled ? ' disabled' : ''),
                             'data-detach': 'file',
                             disabled: isDisabled
                         } -%}
@@ -46,6 +46,10 @@
                             "attr": {"autocomplete": "off", 'class': 'visually-hidden'}}) -}}
             {%- endif -%}
         </div>
+        {%- set info = cms_file_info(form.vars.value.file|default(null)) -%}
+        {%- if info -%}
+            <div class="file-info"><i class="far fa-fw fa-clock" aria-hidden="true"></i> {{ info.date|date('d.m.Y H:i') }} · {{ info.mime }} · {{ info.size }}</div>
+        {%- endif -%}
     {%- form_theme form.file _self -%}
         {{- form_widget(form.file) -}}
     {%- endapply -%}
@@ -64,17 +68,17 @@
         {# display: flex; does not work on <fieldset> #}
         <fieldset {{ block('widget_container_attributes') }}>
             <div class="row image-group">
-                <div class="col-4 col-md-3 mb-4 mb-lg-0">
+                <div class="col-4 md:col-3 mb-4 lg:mb-0 image-preview">
                     <div class="ratio ratio-1x1">
                         {%- if form.vars.value.file -%}
                             <div style="background-image: url('{{- asset(form.vars.value.file.uri|default(""), 'file') -}}'); background-size: cover; background-position: center;"></div>
                         {%- else -%}
-                            <div></div>
+                            <div class="image-placeholder"><i class="far fa-image" aria-hidden="true"></i></div>
                         {%- endif -%}
                     </div>
                 </div>
                 {%- set type = "image" -%}
-                <div class="col-12 col-md-9 d-flex justify-content-between flex-column h-100">
+                <div class="col-12 md:col-9 d-flex justify-content-between flex-column h-100">
                     <div class="mb-2">{{- block('chamber_orchestra_file_widget_inner') -}}</div>
                     {%- if inner is defined -%}{{- inner -}}{%- endif -%}
                 </div>
