@@ -17,6 +17,7 @@ use ChamberOrchestra\CmsBundle\Events\PostSyncEvent;
 use ChamberOrchestra\CmsBundle\Events\SyncEvent;
 use ChamberOrchestra\CmsBundle\Events\UpdateEvent;
 use ChamberOrchestra\CmsBundle\Form\Dto\BulkOperationDto;
+use ChamberOrchestra\CmsBundle\Form\Dto\BulkUpdateDto;
 use ChamberOrchestra\CmsBundle\Form\Dto\DeleteDto;
 use ChamberOrchestra\CmsBundle\Form\Dto\DtoInterface;
 use ChamberOrchestra\CmsBundle\Processor\Utils\CrudUtils;
@@ -141,6 +142,41 @@ class CrudProcessor implements CrudProcessorInterface
             $this->em->rollback();
             throw $e;
         }
+    }
+
+    /**
+     * Gives every selected row the same values: the events of an update are dispatched for each, the rows are saved in one transaction.
+     *
+     * @param class-string         $class
+     * @param array<string, mixed> $values field => value (properties of the entity, written as the form of an edit writes them)
+     *
+     * @return int how many rows were changed
+     */
+    public function bulkUpdate(BulkUpdateDto $dto, string $class, array $values): int
+    {
+        /** @var EntityRepository $er */
+        $er = $this->em->getRepository($class);
+        $meta = $this->em->getClassMetadata($class);
+        $this->em->beginTransaction();
+        try {
+            $ids = $dto->all ? $er->indexBy() : \explode(',', (string) $dto->entities);
+            $entities = $er->findBy(['id' => $ids]);
+            foreach ($entities as $entity) {
+                $this->dispatcher->dispatch(new UpdateEvent($meta, $entity));
+                foreach ($values as $field => $value) {
+                    $meta->getReflectionProperty($field)?->setValue($entity, $value);
+                }
+                $this->dispatcher->dispatch(new PostSyncEvent($meta, $entity));
+                $this->em->persist($entity);
+            }
+            $this->em->flush();
+            $this->em->commit();
+        } catch (\Throwable $e) {
+            $this->em->rollback();
+            throw $e;
+        }
+
+        return \count($entities);
     }
 
     /**

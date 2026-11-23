@@ -1,78 +1,476 @@
-$aside-heading-padding: 3px 25px;
-$aside-heading-image-height: 90px;
+// The layout of the admin: a menu docked on the left (open or closed as the cookie says), a top bar and the page. On a phone the menu is an overlay.
+$aside-width: 14rem;
 
-$aside-width: 280px;
-$aside-margin: -236px;
+.cms-shell {
+    display: flex;
+    min-height: 100vh;
+}
 
-#aside {
+.cms-aside {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex: none;
+    flex-direction: column;
     width: $aside-width;
-    flex-shrink: 0;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--cms-navy);
+    color: #fff;
 
-    &.closed {
-        margin-left: $aside-margin;
+    .cms-aside-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex: 0 0 auto; // a flex item of the menu: it must not shrink when the menu is longer than the window
+        height: var(--cms-bar-h); // the same height as the bar of the page: the green plate of the menu and the bar make one line
+        padding: 0 0.75rem;
+        background: linear-gradient(135deg, #11c2a1, #0b8f77);
+        font-weight: 900;
+    }
 
-        + #main {
-            width: calc(100% - #{$aside-width + $aside-margin}) !important;
+    .cms-aside-user {
+        display: flex;
+        flex: 1;
+        gap: 0.5rem;
+        align-items: center;
+        min-width: 0;
+        margin-left: 0.5rem;
+
+        i {
+            font-size: 1.15rem;
         }
-        .nav-link, {
-            text-align: right;
-            span{
-                display: none;
-            }
-            padding-right: 0.5rem;
-            .fa-angle-left{
-                display: none;
+    }
+
+    // The burger of a wide screen (a phone has the one of the bar).
+    .cms-aside-burger {
+        display: none;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        color: #fff;
+        background: transparent;
+        border: 0;
+        border-radius: var(--cms-radius);
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(255, 255, 255, 0.2);
+            outline: 0;
+        }
+    }
+
+    .cms-aside-close {
+        display: none;
+        filter: invert(1);
+    }
+
+    .cms-aside-body {
+        flex: 1;
+        padding: 0.25rem 0;
+    }
+
+    .nav {
+        display: block;
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+
+    .nav-item {
+        display: block; // the link, then the sub-menu under it
+        width: 100%;
+    }
+
+    .nav-item > .nav {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.18);
+    }
+
+    // Only the item of the page is marked inside a sub-menu; its parent stays plain.
+    .nav-item.open > .nav-link[data-bs-toggle] {
+        border-left-color: transparent;
+    }
+
+    // Every item is the whole width of the menu.
+    .nav-link,
+    .nav-item > a {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        padding: 0.5rem 0.9rem;
+        color: rgba(255, 255, 255, 0.82);
+        text-decoration: none;
+        border-left: 3px solid transparent;
+        font-size: 0.82rem;
+
+        &:hover,
+        &:focus {
+            color: #fff;
+            background: var(--cms-navy-2); // Bootstrap paints a focused link with its light "muted" colour: on the navy menu it was a white box
+        }
+
+        &:focus-visible {
+            outline: 2px solid #11c2a1;
+            outline-offset: -2px;
+        }
+
+        i {
+            width: 1.2rem;
+            margin-right: 0.5rem;
+            text-align: center;
+        }
+    }
+
+    .nav-item.open > .nav-link,
+    .nav-link.active {
+        color: #fff;
+        background: var(--cms-navy-2);
+        border-left-color: #11c2a1;
+    }
+
+    // The items of a sub-menu are indented; the items of a group (a labelled section) are not.
+    .nav-item > .nav .nav-link {
+        padding-left: 2.4rem;
+    }
+
+    // A group of the menu: a small label over its items.
+    .nav-section {
+        display: block;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    .nav-section-label {
+        margin: 0;
+        padding: 0.95rem 0.9rem 0.3rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.45);
+    }
+
+    // A counter at the right end of an item (new orders).
+    .nav-badge {
+        margin-left: auto;
+    }
+
+    // The arrow of an item with sub-items sits at the right end, after the counter.
+    .nav-link > .fa-angle-left {
+        width: auto;
+        margin: 0 0 0 0.5rem;
+    }
+
+    .nav-link > span:not(.badge) {
+        flex: 1;
+    }
+
+    .cms-aside-footer {
+        padding: 0.5rem 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+        .btn {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.35);
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.1);
             }
         }
-        #menu-input-group-search{
+    }
+}
+
+// A wide screen, menu "closed": a rail of icons. The label of an item (and the sub-items of a group) show beside the rail while the pointer is on it; they are
+// fixed-position so the scrolling menu does not clip them, and the script puts their top into --fly-top / --fly-h.
+@media (width >= 1024px) {
+    .cms-aside {
+        z-index: 1030; // above the sticky bar, so the fly-outs cover it
+
+        .cms-aside-burger {
+            display: inline-flex;
+        }
+    }
+
+    .cms-bar .cms-burger {
+        display: none; // the burger is in the menu
+    }
+
+    .cms-shell.aside-closed .cms-aside {
+        $rail: 3.5rem;
+        $fly-bg: var(--cms-navy-2);
+
+        width: $rail;
+
+        .cms-aside-user {
+            display: none; // the rail shows the burger only
+        }
+
+        // In the rail a group is a thin line between its items and the next ones.
+        .nav-section-label {
+            height: 0;
+            margin: 0.45rem 0.8rem;
+            padding: 0;
+            overflow: hidden;
+            font-size: 0;
+            border-top: 0.0625rem solid rgba(255, 255, 255, 0.2);
+        }
+
+        .cms-aside-header {
+            justify-content: center;
+            min-height: 2.6rem;
+        }
+
+        #nav-aside > .nav-item,
+        #nav-aside .nav-section > .nav > .nav-item {
+            position: relative;
+
+            > .nav-link {
+                position: relative;
+                justify-content: center;
+                padding: 0.65rem 0;
+
+                i {
+                    width: auto;
+                    margin: 0;
+                    font-size: 1rem;
+                }
+
+                .fa-angle-left {
+                    display: none;
+                }
+
+                // the label: only as the fly-out
+                > span:not(.badge) {
+                    display: none;
+                }
+
+                // the counter sits on the corner of the icon
+                > .nav-badge {
+                    position: absolute;
+                    top: 0.2rem;
+                    right: 0.3rem;
+                    padding: 0.1rem 0.3rem;
+                    font-size: 0.6rem;
+                    line-height: 1;
+                }
+            }
+
+            // the sub-items: only as the fly-out
+            > .nav {
+                display: none !important;
+            }
+
+            &:hover > .nav-link > span:not(.badge),
+            &:focus-within > .nav-link > span:not(.badge) {
+                position: fixed;
+                top: var(--fly-top, 0);
+                left: $rail;
+                z-index: 1;
+                display: flex;
+                align-items: center;
+                min-width: 9rem;
+                height: var(--fly-h, 2.4rem);
+                padding: 0 1rem;
+                background: $fly-bg;
+                color: #fff;
+                white-space: nowrap;
+                border-radius: 0 var(--cms-radius) var(--cms-radius) 0;
+                box-shadow: 0.25rem 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+            }
+
+            &:hover > .nav,
+            &:focus-within > .nav {
+                position: fixed;
+                top: calc(var(--fly-top, 0) + var(--fly-h, 2.4rem));
+                left: $rail;
+                z-index: 1;
+                display: block !important;
+                width: auto;
+                min-width: 9rem;
+                height: auto;
+                background: $fly-bg;
+                border-radius: 0 0 var(--cms-radius) 0;
+                box-shadow: 0.25rem 0.25rem 0.75rem rgba(0, 0, 0, 0.3);
+
+                .nav-link {
+                    padding: 0.5rem 1rem;
+                    white-space: nowrap;
+                }
+            }
+        }
+
+        .cms-aside-footer {
+            padding: 0.5rem 0.4rem;
+
+            .btn {
+                padding-inline: 0;
+                font-size: 0; // the icon only
+
+                i {
+                    margin: 0;
+                    font-size: 0.9rem;
+                }
+            }
+        }
+    }
+}
+
+.cms-backdrop {
+    display: none;
+}
+
+.cms-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.cms-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    padding: 0.3rem 0.6rem;
+    background: var(--cms-card);
+    border-bottom: 0.125rem solid var(--cms-line);
+
+    // The trail over the title: small and muted.
+    .breadcrumb {
+        margin: 0;
+        font-size: 0.72rem;
+        line-height: 1.2;
+        color: var(--cms-muted);
+
+        a {
+            color: var(--cms-muted);
+            text-decoration: none;
+
+            &:hover {
+                color: var(--cms-ink);
+                text-decoration: underline;
+            }
+        }
+    }
+
+    // The left of the bar: the trail over the title of the page (the search is the right).
+    .cms-bar-heading {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        justify-content: center;
+        min-width: 0;
+    }
+
+    .cms-bar-title {
+        margin: 0;
+        overflow: hidden;
+        font-size: 0.85rem;
+        font-weight: 500;
+        line-height: 1.3;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+.cms-main {
+    max-width: 120rem;
+    margin: 0 auto;
+    padding: 0; // the page has no frame of its own: the cards, the tables and the tabs go from edge to edge
+}
+
+.cms-title {
+    margin: 0.2rem 0 0.55rem;
+
+    // nothing to show (no row): no header at all
+    &:not(:has(.cms-tabs a:nth-child(2))):not(:has(#bulk-nav.show)) {
+        display: none;
+    }
+
+    // the section's menu under the bar: its own row of pills, hidden when it has one item
+    .cms-subbar {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.45rem;
+
+        &:not(:has(*)),
+        &:not(:has(a:nth-child(2))):not(:has(#bulk-nav.show)) {
+            display: none; // nothing to show: no row
+        }
+    }
+
+    .cms-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+
+        &:not(:has(a:nth-child(2))) {
             display: none;
         }
-    }
-    .logout-link{
-        color: $white;
-        &:hover {
-            color: $dark;
-            text-decoration: $link-hover-decoration;
+
+        .nav-link {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.82rem;
+            color: var(--cms-muted);
+            text-decoration: none;
+            border: 1px solid transparent;
+            border-radius: var(--cms-radius);
+
+            &:hover {
+                color: var(--cms-ink);
+                background: var(--cms-hover);
+            }
+
+            // the current one is outlined, not filled
+            &.active {
+                color: #4f46e5;
+                font-weight: 700;
+                background: transparent;
+                border-color: #4f46e5;
+            }
         }
-        @include transition($btn-transition)
     }
-    #menu-input-group-search{
-        padding: 0.5rem;
+
+}
+
+// A phone (and a narrow window): the menu is an overlay, closed until the burger is pressed.
+@media (width < 1024px) {
+    .cms-aside {
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 1040;
+        transform: translateX(-100%);
+        width: min(18rem, 86vw);
+
+        .cms-aside-close {
+            display: block;
+        }
+    }
+
+    .cms-shell.aside-closed .cms-aside {
+        display: flex;
+    }
+
+    .cms-shell.open .cms-aside {
+        transform: none;
+    }
+
+    .cms-shell.open .cms-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1035;
+        display: block;
+        background: rgba(0, 0, 0, 0.45);
     }
 }
 
-#main {
-    width: calc(100% - #{$aside-width});
-}
-
-.aside-inner-block {
-    padding: 0 0;
-}
-
-.aside-header {
-    padding: $aside-heading-padding;
-    background: url("../../img/patterns/7.png") no-repeat;
-    background-size: cover;
-    position: relative;
-}
-
-#sidebar-close {
-    position: absolute;
-    top: 3px !important;
-    right: 3px !important;
-    width: 36px;
-    z-index: 1020;
-}
-
-#sidebar-open {
-    position: fixed;
-    top: 3px;
-    left: 3px;
-    width: 36px;
-    z-index: 1020;
-}
-
-#menu-item-search{
-    width: 2.3rem;
-    justify-content: center;
-}
+// The search panel of a list slides in from the right; on a phone it is the whole width.
+$content-aside-width: 25%;

@@ -3,7 +3,7 @@
 {%- trans_default_domain translation_domain|default('cms') %}
 {%- set attr = attr|default({id: 'modal-delete'}) -%}
 {%- set form_attr = form_attr|default({attr: {id: 'delete'}}) -%}
-{%- set dialog_attr = dialog_attr|default({"class": 'modal-sm'}) -%}
+{%- set dialog_attr = dialog_attr|default({"class": 'dialog-sm'}) -%}
 {%- block title -%}{{- 'common.title.delete'|trans -}}{%- endblock -%}
 {%- form_theme form with ['@ChamberOrchestraCms/form/inline.html.twig'] only -%}
 
@@ -12,7 +12,7 @@
         {{- form_start(form, form_attr) -}}
         {{- form_rest(form) -}}
         <p>{{- 'common.text.delete'|trans|nl2br -}}</p>
-        <button type="submit" class="btn btn-success w-100">{{- 'common.btn.delete'|trans -}}</button>
+        <button type="submit" class="btn btn-solid theme-success w-100">{{- 'common.btn.delete'|trans -}}</button>
         {{- form_end(form) -}}
     {%- endapply -%}
 {%- endblock -%}

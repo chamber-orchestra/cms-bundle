@@ -14,7 +14,7 @@
         <div class="d-flex gap-2">
             {%- for contentType in content_types -%}
                 <a href="{{ path(route_prefix ~ '_entries_create', {id: parent.id, contentType: contentType.id}) }}"
-                   class="btn btn-sm btn-outline-success">
+                   class="btn btn-sm btn-outline theme-success">
                     <i class="fas fa-plus"></i> {{ contentType.name }}
                 </a>
             {%- endfor -%}
@@ -28,7 +28,7 @@
     {%- endif -%}
 
     {%- if entities is empty -%}
-        <div class="p-4 text-center text-muted">{{ 'common.list.empty'|trans }}</div>
+        <div class="p-4 text-center fg-3">{{ 'common.list.empty'|trans }}</div>
     {%- else -%}
         <div class="p-3 d-flex flex-column gap-3">
             {%- for entry in entities -%}
@@ -39,23 +39,23 @@
                             {%- if move is defined and move is not null -%}
                                 <a href="{{ path(move.route, move.route_params|merge({entryId: entry.id, direction: 'up'})) }}"
                                    data-toggle="move" data-direction="up"
-                                   class="btn btn-warning btn-sm" title="{{ 'common.move_up'|trans }}">
-                                    <i class="far fa-fw fa-angle-up"></i>
+                                   class="btn btn-solid theme-warning btn-sm" title="{{ 'common.move_up'|trans }}">
+                                    <i class="fas fa-fw fa-angle-up"></i>
                                 </a>
                                 <a href="{{ path(move.route, move.route_params|merge({entryId: entry.id, direction: 'down'})) }}"
                                    data-toggle="move" data-direction="down"
-                                   class="btn btn-warning btn-sm" title="{{ 'common.move_down'|trans }}">
-                                    <i class="far fa-fw fa-angle-down"></i>
+                                   class="btn btn-solid theme-warning btn-sm" title="{{ 'common.move_down'|trans }}">
+                                    <i class="fas fa-fw fa-angle-down"></i>
                                 </a>
                             {%- endif -%}
                             <a href="{{ path(route_prefix ~ '_entries_update', {id: parent.id, entryId: entry.id}) }}"
-                               class="btn btn-primary btn-sm">
+                               class="btn btn-solid theme-primary btn-sm">
                                 <i class="fas fa-edit"></i>
                             </a>
                             {%- if delete_form is defined and delete_form -%}
                                 <button type="button"
-                                        class="btn btn-danger btn-sm"
-                                        data-bs-toggle="modal"
+                                        class="btn btn-solid theme-danger btn-sm"
+                                        data-bs-toggle="dialog"
                                         data-bs-target="#modal-delete"
                                         data-form="#delete"
                                         data-values="{{ {"entity": entry.id}|json_encode }}">
@@ -101,7 +101,7 @@
                                             <div style="display:grid; grid-template-columns:repeat({{ columns }},1fr); gap:.5rem; margin-top:.25rem; margin-bottom:.25rem;">
                                                 {%- for item in val|slice(0, maxShow) -%}
                                                     {%- if item is iterable -%}
-                                                        <div class="border rounded overflow-hidden bg-light" style="font-size: .75rem; min-width: 0;">
+                                                        <div class="border rounded overflow-hidden bg-2" style="font-size: .75rem; min-width: 0;">
                                                             {%- if subSchema is not empty -%}
                                                                 {%- for subField in subSchema -%}
                                                                     {%- set sName = subField.name -%}
@@ -120,7 +120,7 @@
                                                                             {%- endif -%}
                                                                         {%- else -%}
                                                                             {%- if sVal is instanceof('string') -%}
-                                                                                <p class="px-1 py-1 mb-0 text-truncate text-muted">{{ sVal|striptags|slice(0, 25) }}</p>
+                                                                                <p class="px-1 py-1 mb-0 text-truncate fg-3">{{ sVal|striptags|slice(0, 25) }}</p>
                                                                             {%- endif -%}
                                                                         {%- endif -%}
                                                                     {%- endif -%}
@@ -128,7 +128,7 @@
                                                             {%- else -%}
                                                                 {%- for k, v in item -%}
                                                                     {%- if v is instanceof('string') -%}
-                                                                        <p class="px-1 py-1 mb-0 text-truncate text-muted">{{ v|striptags|slice(0, 25) }}</p>
+                                                                        <p class="px-1 py-1 mb-0 text-truncate fg-3">{{ v|striptags|slice(0, 25) }}</p>
                                                                     {%- endif -%}
                                                                 {%- endfor -%}
                                                             {%- endif -%}
@@ -136,7 +136,7 @@
                                                     {%- endif -%}
                                                 {%- endfor -%}
                                                 {%- if totalCount > maxShow -%}
-                                                    <div class="d-flex align-items-center justify-content-center border rounded text-muted bg-light"
+                                                    <div class="d-flex align-items-center justify-content-center border rounded fg-3 bg-2"
                                                          style="font-size: .75rem;">
                                                         +{{ totalCount - maxShow }} more
                                                     </div>
@@ -158,9 +158,3 @@
     {%- endif -%}
 {%- endblock -%}
 
-{%- block javascripts -%}
-    {{ vite_entry_script_tags('crud/index', {}, 'cms') }}
-{%- endblock -%}
-{%- block stylesheets -%}
-    {{ vite_entry_link_tags('crud/index', {}, 'cms') }}
-{%- endblock -%}

@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 trait SupportsListOperation // @phpstan-ignore trait.unused
 {
-    #[Route('', name: 'index', methods: ['GET'])]
+    #[Route('', name: 'index', methods: ['GET', 'POST'])]
     public function index(?object $parent = null): Response|ViewInterface
     {
         return $this->list(['parent' => $parent]);

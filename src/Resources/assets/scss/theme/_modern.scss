@@ -1,0 +1,2038 @@
+// The admin's look, as the bundle always had it (Bootstrap 4 blue, the teal of the main action, compact 0.8rem text, 2px borders, small radii, bold headings,
+// cards with a soft shadow, a dark menu with a teal heading) on Bootstrap 6. Light only, like the old theme.
+:root {
+    color-scheme: light;
+
+    // ONE radius for every block, button, field, menu, badge and card of the admin (circles and the pill of a chip aside): Bootstrap's scale is set to it too.
+    --cms-radius: 0.4rem;
+    --cms-bar-h: 3.4rem; // the height of the bar of the page and of the green plate of the menu
+    --radius-1: var(--cms-radius);
+    --radius-2: var(--cms-radius);
+    --radius-3: var(--cms-radius);
+    --radius-4: var(--cms-radius);
+    --radius-5: var(--cms-radius);
+    --radius-6: var(--cms-radius);
+    --radius-7: var(--cms-radius);
+    --radius-8: var(--cms-radius);
+    --radius-9: var(--cms-radius);
+
+    --cms-navy: #343a40;
+    --cms-navy-2: #23272b;
+    --cms-accent: #4f46e5;
+    --cms-teal: #11c2a1;
+    --cms-bg: #fff;
+    --cms-card: #fff;
+    --cms-line: #dee2e6;
+    --cms-ink: #212529;
+    --cms-muted: #6c757d;
+    --cms-icon: oklch(0.504 0.0168 245); // the icons of the buttons (the same as the toolbar of the editor)
+    --cms-head: rgba(0, 0, 0, 0.03);
+    --cms-input: #fff;
+    --cms-field-border: #ced4da;
+    --cms-hover: #e9ecef;
+    --cms-soft: #f8f9fa;
+    --cms-help: #495057;
+    --cms-warn-bg: #fffaeb;
+    --cms-row-hover: #f1f0fd;
+    --cms-danger: #dc3545;
+
+    --body-font-size: 0.8rem;
+    --body-line-height: 1.5;
+    --border-width: 0.125rem;
+    --border-color: var(--cms-line);
+
+    // Bootstrap 6 theme tokens: the old palette.
+    --primary-base: #4f46e5;
+    --primary-bg: #4f46e5;
+    --primary-fg: #4338ca;
+    --primary-fg-emphasis: #312e81;
+    --primary-bg-subtle: #e0e7ff;
+    --primary-bg-muted: #c7d2fe;
+    --primary-border: #a5b4fc;
+    --primary-focus-ring: #818cf8;
+    --primary-contrast: #fff;
+    --success-base: #11c2a1;
+    --success-bg: #11c2a1;
+    --success-fg: #0b8f77;
+    --success-fg-emphasis: #075e4e;
+    --success-bg-subtle: #d0f5ee;
+    --success-bg-muted: #a6ebdd;
+    --success-border: #6fdcc7;
+    --success-contrast: #fff;
+    --info-base: #4ba9d8;
+    --info-bg: #4ba9d8;
+    --info-contrast: #fff;
+    --danger-base: #dc3545;
+    --danger-bg: #dc3545;
+    --warning-base: #ffc107;
+    --warning-bg: #ffc107;
+    --warning-contrast: #212529;
+}
+
+// ---- the dark theme ------------------------------------------------------------------------------------------------------------
+// It follows the setting of the system (`prefers-color-scheme`): there is no switch in the admin. Everything of the admin takes its colours from the tokens above,
+// so a theme is a set of tokens.
+@mixin cms-dark {
+    color-scheme: dark;
+    --cms-bg: #15181c;
+    --cms-card: #1d2126;
+    --cms-line: #343a40;
+    --cms-ink: #e3e6ea;
+    --cms-muted: #9aa4ae;
+    --cms-head: rgba(255, 255, 255, 0.05);
+    --cms-input: #14171a;
+    --cms-icon: oklch(0.78 0.015 245);
+    --cms-field-border: #3b434b;
+    --cms-hover: #2a3036;
+    --cms-soft: #222830;
+    --cms-help: #b4bcc4;
+    --cms-warn-bg: #3a3017;
+    --cms-row-hover: #262d35;
+    --cms-danger: #f1707d;
+    --cms-danger-bg: #b02a37;
+    // the menu: darker than the page, with a lighter strip for the current item
+    --cms-navy: #0f1215;
+    --cms-navy-2: #1b2127;
+    --border-color: var(--cms-line);
+    --bg-body: var(--cms-bg);
+    --fg-body: var(--cms-ink);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        @include cms-dark;
+    }
+}
+
+body,
+.cms-main {
+    background: var(--cms-bg) !important;
+    color: var(--cms-ink);
+    font-size: 0.8rem;
+}
+
+// The page is white; blocks are told apart by thin borders, not by grey and white.
+.card.card-content {
+    background: transparent;
+    border: 0;
+    box-shadow: none !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-weight: 900;
+    line-height: 1.3;
+}
+
+h1,
+.h1,
+h3,
+.h3 {
+    font-size: 1.1rem;
+}
+
+h4,
+.h4 {
+    font-size: 1rem;
+}
+
+h5,
+.h5,
+h6,
+.h6 {
+    font-size: 0.85rem;
+}
+
+a:not([class*='btn']):not(.nav-link):not(.menu-item):not(.page-link) {
+    color: var(--cms-accent);
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+// ---- cards ------------------------------------------------------------------------------------------------------------------
+.card,
+.card-content {
+    background: var(--cms-card);
+    border: 0.125rem solid var(--cms-line);
+    border-radius: var(--cms-radius);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    overflow: visible;
+}
+
+.card-header,
+.card-footer,
+.card-nav {
+    background: var(--cms-head);
+    border-color: var(--cms-line);
+    padding: 0.35rem 0.6rem;
+}
+
+.card-title {
+    font-size: 0.9rem;
+    font-weight: 900;
+}
+
+.card-body {
+    padding: 0.5rem 0.6rem;
+}
+
+.nav-card {
+    padding: 0 0.4rem;
+
+    .nav-link {
+        padding: 0.4rem 0.6rem;
+        color: var(--cms-muted);
+
+        &.active {
+            color: var(--cms-ink);
+            border-bottom: 0.125rem solid var(--cms-accent);
+        }
+    }
+}
+
+// ---- tables -----------------------------------------------------------------------------------------------------------------
+.table {
+    --bs-table-bg: transparent;
+    font-size: 0.8rem;
+    vertical-align: middle;
+
+    th,
+    td {
+        padding: 0.25rem 0.4rem;
+        border-color: rgba(222, 226, 230, 0.5);
+    }
+
+    thead th {
+        font-weight: 900;
+        font-size: 0.75rem;
+        color: var(--cms-ink);
+        background: rgba(0, 0, 0, 0.03);
+        border-bottom: 0.125rem solid var(--cms-line);
+    }
+
+    tbody tr:hover {
+        background: var(--cms-row-hover);
+    }
+}
+
+// ---- forms and buttons -----------------------------------------------------------------------------------------------------
+.form-control,
+.form-select,
+.input-group-text {
+    padding: 0.28rem 0.45rem;
+    font-size: 0.8rem;
+    background-color: var(--cms-card);
+    border: 0.125rem solid var(--cms-field-border);
+    border-radius: var(--cms-radius);
+    color: var(--cms-ink);
+
+    &:focus {
+        border-color: #80bdff;
+        outline: 0.2rem solid rgba(79, 70, 229, 0.25);
+        outline-offset: 0;
+    }
+}
+
+.form-label,
+label {
+    font-weight: 700;
+    font-size: 85%; // of the field's text
+}
+
+.form-check-label,
+.form-check label {
+    font-weight: 400;
+}
+
+.btn {
+    padding: 0.28rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: 400;
+    border-radius: var(--cms-radius);
+    border-width: 0.125rem;
+}
+
+.btn-sm {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.75rem;
+}
+
+.badge {
+    font-size: 85%;
+    font-weight: 700;
+    border-radius: var(--cms-radius);
+    padding: 0.3em 0.45em;
+}
+
+.dialog,
+.menu,
+.toast {
+    border-radius: var(--cms-radius);
+    border: 0.125rem solid var(--cms-line);
+}
+
+.aside-filter {
+    background: var(--cms-card) !important;
+    border-left: 0.125rem solid var(--cms-line);
+
+    .btn-toggle {
+        background: #ffc107;
+        color: #212529;
+    }
+}
+
+.breadcrumb {
+    gap: 0.35rem;
+    padding: 0 0.5rem;
+    font-size: 85%;
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: '/';
+        margin-right: 0.35rem;
+        color: var(--cms-muted);
+    }
+}
+
+.form-check {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+// ---- fixed control height; icon buttons are square -------------------------------------------------------------------------
+:root {
+    --cms-h: 2rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    height: var(--cms-h);
+    min-height: 0;
+    padding: 0 0.85rem;
+    line-height: 1;
+}
+
+.btn-sm {
+    --cms-h: 1.75rem;
+    padding: 0 0.65rem;
+}
+
+// A button that holds only an icon: as wide as it is high.
+:is(.table, .btn-toolbar, .btn-group, .wysiwyg-toolbar, .cms-bar, .input-group) .btn:has(> i:only-child),
+.btn-icon {
+    width: var(--cms-h);
+    padding: 0;
+}
+
+.table .btn {
+    --cms-h: 1.75rem;
+}
+
+// One height for every text input, select (typeable ones included) and button: Bootstrap's own minimum height of a text input would make it taller than a select.
+.form-control,
+.form-select,
+.input-group-text {
+    height: var(--cms-h);
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+textarea.form-control {
+    height: auto;
+    min-height: 4rem;
+    padding: 0.3rem 0.45rem;
+}
+
+// ---- header, titles, tabs ---------------------------------------------------------------------------------------------------
+.cms-bar {
+    height: var(--cms-bar-h);
+    min-height: var(--cms-bar-h);
+    padding: 0.3rem 0.75rem 0.3rem 0.6rem; // the title starts where the labels of the form do
+}
+
+.cms-burger {
+    border: 0;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    padding: 0.3rem 0.6rem;
+    border-bottom: 1px solid var(--cms-line);
+}
+
+.card-header .card-title {
+    flex: 1;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.card-nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    background: var(--cms-card);
+    border-bottom: 1px solid var(--cms-line);
+}
+
+.nav-card {
+    display: flex;
+    gap: 0;
+    padding: 0 0.3rem;
+
+    .nav-link {
+        padding: 0.35rem 0.6rem;
+        background: transparent;
+        border: 0;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+        color: var(--cms-muted);
+
+        &:hover {
+            color: var(--cms-ink);
+            background: transparent;
+        }
+
+        &.active {
+            color: var(--cms-ink);
+            background: transparent;
+            border-bottom-color: var(--cms-accent);
+        }
+    }
+}
+
+// The bulk bar (rows are selected: "Selected: 7 | Delete") is a row of its own above the table, in the flow: it appears under the submenu (or alone, when the list has none) and pushes
+// the pagination and the table down; it is not there while nothing is selected.
+#bulk-nav {
+    position: relative;
+    display: none;
+    flex: 1 0 100%;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 2.6rem;
+    padding-left: 3rem;
+    background: var(--cms-card);
+    border-top: 1px solid var(--cms-line);
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 2.4rem;
+        background: var(--cms-head);
+        border-right: 1px solid var(--cms-line);
+    }
+
+    > i {
+        position: absolute;
+        left: 0;
+        width: 2.4rem;
+        text-align: center;
+    }
+
+    &.show {
+        display: flex;
+    }
+}
+
+// ---- tables: a very light line between rows ------------------------------------------------------------------------------
+.table {
+    --bs-table-border-color: transparent;
+    border-color: transparent;
+
+    > :not(caption) > * > * {
+        border-width: 0 0 1px;
+        border-style: solid;
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    thead th {
+        border-bottom-color: rgba(0, 0, 0, 0.18);
+    }
+
+    .badge {
+        padding: 0.15em 0.4em;
+        line-height: 1.25;
+    }
+
+    .check,
+    .form-check {
+        margin: 0;
+    }
+
+    .form-check .check {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .btn-toolbar {
+        gap: 0.2rem;
+    }
+}
+
+.card-header {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.card-header .card-title {
+    justify-content: space-between;
+    text-align: left;
+}
+
+// A card that holds a table: the table fills it (no padding, no margin).
+.card-body:has(> .table-responsive),
+.card-body:has(> .table) {
+    padding: 0;
+}
+
+.card-body > .table-responsive,
+.card-body > .table {
+    margin: 0;
+}
+
+// The checkbox column is a square cell: just the box, no label, no side padding.
+.table-list {
+    th#bulk-operation-toggler,
+    td.bulk-operation-input {
+        width: 2.4rem;
+        min-width: 2.4rem;
+        max-width: 2.4rem;
+        padding: 0;
+        text-align: center;
+        vertical-align: middle; // the header's own cells sit at the bottom: the box is centred
+
+        .form-check {
+            justify-content: center;
+            gap: 0;
+        }
+
+        .form-check-label {
+            display: none;
+        }
+    }
+}
+
+// A wide table scrolls sideways inside its card; the action column (the last one) stays at the right edge.
+.table-list,
+.table-pinned {
+    thead th:last-child.table-shrink,
+    tbody td:last-child.table-shrink:not([colspan]) {
+        position: sticky;
+        right: 0;
+        z-index: 1;
+        background-color: var(--cms-card);
+        box-shadow: -1px 0 0 var(--cms-line);
+    }
+
+    // the actions of a row are one cell: the buttons side by side, at the right end
+    td.table-actions > div {
+        align-items: center;
+    }
+
+    td.table-actions .btn-toolbar {
+        flex-wrap: nowrap;
+    }
+
+    thead th:last-child.table-shrink {
+        background-color: var(--cms-head, #f8f9fa);
+    }
+
+    tbody tr:hover td:last-child.table-shrink {
+        background-color: var(--cms-row-hover);
+    }
+}
+
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+}
+
+// One "list" is enough: the title of the list card is not repeated, and a breadcrumb of a single item says nothing.
+nav:has(> .breadcrumb > li:only-child) {
+    display: none;
+}
+
+#bulk-nav .bulk-count {
+    padding: 0 0.6rem;
+    font-weight: 700;
+}
+
+.card-header .card-title {
+    justify-content: flex-end;
+}
+
+#fields_filter_dropdown {
+    margin-left: auto;
+    padding: 0 0.3rem;
+}
+
+// ---- lists are quiet ------------------------------------------------------------------------------------------------------
+// Column headings and their sort marks are plain ink, not links.
+.table thead th a:not([class*='btn']):not(.nav-link):not(.menu-item):not(.page-link) {
+    color: var(--cms-ink);
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    i {
+        color: #adb5bd;
+    }
+}
+
+#fields_filter_dropdown a:not([class*='btn']):not(.nav-link):not(.menu-item):not(.page-link) {
+    color: var(--cms-muted);
+}
+
+// ---- the dashboard ---------------------------------------------------------------------------------------------------------
+.dash-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+// The numbers that need a look: a row of cards that takes the width there is.
+.dash-kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
+    gap: 0.6rem;
+    margin-bottom: 0.9rem;
+}
+
+.dash-kpi {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+    padding: 0.65rem 0.85rem;
+    background: var(--cms-card);
+    border: 0.0625rem solid var(--cms-line);
+    border-radius: var(--cms-radius);
+    color: var(--cms-ink) !important;
+    text-decoration: none !important;
+    line-height: 1.25;
+
+    small {
+        display: block;
+        font-size: 0.72rem;
+        color: var(--cms-muted);
+    }
+
+    &.is-attention {
+        border-color: #f0b429;
+        background: var(--cms-warn-bg);
+    }
+
+}
+
+a.dash-kpi:hover {
+    border-color: #11c2a1;
+}
+
+.dash-number {
+    min-width: 2rem;
+    font-size: 1.6rem;
+    font-weight: 900;
+    text-align: right;
+}
+
+.dash-periods {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 0.6rem;
+
+    a {
+        padding: 0.15rem 0.6rem;
+        border: 0.0625rem solid var(--cms-line);
+        border-radius: var(--cms-radius);
+        background: var(--cms-card);
+        color: var(--cms-muted) !important;
+        text-decoration: none !important;
+
+        &[aria-current] {
+            background: var(--cms-hover);
+            color: var(--cms-ink) !important;
+            font-weight: 700;
+        }
+    }
+}
+
+.dash-charts {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+
+    @media (width >= 1200px) {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.dash-chart {
+    padding: 0.8rem 1rem;
+    background: var(--cms-card);
+    border: 0.0625rem solid var(--cms-line);
+    border-radius: var(--cms-radius);
+
+    header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 1rem;
+        align-items: baseline;
+        margin-bottom: 0.3rem;
+    }
+
+    h2 {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .dash-legend {
+        display: flex;
+        gap: 0.9rem;
+        color: var(--cms-muted);
+        font-size: 0.75rem;
+    }
+
+    .dash-sum {
+        margin-left: auto;
+        font-size: 0.75rem;
+        color: var(--cms-muted);
+    }
+
+    .legend-bar::before,
+    .legend-line::before {
+        content: '';
+        display: inline-block;
+        width: 0.7rem;
+        height: 0.7rem;
+        margin-right: 0.35rem;
+        vertical-align: -0.05rem;
+        border-radius: 0.1rem; // the little colour marker of a legend: not a block
+    }
+
+    .legend-bar::before {
+        background: #a9cdf5;
+    }
+
+    .legend-line::before {
+        background: #11c2a1;
+        height: 0.2rem;
+        vertical-align: 0.2rem;
+    }
+}
+
+// The blocks about the site: the last orders, the exchange with 1C, the goods without a price, the VINs that were not read.
+.dash-blocks {
+    display: grid;
+    gap: 0.75rem;
+
+    @media (width >= 900px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (width >= 1500px) {
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+    }
+}
+
+.dash-card {
+    padding: 0.8rem 1rem;
+    background: var(--cms-card);
+    border: 0.0625rem solid var(--cms-line);
+    border-radius: var(--cms-radius);
+
+    > header {
+        display: flex;
+        gap: 0.75rem;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+
+        h2 {
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        a {
+            font-size: 0.78rem;
+        }
+    }
+
+    &.dash-card-wide {
+        @media (width >= 900px) {
+            grid-column: 1 / -1;
+        }
+
+        @media (width >= 1500px) {
+            grid-column: auto;
+        }
+    }
+}
+
+.dash-muted {
+    color: var(--cms-muted);
+}
+
+.dash-empty {
+    margin: 0;
+    color: var(--cms-muted);
+}
+
+.dash-table {
+    width: 100%;
+    font-size: 0.85rem;
+
+    td {
+        padding: 0.35rem 0.4rem;
+        border-top: 0.0625rem solid var(--cms-line);
+    }
+
+    tr:first-child td {
+        border-top: 0;
+    }
+}
+
+.dash-status {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin: 0 0 0.5rem;
+    font-weight: 700;
+
+    &.is-ok {
+        color: #0b8f77;
+    }
+
+    &.is-late {
+        color: #b7791f;
+    }
+}
+
+.dash-facts {
+    margin: 0;
+    font-size: 0.82rem;
+
+    div {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.25rem 0;
+        border-top: 0.0625rem solid var(--cms-line);
+    }
+
+    dt {
+        font-weight: 400;
+        color: var(--cms-muted);
+    }
+
+    dd {
+        margin: 0;
+        font-weight: 700;
+    }
+}
+
+.dash-list {
+    padding: 0;
+    margin: 0;
+    font-size: 0.82rem;
+    list-style: none;
+
+    li {
+        padding: 0.3rem 0;
+        border-top: 0.0625rem solid var(--cms-line);
+    }
+}
+
+.chart {
+    display: block;
+    width: 100%;
+    height: auto;
+
+    .chart-grid {
+        stroke: var(--cms-hover);
+        stroke-width: 1;
+    }
+
+    .chart-tick {
+        fill: var(--cms-muted);
+        font-size: 10px;
+    }
+
+    .chart-tick-line {
+        fill: #0b8f77;
+    }
+
+    .chart-bar {
+        fill: #a9cdf5;
+
+        &:hover {
+            fill: #7ab2ee;
+        }
+    }
+
+    .chart-line {
+        stroke: #11c2a1;
+        stroke-width: 2;
+        stroke-linejoin: round;
+    }
+
+    .chart-dot {
+        fill: var(--cms-card);
+        stroke: #11c2a1;
+        stroke-width: 1.5;
+    }
+}
+
+// ---- the search box in the bar ----------------------------------------------------------------------------------------------
+.cms-search {
+    position: relative;
+    flex: 0 1 26rem;
+    min-width: 9rem;
+    margin: 0;
+
+    > i {
+        position: absolute;
+        top: 50%;
+        left: 0.65rem;
+        transform: translateY(-50%);
+        font-size: 0.75rem;
+        color: var(--cms-muted);
+        pointer-events: none;
+    }
+
+    // The same as every other text field of the admin (height, border, font, focus); the room for the icon and the key is the only difference.
+    input {
+        width: 100%;
+        height: var(--cms-h);
+        padding: 0 2.4rem 0 2rem;
+        font-size: 0.8rem;
+        color: var(--cms-ink);
+        background-color: var(--cms-card);
+        border: 0.125rem solid var(--cms-field-border);
+        border-radius: var(--cms-radius);
+
+        &::placeholder {
+            color: var(--cms-muted);
+        }
+
+        &:focus {
+            border-color: #80bdff;
+            outline: 0.2rem solid rgba(79, 70, 229, 0.25);
+            outline-offset: 0;
+        }
+
+        // the browser's own cross of a search field: the hint of the key stands there
+        &::-webkit-search-cancel-button {
+            appearance: none;
+        }
+    }
+
+    // The key that jumps to the box (`/`): hidden while the box is in use.
+    kbd {
+        position: absolute;
+        top: 50%;
+        right: 0.7rem;
+        padding: 0 0.4rem;
+        font-family: inherit;
+        font-size: 0.7rem;
+        line-height: 1.25rem;
+        color: var(--cms-muted);
+        background: var(--cms-card);
+        border: 0.0625rem solid var(--cms-line);
+        border-radius: var(--cms-radius);
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+    input:focus ~ kbd {
+        display: none;
+    }
+}
+
+.cms-search-results {
+    position: absolute;
+    top: calc(100% + 0.2rem);
+    right: 0;
+    left: 0;
+    z-index: 1060;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: var(--cms-card);
+    border: 0.0625rem solid var(--cms-line);
+    border-radius: var(--cms-radius);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.14) !important;
+
+    .cms-search-group {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--cms-muted);
+        background: var(--cms-head);
+    }
+
+    .cms-search-item {
+        display: flex;
+        gap: 0.6rem;
+        align-items: baseline;
+        padding: 0.35rem 0.6rem;
+        color: var(--cms-ink) !important;
+        text-decoration: none !important;
+
+        span {
+            overflow: hidden;
+            color: var(--cms-muted);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &:hover,
+        &.active {
+            background: var(--cms-soft);
+        }
+    }
+}
+
+.import-output {
+    max-height: 60vh;
+    padding: 0.6rem 0.75rem;
+    overflow: auto;
+    background: #23272b;
+    color: #e9ecef;
+    border-radius: var(--cms-radius);
+    white-space: pre-wrap;
+}
+
+// Horizontal forms: Bootstrap 6 makes `.form-group` a grid, a horizontal row (`.form-group.row`) is a row of columns again.
+.form-group.row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0.75rem;
+}
+
+// An image field: the preview (a grey placeholder while there is no picture) takes a quarter of the row (col-3), the upload control the rest (col-9).
+.image-group {
+    align-items: flex-start;
+    margin-top: 0;
+
+    > * {
+        margin-top: 0;
+    }
+
+    > .image-preview {
+        flex: 0 0 25%;
+        width: 25%;
+        max-width: 25%;
+        margin-bottom: 0 !important;
+    }
+
+    > :not(.image-preview) {
+        flex: 0 0 75%;
+        width: 75%;
+        max-width: 75%;
+        height: auto !important;
+    }
+
+    .ratio {
+        padding: 0;
+    }
+
+    .ratio > div {
+        width: 100%;
+        aspect-ratio: 1;
+        border: 1px solid var(--cms-line);
+        border-radius: var(--cms-radius);
+    }
+
+    .image-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--cms-muted);
+        background: var(--cms-head);
+        font-size: 2rem;
+    }
+}
+
+// Buttons and fields of an input group are joined: no radius where they touch (the single radius above would round every one of them).
+.input-group {
+    > :not(:last-child, .menu, .input-group-ignore) {
+        border-start-end-radius: 0;
+        border-end-end-radius: 0;
+    }
+
+    > :not(:first-child, .menu, .input-group-ignore) {
+        border-start-start-radius: 0;
+        border-end-start-radius: 0;
+    }
+}
+
+// A read-only / disabled field is grey, so it is not taken for one that can be edited.
+.form-control:disabled,
+.form-control[readonly] {
+    color: var(--cms-muted);
+    background: var(--cms-head);
+    cursor: default;
+}
+
+// The copy button of a text field: inside the field at its right edge (a textarea: in the top right corner).
+.copyable {
+    position: relative;
+
+    > .form-control {
+        padding-inline-end: 2.25rem;
+    }
+
+    > .copy-btn {
+        position: absolute;
+        top: 50%;
+        inset-inline-end: 0.25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        padding: 0;
+        color: var(--cms-icon);
+        background: transparent;
+        border: 0;
+        border-radius: var(--cms-radius);
+        transform: translateY(-50%);
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--cms-accent);
+            background: var(--cms-head);
+        }
+    }
+}
+
+.copyable-area > .copy-btn {
+    top: 0.25rem;
+    transform: none;
+}
+
+// The buttons of a file field (upload, open, delete) are squares of the height of the field; under it: the date, the type and the size of the uploaded file.
+.file-group > .btn {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    padding-inline: 0;
+    margin-bottom: 0;
+}
+
+.file-info {
+    margin-top: 0.25rem;
+    font-size: 0.7rem;
+    color: var(--cms-muted);
+}
+
+// The buttons of a file field look like the field: its border and colour; only the cross of "delete" is red.
+.file-group > .btn {
+    color: var(--cms-icon);
+    background: var(--cms-input);
+    border-color: var(--cms-line);
+
+    &:hover {
+        background: var(--cms-head);
+    }
+
+    &.theme-danger i,
+    &[data-detach] i {
+        color: #dc3545;
+    }
+}
+
+// A select with `quick_create`: the "+" is joined to the input.
+.cb.cb-has-add {
+    display: flex;
+
+    > .cb-input {
+        flex: 1 1 auto;
+        min-width: 0;
+        border-start-end-radius: 0;
+        border-end-end-radius: 0;
+    }
+
+    > .cb-add {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 1;
+        padding-inline: 0;
+        margin-inline-start: calc(-1 * var(--border-width));
+        color: var(--cms-icon);
+        background: var(--cms-input);
+        border: var(--border-width) solid var(--cms-line);
+        border-start-start-radius: 0;
+        border-end-start-radius: 0;
+
+        &:hover {
+            background: var(--cms-head);
+        }
+    }
+}
+
+// The name of the uploaded file sits in the middle of the field's height.
+.file-group > .form-control {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.copy-btn i,
+.file-group > .btn i,
+.cb-add i {
+    font-size: 0.75rem;
+}
+
+// The tabs of a section (under the bar): no borders, close under the bar; the current one is black with a 3px line on top.
+.cms-title {
+    margin: -2px 0 0; // over the bottom border (2px) of the bar: the line of the current tab continues it
+
+    .cms-subbar {
+        margin-top: 0;
+    }
+
+    .cms-tabs {
+        gap: 0;
+
+        .nav-link {
+            display: inline-flex;
+            gap: 0.35rem;
+            align-items: center;
+            padding: 0.4rem 0.6rem;
+            font-weight: 400;
+            color: var(--cms-muted);
+            background: transparent;
+            border: 0;
+            border-top: 3px solid transparent;
+            border-radius: 0;
+
+            &:hover {
+                color: var(--cms-ink);
+                background: transparent;
+            }
+
+            &.active {
+                position: relative;
+                z-index: 1021; // over the border of the bar
+                font-weight: 600;
+                color: var(--cms-ink);
+                background: transparent;
+                border-top-color: var(--cms-ink);
+            }
+        }
+    }
+}
+
+// On a phone the tabs of a section are icons only.
+@media (max-width: 767.98px) {
+    .cms-tabs .nav-link .nav-text {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .cms-tabs .nav-link {
+        padding-inline: 0.9rem;
+    }
+}
+
+// ---- the sign-in page of the admin --------------------------------------------------------------------------------------------
+.cms-login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--cms-head);
+}
+
+.cms-login {
+    width: 100%;
+    max-width: 22rem;
+    padding: 1rem;
+}
+
+.cms-login-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.5rem;
+    background: var(--cms-card);
+    border: 0.125rem solid var(--cms-line);
+    border-radius: var(--cms-radius);
+
+    .cms-login-title {
+        margin: 0 0 0.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+
+    .cms-login-error {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.8rem;
+        color: #842029;
+        background: #f8d7da;
+        border-radius: var(--cms-radius);
+    }
+
+    .btn {
+        margin-top: 0.5rem;
+    }
+}
+
+// A heading of a block on the page of an entity (the order): small, bold, normal case.
+.order-section {
+    margin: 1rem 0 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    a:not([class*='btn']) {
+        color: var(--cms-ink);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+// ---- the page of an order (the shop's own template, the classes are generic) ------------------------------------------------
+.order-table {
+    th {
+        width: 11rem;
+        font-weight: 600;
+        background: var(--cms-head);
+    }
+
+    th,
+    td {
+        padding: 0.2rem 0.5rem;
+        vertical-align: middle;
+    }
+
+    .form-control {
+        height: 1.7rem;
+    }
+}
+
+.order-lines {
+    .order-num {
+        width: 8rem;
+    }
+
+    td,
+    th {
+        padding: 0.2rem 0.5rem;
+        vertical-align: middle;
+    }
+
+    .form-control {
+        height: 1.7rem;
+    }
+}
+
+.order-remove {
+    margin: 0;
+    font-weight: 400;
+    color: var(--cms-icon);
+    cursor: pointer;
+
+    input:checked + i {
+        color: #dc3545;
+    }
+}
+
+.order-add {
+    display: flex;
+    gap: 0.5rem;
+
+    > input:last-child {
+        flex: 0 0 6rem;
+    }
+}
+
+.order-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0.75rem 0 0.5rem;
+}
+
+.order-status {
+    margin-top: 1rem;
+}
+
+.order-history {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--cms-line);
+
+    &:last-child {
+        border-bottom: 0;
+    }
+
+    .order-history-head {
+        margin-bottom: 0.15rem;
+        color: var(--cms-muted);
+    }
+}
+
+// The help text after a field: small and dark grey.
+.form-text,
+small[id$='_help'] {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.7rem;
+    line-height: 1.35;
+    color: var(--cms-help) !important;
+}
+
+.order-resend {
+    margin-inline-start: 0.5rem;
+    padding: 0 0.4rem;
+}
+
+// The columns of a list are not chosen by the manager (the control stays in the markup, hidden).
+#fields_filter_dropdown {
+    display: none !important;
+}
+
+// The size of the page of a list.
+.cms-page-size {
+    display: inline-flex;
+    gap: 0.6rem;
+    align-items: center;
+    margin-inline-start: 1rem;
+    font-size: 0.8rem;
+    color: var(--cms-muted);
+
+    a {
+        color: var(--cms-muted);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--cms-ink);
+        }
+
+        &.active {
+            font-weight: 700;
+            color: var(--cms-ink);
+        }
+    }
+}
+
+// Cells of a list: a small one, and one that is cut with an ellipsis instead of wrapping (the width comes from the table).
+.table-list {
+    .cms-cell-small {
+        font-size: 0.72rem;
+    }
+
+    td.cms-cell-clip {
+        max-width: 0; // with a width given by the other columns: the cell takes what is left and clips the rest
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.card-footer:has(.cms-page-size),
+.cms-pager-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+// The filter of a list: a button fixed in the bottom right corner (with the reset link beside it), always at hand while the list scrolls.
+.cms-filter-fab {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 1030;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    .cms-filter-open {
+        background: var(--cms-card);
+        box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.18);
+    }
+
+    .cms-filter-reset {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+        color: var(--cms-ink);
+        text-decoration: none;
+        background: var(--cms-card);
+        border: 1px solid var(--cms-line);
+        border-radius: var(--cms-radius);
+        box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.12);
+    }
+}
+
+// The filter button keeps its own colours on hover (a filled outline button would put the contrast colour of the theme on the card colour).
+.cms-filter-fab .cms-filter-open:hover,
+.cms-filter-fab .cms-filter-open:focus-visible {
+    color: var(--cms-ink);
+    background: var(--cms-hover);
+}
+
+
+.cms-aside-footer {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+
+    .btn.w-100 {
+        flex: 1 1 auto;
+        width: auto !important;
+    }
+}
+
+.aside-closed .cms-aside-footer {
+    flex-direction: column;
+}
+
+// The sort icon of a column heading: dim while the column is not sorted, solid on the one that is.
+.sort-icon {
+    color: var(--cms-muted);
+    opacity: 0.55;
+}
+
+.sort-icon-on {
+    color: var(--cms-ink);
+    opacity: 1;
+}
+
+// The cells of a list: a narrow horizontal padding (more columns fit, the text still keeps off the borders).
+.table-list {
+    th,
+    td {
+        padding-inline: 0.3rem;
+
+        // the first column keeps a little room from the edge of the page
+        &:first-child {
+            padding-left: 0.6rem;
+        }
+    }
+}
+
+// A closed dialog takes no room: Bootstrap keeps it as a hidden absolutely positioned box, which made the page scroll over its (empty) height (the dialog of the filter, #modal-filter).
+dialog:not([open]) {
+    display: none !important;
+}
+
+.cms-pager-top,
+.card-footer:has(.cms-page-size) {
+    box-sizing: border-box;
+    height: var(--cms-bar-h); // one height, with the pagination beside the size of the page or without it, above the table and under it
+    padding-block: 0;
+    padding-inline: 0.6rem;
+}
+
+.cms-pager-top {
+    border-bottom: 0.125rem solid var(--cms-line);
+}
+
+// The buttons of a button group are joined: no radius where two of them touch (the single radius of the theme would round every one).
+.btn-group {
+    > .btn:not(:last-child) {
+        border-start-end-radius: 0;
+        border-end-end-radius: 0;
+    }
+
+    > .btn:not(:first-child) {
+        border-start-start-radius: 0;
+        border-end-start-radius: 0;
+    }
+}
+
+// The size of the page is always at the right edge, with or without the pagination beside it.
+.cms-page-size {
+    margin-inline-start: auto;
+}
+
+// A column marked `table-shrink` (the actions, a flag, a small number) is as wide as its content and not wider.
+.table-list {
+    th.table-shrink,
+    td.table-shrink {
+        width: 1%;
+        white-space: nowrap;
+    }
+}
+
+// The card of a list: the look of the cards of the dashboard (`dash-card`): a border, the radius, a margin from the edges of the page; the table and the rows of the pagination go
+// from edge to edge inside it.
+.card.card-content.cms-list-card {
+    margin: 0.6rem;
+    padding: 0;
+    overflow: hidden;
+    background: var(--cms-card);
+    border: 0.0625rem solid var(--cms-line);
+    border-radius: var(--cms-radius);
+}
+
+// Turbo's progress bar in the colour of the admin.
+.turbo-progress-bar {
+    background: #11c2a1;
+}
+
+// The first column of a row is a link to the page of the row: it keeps the colour of the text, and turns to the accent colour with an underline on hover.
+a.cms-row-link {
+    display: block;
+    color: inherit !important;
+    text-decoration: none;
+
+    &:hover {
+        color: var(--cms-accent) !important;
+        text-decoration: underline;
+    }
+}
+
+// A field that failed the validation (`FormTrait` answers 422 and the form puts the message under the field): the border of the field and the message in the colour of danger.
+.is-invalid {
+    .form-control,
+    .form-select,
+    .cb-input,
+    .wysiwyg-content {
+        border-color: var(--cms-danger);
+    }
+}
+
+// The message is a Bootstrap-like tooltip: white on a red plate over the lower edge of the field, pointing at it.
+.form-group.row > div {
+    position: relative;
+}
+
+.invalid-tooltip,
+.invalid-feedback {
+    position: absolute;
+    top: 100%;
+    left: 0.75rem;
+    z-index: 5;
+    display: block;
+    max-width: calc(100% - 1.5rem);
+    margin-top: 0.15rem;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    color: #fff;
+    background: var(--cms-danger-bg, #dc3545);
+    border-radius: var(--cms-radius);
+    box-shadow: 0 0.25rem 0.6rem rgba(0, 0, 0, 0.2);
+
+    &::before {
+        content: '';
+        position: absolute;
+        bottom: 100%;
+        left: 0.8rem;
+        border: 0.3rem solid transparent;
+        border-top: 0;
+        border-bottom-color: var(--cms-danger-bg, #dc3545);
+    }
+}
+
+.invalid-tooltip:empty {
+    display: none;
+}
+
+
+// ---- lists the way a dashboard shows a table -----------------------------------------------------------------------------
+// The bar of the list (the filter, the columns) sticks under the header of the page; so do the headings of the columns; the pagination is a bar at the bottom of the window
+// that is always there; the selected rows are a dark plate over it; the table itself is light: one thin line between rows, quiet headings, soft badges, quiet buttons.
+:root {
+    --cms-list-bar-h: 3.6rem;
+    --cms-aside-w: 14rem;
+}
+
+.cms-shell.aside-closed {
+    --cms-aside-w: 3.5rem;
+}
+
+@media (width < 1024px) {
+    :root,
+    .cms-shell.aside-closed {
+        --cms-aside-w: 0rem;
+    }
+}
+
+// A card that clips (`overflow: hidden`) would make nothing inside it stick: `clip` cuts the corners the same way and is no scroll container.
+.card.card-content.cms-list-card {
+    overflow: clip;
+}
+
+.cms-list-card {
+
+    > .card-body {
+        overflow: visible;
+    }
+
+    .cms-list-bar {
+        position: sticky;
+        top: var(--cms-bar-h);
+        z-index: 6;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        height: var(--cms-list-bar-h);
+        padding: 0 0.75rem;
+        background: var(--cms-card);
+        border-bottom: 1px solid var(--cms-line);
+
+        #fields_filter_dropdown {
+            margin-left: auto;
+        }
+    }
+
+    // On a wide screen the table does not scroll inside the card (that would stop the headings from sticking); on a narrow one it does
+    @media (width >= 1024px) {
+        .table-responsive {
+            overflow: visible;
+        }
+    }
+
+    .table {
+        font-size: 0.82rem;
+
+        > :not(caption) > * > * {
+            padding: 0.6rem 0.7rem;
+            border-bottom-color: var(--cms-line);
+        }
+
+        thead th {
+            position: sticky;
+            top: calc(var(--cms-bar-h) + var(--cms-list-bar-h));
+            z-index: 5;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--cms-muted);
+            background: var(--cms-card);
+            border-bottom: 1px solid var(--cms-line);
+
+            a:not([class*='btn']):not(.nav-link):not(.menu-item):not(.page-link) {
+                color: inherit;
+            }
+        }
+
+        // the headings are aligned as their cells (table-align), and the sort marks stay beside the words
+        thead th.text-center {
+            text-align: center;
+        }
+
+        thead th.text-end {
+            text-align: right;
+        }
+
+        // the last column (the actions) sticks to the right edge as before, and to the top too
+        thead th:last-child.table-shrink {
+            top: calc(var(--cms-bar-h) + var(--cms-list-bar-h));
+            background: var(--cms-card);
+        }
+
+        // the checkboxes are round-cornered boxes
+        .check {
+            border-radius: 0.3rem;
+        }
+    }
+
+    // the buttons of a row are quiet: an outline until the pointer is on them
+    .table-actions .btn {
+        color: var(--cms-muted);
+        background: transparent;
+        border: 1px solid var(--cms-line);
+
+        &:hover,
+        &:focus-visible {
+            color: var(--cms-ink);
+            background: var(--cms-hover);
+        }
+    }
+
+    // the pagination is the bar at the bottom of the window: it sticks there, whatever the length of the list
+    > .card-footer,
+    .card-footer {
+        position: sticky;
+        bottom: 0;
+        z-index: 6;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: var(--cms-list-bar-h);
+        padding: 0.35rem 0.75rem;
+        background: var(--cms-card);
+        border-top: 1px solid var(--cms-line);
+
+        // the pagination is at the left, the total follows it, the size of the page is at the right
+        .cms-list-total {
+            font-size: 0.8rem;
+            color: var(--cms-muted);
+        }
+
+        .cms-page-size {
+            margin-left: auto;
+        }
+    }
+}
+
+// The plate of the selected rows: dark, at the bottom of the window, in the middle of the page (not of the menu), over the pagination bar
+#bulk-nav {
+    position: fixed;
+    bottom: 4.6rem;
+    left: calc(50% + var(--cms-aside-w) / 2);
+    z-index: 1035;
+    display: none;
+    flex: none;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 0;
+    padding: 0.45rem 0.5rem 0.45rem 1.1rem;
+    color: #fff;
+    background: #12161f;
+    border: 0;
+    border-radius: 0.9rem;
+    box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.35);
+    transform: translateX(-50%);
+
+    &::before,
+    > i {
+        display: none;
+    }
+
+    &.show {
+        display: flex;
+    }
+
+    .bulk-count {
+        padding: 0 0.4rem 0 0;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .nav {
+        flex-wrap: nowrap;
+        gap: 0.3rem;
+    }
+
+    .nav-link,
+    a:not([class*='btn']) {
+        padding: 0.35rem 0.75rem;
+        color: #fff;
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        border-radius: var(--cms-radius);
+        text-decoration: none;
+
+        &:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.12);
+        }
+    }
+
+    // the cross of "Delete" is red
+    a[data-method='DELETE'] .fa-times {
+        color: #ff6b6b;
+    }
+
+    .bulk-clear {
+        width: 2rem;
+        height: 2rem;
+        color: #fff;
+        background: transparent;
+        border: 0;
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0;
+        cursor: pointer;
+    }
+}
+
+// The search of the bar widens when it is used and offers hints under it
+.cms-bar .cms-search {
+    transition: none;
+
+    &:focus-within {
+        flex-basis: 40rem;
+    }
+
+    .cms-search-results {
+        max-height: 75vh;
+    }
+
+    .cms-search-item {
+        cursor: pointer;
+
+        strong {
+            min-width: 7rem;
+        }
+    }
+}
+
+// the dialog of a bulk update: even gaps between the fields and the buttons below them
+#modal-bulk-update {
+    .form-group,
+    .mb-3 {
+        margin-bottom: 1rem;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 0.35rem;
+    }
+
+    form > .d-flex {
+        margin-top: 1.5rem !important;
+    }
+}
+
+// the picture of a row in a list: 16:9, cut by the `fill` filter (the theme's `height: auto` must not stretch it)
+.table-list img.cms-thumb {
+    display: block;
+    width: 6rem;
+    max-width: none;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 0.25rem;
+}
+
+// The head of a page (as Stripe's): the title with the actions (create, export) opposite it, the tabs under it, then the bar of the list
+.cms-pagehead {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1rem 0.6rem;
+
+    .cms-pagehead-title {
+        min-width: 0;
+    }
+
+    .cms-bar-title {
+        margin: 0;
+        overflow: visible;
+        font-size: 1.2rem;
+        font-weight: 700;
+        line-height: 1.2;
+        white-space: normal;
+    }
+
+    .breadcrumb {
+        margin: 0 0 0.2rem;
+        font-size: 0.78rem;
+    }
+
+    .cms-pagehead-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+
+        &:not(:has(*)) {
+            display: none;
+        }
+    }
+}
+
+.cms-title {
+    margin: 0 !important;
+    padding: 0 1rem;
+    border-bottom: 1px solid var(--cms-line);
+
+    .cms-tabs .nav-link {
+        border-top: 0 !important;
+        border-bottom: 2px solid transparent;
+        padding: 0.5rem 0.2rem;
+        margin-right: 1.4rem;
+
+        &.active {
+            border-bottom-color: var(--cms-ink);
+        }
+    }
+}
+
+// the search of the entities in the bar of a list
+.cms-list-search {
+    display: flex;
+    flex: 1 1 auto;
+    gap: 0.5rem;
+    align-items: center;
+    min-width: 0;
+    height: var(--cms-list-control-h);
+    padding: 0 0.8rem;
+    color: var(--cms-muted);
+    background: var(--cms-card);
+    border: 1px solid var(--cms-line);
+    border-radius: var(--cms-radius);
+
+    &:focus-within {
+        border-color: var(--cms-ink);
+    }
+
+    input {
+        flex: 1;
+        min-width: 0;
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: var(--cms-ink);
+        background: transparent;
+        border: 0;
+        outline: 0;
+    }
+}
+
+// "Show selected" on the plate of the selected rows
+#bulk-nav .bulk-show {
+    padding: 0.35rem 0.75rem;
+    color: #fff;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--cms-radius);
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.12);
+    }
+
+    &[hidden] {
+        display: none;
+    }
+}
+
+// the search of the entities and the Filter button beside it are one height
+.cms-list-bar {
+    --cms-list-control-h: 2.25rem;
+
+    .cms-filter-open {
+        height: var(--cms-list-control-h);
+    }
+}

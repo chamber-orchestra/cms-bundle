@@ -11,13 +11,13 @@
 {%- endblock -%}
 
 {%- block actions_inner -%}
-    <div class="col-12 col-lg-10 offset-lg-2">
-        <button type="submit" class="btn btn-success px-5">{{- 'common.btn.save'|trans -}}</button>
+    <div class="col-12">
+        <button type="submit" class="btn btn-solid theme-success px-5">{{- 'common.btn.save'|trans -}}</button>
     </div>
 
     {%- if delete_form is defined -%}
         <div class="col-2">
-            <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal"
+            <button type="button" class="btn btn-solid theme-danger w-100" data-bs-toggle="dialog"
                     data-bs-target="#modal-delete">{{- 'common.btn.delete'|trans -}}</button>
         </div>
     {%- endif -%}
@@ -30,9 +30,3 @@
 {%- endblock -%}
 
 
-{%- block javascripts -%}
-    {{ vite_entry_script_tags('crud/edit', {}, 'cms') }}
-{%- endblock -%}
-{%- block stylesheets -%}
-    {{ vite_entry_link_tags('crud/edit', {}, 'cms') }}
-{%- endblock -%}

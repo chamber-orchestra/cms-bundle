@@ -46,11 +46,11 @@
                                                 {%- if sf.type == 'wysiwyg' -%}
                                                     <div class="card-text">{{- sv|raw -}}</div>
                                                 {%- elseif sf.type == 'file' -%}
-                                                    <a href="{{ sv }}" class="btn btn-outline-secondary btn-sm mt-2">{{ sv|split('/')|last }}</a>
+                                                    <a href="{{ sv }}" class="btn btn-outline theme-secondary btn-sm mt-2">{{ sv|split('/')|last }}</a>
                                                 {%- elseif titleField is not null and sf.name == titleField.name -%}
                                                     <p class="card-title fw-semibold mb-1">{{- sv -}}</p>
                                                 {%- else -%}
-                                                    <p class="card-text text-muted small">{{- sv -}}</p>
+                                                    <p class="card-text fg-3 small">{{- sv -}}</p>
                                                 {%- endif -%}
                                             {%- endif -%}
                                         {%- endif -%}
@@ -88,9 +88,9 @@
                                                 {%- if sf.type == 'wysiwyg' -%}
                                                     {{- sv|raw -}}
                                                 {%- elseif sf.type == 'file' -%}
-                                                    <a href="{{ sv }}" class="btn btn-outline-secondary btn-sm">{{ sv|split('/')|last }}</a>
+                                                    <a href="{{ sv }}" class="btn btn-outline theme-secondary btn-sm">{{ sv|split('/')|last }}</a>
                                                 {%- else -%}
-                                                    <p class="text-muted mb-0">{{- sv -}}</p>
+                                                    <p class="fg-3 mb-0">{{- sv -}}</p>
                                                 {%- endif -%}
                                             {%- endif -%}
                                         {%- endif -%}
@@ -113,8 +113,8 @@
             {%- set uri = val is instanceof('string') ? val : (val.uri is defined ? val.uri : null) -%}
             {%- if uri -%}
                 <div class="my-2">
-                    <a href="{{ uri }}" class="btn btn-outline-secondary btn-sm">
-                        <i class="far fa-file me-1"></i>{{ uri|split('/')|last }}
+                    <a href="{{ uri }}" class="btn btn-outline theme-secondary btn-sm">
+                        <i class="fas fa-file me-1"></i>{{ uri|split('/')|last }}
                     </a>
                 </div>
             {%- endif -%}

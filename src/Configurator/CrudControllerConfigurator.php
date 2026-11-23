@@ -667,6 +667,28 @@ class CrudControllerConfigurator
                 });
         }
 
+        // bulk_update is opt-in too: `['form_class' => FormType::class]` (the fields that can be changed at once; each one optional) adds "change" to the bar of the selected rows.
+        $resolver
+            ->define('bulk_update')
+            ->default(null)
+            ->allowedTypes('null', 'array')
+            ->normalize(static function (Options $options, ?array $value): ?array {
+                if (null === $value) {
+                    return null;
+                }
+                /** @var array<string, mixed> $index */
+                $index = $options['index'];
+                if (!$index['bulk_operation']) {
+                    return null;
+                }
+                /** @var string $routePrefix */
+                $routePrefix = $options['route_prefix'];
+                /** @var array<string, mixed> $routeParams */
+                $routeParams = $options['route_params'];
+
+                return \array_replace_recursive(['route' => \sprintf('%s_bulk_update', $routePrefix), 'route_params' => $routeParams], $value);
+            });
+
         // entries is opt-in: null by default so controllers without SupportsContentEntriesOperation
         // don't try to generate a link to a non-existent route. Set to [] to enable.
         $resolver

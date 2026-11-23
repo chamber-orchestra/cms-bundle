@@ -36,7 +36,7 @@ abstract class AbstractController extends \Symfony\Bundle\FrameworkBundle\Contro
     {
         /** @var array<string, mixed> $merged */
         $merged = \array_replace([
-            'limit' => 16,
+            'limit' => 32,
             'extended' => true,
         ], $options);
 

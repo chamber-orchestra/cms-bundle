@@ -1,35 +1,29 @@
-{%- extends '@ChamberOrchestraCms/base.html.twig' -%}
-{%- trans_default_domain 'cms' %}
-{# @var form \Symfony\Component\Form\FormView #}
-
-{%- block body -%}
-    <main class="min-vh-100 bg-light row align-items-center justify-content-center">
-        <div class="col-12 col-lg-3">
-            <div class="card">
-                <div class="card-header">
-                    <h4>{{- 'security.title.login'|trans -}}</h4>
-                </div>
-                <div class="card-body">
-                    {%- form_theme form with ['@ChamberOrchestraCms/form/inline.html.twig'] only -%}
-                    {{- form_start(form) -}}
-                    {{- form_rest(form) -}}
-                    <button type="submit" class="btn btn-primary w-100">
-                        {{- 'security.btn.login'|trans -}}
-                    </button>
-                    {{- form_end(form) -}}
-                </div>
-            </div>
-        </div>
-
-    </main>
-{%- endblock -%}
-
-
-
-{%- block javascripts -%}
-    {{ vite_entry_script_tags('security/login', {}, 'cms') }}
-{%- endblock -%}
-
-{%- block stylesheets -%}
-    {{ vite_entry_link_tags('security/login', {}, 'cms') }}
-{%- endblock -%}
+{#- The sign-in page of the admin: a card in the middle of an empty page. Variables: last_username, error (a key of the `cms` translations or null). -#}
+{%- trans_default_domain 'cms' -%}
+<!doctype html>
+<html lang="{{ app.request.locale }}" class="h-100">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="noindex">
+    <title>{{ 'security.title.login'|trans }}</title>
+    {{ vite_entry_link_tags('cms') }}
+</head>
+<body class="min-vh-100 cms-login-page">
+<main class="cms-login">
+    <form method="post" action="{{ path('cms_login') }}" class="cms-login-card">
+        <h1 class="cms-security.title.login">{{ 'security.title.login'|trans }}</h1>
+        {%- if error -%}
+            <div class="cms-login-error" role="alert">{{ error|trans }}</div>
+        {%- endif -%}
+        <label for="username">{{ 'security.field.email'|trans }}</label>
+        <input type="email" id="username" name="_username" value="{{ last_username }}" class="form-control" autocomplete="username" autofocus required data-no-copy>
+        <label for="password">{{ 'security.field.password'|trans }}</label>
+        <input type="password" id="password" name="_password" class="form-control" autocomplete="current-password" required>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <button type="submit" class="btn btn-solid theme-success w-100">{{ 'security.btn.login'|trans }}</button>
+    </form>
+</main>
+{{ vite_entry_script_tags('cms') }}
+</body>
+</html>

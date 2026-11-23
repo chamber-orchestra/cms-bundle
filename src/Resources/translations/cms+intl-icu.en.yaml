@@ -1,8 +1,10 @@
 common:
+    total: 'Total: {count}'
+    per_page: Per page
     title:
         list: "List"
         view: "View"
-        create: "New"
+        create: "New record"
         delete: "Delete"
         update: "Editing"
         meta: "Meta"
@@ -17,6 +19,7 @@ common:
     form:
         placeholder: "Choose a value"
     btn:
+        cancel: "Cancel"
         new: "Create"
         save: "Save"
         back: "Back"
@@ -46,8 +49,10 @@ common:
         children: Children
         view: View
         bulk_delete: <i class="far fa-fw fa-times"></i> Delete
+        bulk_update: <i class="fas fa-fw fa-pen"></i> Change
         export: CSV
     close: Close
+    menu: Menu
     move_up: Move Up
     move_down: Move Down
     create: Create
@@ -72,7 +77,10 @@ common:
 
 filter:
     title: 'Filter'
+    open: 'Filter'
     search: 'Search'
+    search_placeholder: 'Search'
+    reset: 'Reset'
 modal:
     close: Close
 toast:
@@ -98,6 +106,11 @@ security:
         login: Authorization
     btn:
         login: Sign In
+    error:
+        throttled: "Too many sign-in attempts. Wait a minute and try again."
+        csrf: "The form has expired. Try again."
+        disabled: "This administrator is disabled."
+        credentials: "Wrong email or password."
     field:
         email: E-mail
         password: Password
@@ -124,9 +137,59 @@ crud:
         deleted: Object has been successfully deleted
         all_deleted: All objects have been successfully deleted
         selected_deleted: Selected objects have been successfully deleted
+        selected_updated: 'The selected records are changed'
+        nothing_to_update: No field to change was chosen
         enabled: Object was enabled
         disabled: Object was disabled
+    bulk:
+        delete_title: Delete the selected?
+        delete_text: 'Records to be deleted: {count}. This cannot be undone.'
+        delete_all_text: 'All the records of the list will be deleted. This cannot be undone.'
+        delete_confirm: Delete
+        cancel: Cancel
+        update_title: Change the selected
+        update_text: 'Records to be changed: {count}. Leave the fields that stay as they are.'
+        update_all_text: 'All the records of the list will be changed. Leave the fields that stay as they are.'
+        update_apply: Apply
+        keep: Keep
+        yes: Yes
+        no: No
     index:
+        sorted_asc: sorted ascending
+        sorted_desc: sorted descending
+        search_column: 'Search in the column'
         select_all_on_page: 'Selected all elements on the page'
+        show_selected: 'Show selected'
+        show_all: 'Show all'
         select_all: '<i class="fas fa-exclamation-triangle text-warning"></i> Selected all elements!'
         selected: 'Selected {count} element(s)!'
+
+search:
+    placeholder: "Search the site"
+    recent: "Recent searches"
+
+audit:
+    title: Audit log
+    note: Who changed or deleted what in the admin. What was deleted can be brought back.
+    when: When
+    actor: Who
+    action: Action
+    what: What
+    changes: Changes
+    all_actors: All administrators
+    all_actions: All actions
+    all_kinds: Everything
+    search: Name or article
+    find: Search
+    empty: No records
+    restore: Restore
+    actions:
+        create: Created
+        update: Changed
+        delete: Deleted
+        restore: Restored
+    flash:
+        restored: Restored
+        not_restorable: This record can not be restored any more
+        taken: Its address is taken by another record, it can not be restored
+    pages: 'Page {page} of {pages}, records: {total}'

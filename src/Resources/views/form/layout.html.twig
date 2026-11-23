@@ -182,7 +182,7 @@
         </span>
     {%- else -%}
         {%- if errors|length > 0 -%}
-            <div class="alert alert-danger d-block">
+            <div class="alert theme-danger d-block">
                 {%- for error in errors -%}
                     {{- template|replace({'__error__': error.message})|raw -}}
                 {%- endfor -%}
@@ -198,14 +198,14 @@
         {%- if not required -%}
             {%- set append -%}
                 <button type="button" {#
-                #}class="btn btn-outline-danger" {#
-                        #}data-clear><i class="far fa-times fa-fw"></i></button>
+                #}class="btn btn-outline theme-danger" {#
+                        #}data-clear><i class="fas fa-times fa-fw"></i></button>
             {%- endset -%}
         {%- endif -%}
 
         {%- set prepend -%}
             <span class="input-group-text">
-                <i class="fad fa-fw fa-calendar"></i>
+                <i class="fas fa-fw fa-calendar"></i>
             </span>
         {%- endset -%}
 
@@ -224,17 +224,17 @@
         {%- if not required -%}
             {%- set append -%}
                 <button type="button" {#
-                #}class="btn btn-outline-danger" {#
-                        #}data-clear><i class="far fa-times fa-fw"></i></button>
+                #}class="btn btn-outline theme-danger" {#
+                        #}data-clear><i class="fas fa-times fa-fw"></i></button>
             {%- endset -%}
         {%- endif -%}
 
         {%- set prepend -%}
             <span class="input-group-text">
-                <i class="fad fa-fw fa-calendar"></i>
+                <i class="fas fa-fw fa-calendar"></i>
             </span>
             <span class="input-group-text">
-                <i class="fad fa-fw fa-clock"></i>
+                <i class="fas fa-fw fa-clock"></i>
             </span>
         {%- endset -%}
 
@@ -252,30 +252,30 @@
     {%- apply spaceless -%}
         {%- set delete_prototype -%}
             {%- if form.vars.allow_delete -%}
-                <button type="button" class="btn btn-danger btn-sm" {#
+                <button type="button" class="btn btn-solid theme-danger btn-sm" {#
                 #} data-toggle="remove" {#
                 #} data-target="#{{ form.vars.id }}" {#
                 #} aria-label="{{- "collection.field.delete"|trans({}, 'cms') -}}" {#
                 #} title="{{- "collection.field.delete"|trans({}, 'cms') -}}">{#
-                    #}<i class="far fa-times"></i>{#
+                    #}<i class="fas fa-times"></i>{#
                     #}</button>
             {%- endif -%}
             {%- if prototype['sortOrder'] is defined -%}
                 <button type="button" {#
                 #} aria-label="{{ 'common.move_up'|trans({}, 'cms') }}" {#
                 #} title="{{ 'common.move_up'|trans({}, 'cms') }}" {#
-                #} class="btn btn-sm btn-warning" {#
+                #} class="btn btn-sm btn-solid theme-warning" {#
                 #} data-target="#{{ form.vars.id }}" {#
                 #} data-move="up">
-                    <i class="far fa-angle-up"></i>
+                    <i class="fas fa-angle-up"></i>
                 </button>
                 <button type="button" {#
-                #} class="btn btn-sm btn-warning" {#
+                #} class="btn btn-sm btn-solid theme-warning" {#
                 #} aria-label="{{ 'common.move_down'|trans({}, 'cms') }}" {#
                 #} title="{{ 'common.move_down'|trans({}, 'cms') }}" {#
                 #} data-target="#{{ form.vars.id }}" {#
                 #} data-move="down">
-                    <i class="far fa-angle-down"></i>
+                    <i class="fas fa-angle-down"></i>
                 </button>
             {%- endif -%}
         {%- endset -%}
@@ -327,7 +327,7 @@
         </ol>
         {%- if form.vars.allow_add -%}
             <div>
-                <button type="button" class="btn btn-outline-success" data-toggle="add" {#
+                <button type="button" class="btn btn-outline theme-success" data-toggle="add" {#
                 #}data-target="#{{ form.vars.id }}">{#
                     #}<i class="fas fa-fw fa-plus-square"></i>&nbsp;{{- "collection.field.add"|trans({}, 'cms') -}}{#
                     #}</button>
