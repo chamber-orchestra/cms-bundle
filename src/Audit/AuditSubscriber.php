@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace ChamberOrchestra\CmsBundle\Audit;
 
+use ChamberOrchestra\CmsBundle\Audit\Attribute\Auditable;
 use ChamberOrchestra\CmsBundle\Audit\Entity\AuditLog;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,15 +25,16 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * The journal: after every flush made by a request under `path_prefix` with a user of `user_class` signed in, one line for each row created, changed, deleted or brought
- * back, with what changed. Commands, imports, the schedule and the requests of other users are not written (there is nobody to name), nor are the `ignore`d entities.
+ * The journal: after every flush made by a request under `path_prefix` with a user of `user_class` signed in, one line for each row of an `#[Auditable]` entity created, changed,
+ * deleted or brought back (the actions the attribute lists), with what changed: `#[AuditIgnore]` properties are left out, `#[AuditTransform]` ones are written in their
+ * transformed form. Commands, imports, the schedule and the requests of other users are not written (there is nobody to name), nor is an entity without the attribute.
  * The lines are collected while the unit of work is known (`onFlush`) and written after it (`postFlush`, when a new row has its id).
  */
 #[AsDoctrineListener(event: Events::onFlush)]
 #[AsDoctrineListener(event: Events::postFlush)]
 final class AuditSubscriber
 {
-    /** The fields whose value is never written. */
+    /** A field with such a name is written as a mask even without `#[AuditTransform]` (a safety net: a password must not reach the journal because an attribute was forgotten). */
     private const string SECRET = '/password|token|secret|hash/i';
     /** Fields that change with every save and say nothing. */
     private const array NOISE = ['updatedDatetime', 'lastLoginAt', 'version'];
@@ -47,8 +49,12 @@ final class AuditSubscriber
         private readonly AuditWriter $writer,
         private readonly string $pathPrefix = '/',
         private readonly string $userClass = UserInterface::class,
-        /** @var list<string> entities that are never written */
-        private readonly array $ignore = [],
+        private readonly AuditMetadata $metadata = new AuditMetadata(),
+        private readonly AuditTransformer $transformer = new AuditTransformer(''),
+        private readonly bool $recordIp = false,
+        private readonly bool $anonymizeIp = true,
+        /** false: a line that cannot be written is an error (development and tests); true: it is logged and the saved change stays saved */
+        private readonly bool $silentFailures = true,
         private readonly ?LoggerInterface $logger = null,
     ) {
     }
@@ -63,8 +69,8 @@ final class AuditSubscriber
         $uow = $em->getUnitOfWork();
 
         foreach ($uow->getScheduledEntityInsertions() as $entity) {
-            if ($this->tracked($entity)) {
-                $this->pending[] = ['action' => 'create', 'entity' => $entity, 'id' => null, 'label' => $this->label($entity), 'changes' => $this->changes($uow->getEntityChangeSet($entity), true)];
+            if ($this->tracked($entity, Auditable::CREATE)) {
+                $this->pending[] = ['action' => 'create', 'entity' => $entity, 'id' => null, 'label' => $this->label($entity), 'changes' => $this->changes($entity, $uow->getEntityChangeSet($entity), true)];
             }
         }
         foreach ($uow->getScheduledEntityUpdates() as $entity) {
@@ -77,14 +83,17 @@ final class AuditSubscriber
                 $action = null === ($set['deletedDatetime'][1] ?? null) ? 'restore' : 'delete';
                 unset($set['deletedDatetime']);
             }
-            $changes = $this->changes($set, false);
+            if (!$this->tracked($entity, $action)) {
+                continue;
+            }
+            $changes = $this->changes($entity, $set, false);
             if ('update' === $action && [] === $changes) {
-                continue; // only noise changed
+                continue; // only noise (or what is ignored) changed
             }
             $this->pending[] = ['action' => $action, 'entity' => $entity, 'id' => $this->id($em, $entity), 'label' => $this->label($entity), 'changes' => [] === $changes ? null : $changes];
         }
         foreach ($uow->getScheduledEntityDeletions() as $entity) {
-            if ($this->tracked($entity)) {
+            if ($this->tracked($entity, Auditable::DELETE)) {
                 $this->pending[] = ['action' => 'delete', 'entity' => $entity, 'id' => $this->id($em, $entity), 'label' => $this->label($entity), 'changes' => null];
             }
         }
@@ -102,14 +111,18 @@ final class AuditSubscriber
             return;
         }
         $em = $args->getObjectManager();
+        $ip = $this->ip();
         foreach ($pending as $line) {
             $id = $line['id'] ?? $this->id($em, $line['entity']);
             if (null === $id) {
                 continue;
             }
             try {
-                $this->writer->write($user->getUserIdentifier(), $line['action'], $em->getClassMetadata($line['entity']::class)->getName(), $id, $line['label'], $line['changes']);
+                $this->writer->write($user->getUserIdentifier(), $line['action'], $em->getClassMetadata($line['entity']::class)->getName(), $id, $line['label'], $line['changes'], $ip);
             } catch (\Throwable $e) {
+                if (!$this->silentFailures) {
+                    throw $e;
+                }
                 // the change itself is saved: a line of the journal that fails is logged, it does not turn a saved change into an error page
                 $this->logger?->error('The journal of the admin could not be written: '.$e->getMessage());
             }
@@ -127,18 +140,38 @@ final class AuditSubscriber
         return $user instanceof UserInterface && $user instanceof $this->userClass ? $user : null;
     }
 
-    private function tracked(object $entity): bool
+    /**
+     * Is the row journalled: its class (or a parent) has `#[Auditable]`, and the attribute lists the action (any action when `$action` is null: the row is only looked at).
+     */
+    private function tracked(object $entity, ?string $action = null): bool
     {
         if ($entity instanceof AuditLog) {
             return false;
         }
-        foreach ($this->ignore as $class) {
-            if ($entity instanceof $class) {
-                return false;
-            }
-        }
+        $meta = $this->metadata->of($entity);
 
-        return true;
+        return null !== $meta && (null === $action || \in_array($action, $meta['actions'], true));
+    }
+
+    /**
+     * The address of the client when `record_ip` is on: the last part of it is cut off when `anonymize_ip` is on (IPv4: the last byte; IPv6: the last 80 bits).
+     */
+    private function ip(): ?string
+    {
+        $ip = $this->recordIp ? $this->requests->getMainRequest()?->getClientIp() : null;
+        if (null === $ip) {
+            return null;
+        }
+        if (!$this->anonymizeIp) {
+            return $ip;
+        }
+        $packed = @\inet_pton($ip);
+        if (false === $packed) {
+            return null;
+        }
+        $keep = 4 === \strlen($packed) ? 3 : 6;
+
+        return \inet_ntop(\substr($packed, 0, $keep).\str_repeat("\0", \strlen($packed) - $keep)) ?: null;
     }
 
     private function id(EntityManagerInterface $em, object $entity): ?string
@@ -168,22 +201,27 @@ final class AuditSubscriber
      *
      * @return array<string, array{0: mixed, 1: mixed}>
      */
-    private function changes(array $set, bool $created): array
+    private function changes(object $entity, array $set, bool $created): array
     {
+        $meta = $this->metadata->of($entity) ?? ['actions' => [], 'ignored' => [], 'transforms' => []];
         $changes = [];
         foreach ($set as $field => $pair) {
             if (!\is_array($pair) || !\array_key_exists(1, $pair)) {
                 continue; // a collection: not written
             }
             [$before, $after] = [$pair[0] ?? null, $pair[1]];
-            if (\in_array($field, self::NOISE, true)) {
-                continue;
-            }
-            if (1 === \preg_match(self::SECRET, $field)) {
-                $changes[$field] = ['***', '***'];
+            if (\in_array($field, self::NOISE, true) || isset($meta['ignored'][$field])) {
                 continue;
             }
             if ($created && (null === $after || '' === $after || [] === $after)) {
+                continue;
+            }
+            if (isset($meta['transforms'][$field])) {
+                $changes[$field] = [$this->transformer->apply($meta['transforms'][$field], $this->value($before)), $this->transformer->apply($meta['transforms'][$field], $this->value($after))];
+                continue;
+            }
+            if (1 === \preg_match(self::SECRET, $field)) {
+                $changes[$field] = [AuditTransformer::MASK, AuditTransformer::MASK];
                 continue;
             }
             $changes[$field] = [$this->value($before), $this->value($after)];

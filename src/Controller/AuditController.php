@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace ChamberOrchestra\CmsBundle\Controller;
 
+use ChamberOrchestra\CmsBundle\Audit\AuditSigner;
 use ChamberOrchestra\DoctrineExtensionsBundle\Contracts\Entity\SoftDeleteInterface;
 use ChamberOrchestra\DoctrineExtensionsBundle\Filter\SoftDeleteFilter;
 use Doctrine\DBAL\Connection;
@@ -32,8 +33,14 @@ final class AuditController extends AbstractController
 {
     private const int PER_PAGE = 50;
 
-    public function __construct(private readonly Connection $connection, private readonly EntityManagerInterface $em, private readonly TranslatorInterface $translator, #[Autowire('%chamber_orchestra_cms.audit.enabled%')] private readonly bool $enabled = false)
-    {
+    public function __construct(
+        private readonly Connection $connection,
+        private readonly EntityManagerInterface $em,
+        private readonly TranslatorInterface $translator,
+        #[Autowire('%chamber_orchestra_cms.audit.enabled%')]
+        private readonly bool $enabled = false,
+        private readonly ?AuditSigner $signer = null,
+    ) {
     }
 
     #[Route('/audit', name: 'audit_index', methods: ['GET'])]
@@ -68,7 +75,7 @@ final class AuditController extends AbstractController
         $pages = \max(1, (int) \ceil($total / self::PER_PAGE));
         $page = \min(\max(1, $request->query->getInt('page', 1)), $pages);
         $rows = $this->connection->fetchAllAssociative(
-            'SELECT a.id::text AS id, a.occurred_at, a.actor, a.action, a.entity_class, a.entity_id, a.entity_label, a.changes FROM audit_log a WHERE '.$condition.' ORDER BY a.occurred_at DESC, a.id DESC LIMIT '.self::PER_PAGE.' OFFSET '.(($page - 1) * self::PER_PAGE),
+            'SELECT a.id::text AS id, a.occurred_at, to_char(a.occurred_at, \'YYYY-MM-DD HH24:MI:SS\') AS occurred_text, a.actor, a.action, a.entity_class, a.entity_id, a.entity_label, a.changes, a.ip, a.signature FROM audit_log a WHERE '.$condition.' ORDER BY a.occurred_at DESC, a.id DESC LIMIT '.self::PER_PAGE.' OFFSET '.(($page - 1) * self::PER_PAGE),
             $params,
         );
         foreach ($rows as &$row) {
@@ -76,11 +83,25 @@ final class AuditController extends AbstractController
             $row['changes'] = \is_array($changes) ? $changes : [];
             $row['kind'] = $this->kind(self::text($row['entity_class']));
             $row['deleted'] = 'delete' === $row['action'] && $this->isStillDeleted(self::text($row['entity_class']), self::text($row['entity_id']));
+            // the seal: true (fits), false (does not: the line was changed or made by hand), null (no seal: written before they were on, or they are off)
+            $row['sealed'] = null === $this->signer || !$this->signer->enabled() || !\is_string($row['signature']) ? null : $this->signer->verify(
+                $row['signature'],
+                self::text($row['id']),
+                self::text($row['occurred_text']),
+                self::text($row['actor']),
+                self::text($row['action']),
+                self::text($row['entity_class']),
+                self::text($row['entity_id']),
+                self::text($row['entity_label']),
+                \is_array($changes) ? $changes : null,
+                \is_string($row['ip']) ? $row['ip'] : null,
+            );
         }
         unset($row);
 
         return $this->render('@ChamberOrchestraCms/audit/index.html.twig', [
             'rows' => $rows,
+            'integrity' => null !== $this->signer && $this->signer->enabled(),
             'total' => $total,
             'page' => $page,
             'pages' => $pages,

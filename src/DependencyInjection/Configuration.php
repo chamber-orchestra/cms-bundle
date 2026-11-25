@@ -25,7 +25,15 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  *         audit:                                         # the journal of what the administrators change (off by default)
  *             enabled: true
  *             path_prefix: /abc                          # only requests under this path are journalled (default: every request)
- *             ignore: [App\Entity\Setting]               # entities that are never written
+ *             record_ip: true                            # the address of the client goes into every line (default: false)
+ *             anonymize_ip: true                         # ... with its last part cut off (default: true)
+ *             keyed_hash_secret: '%env(AUDIT_SECRET)%'   # the secret of #[AuditTransform(KEYED_HASH)] (default: the secret of the kernel)
+ *             silent_failures: true                      # a line that cannot be written is logged, the change stays saved (false: an error)
+ *             integrity:                                 # a seal on every line, checked by the page and by `cms:audit:check`
+ *                 enabled: true
+ *                 secret: '%env(AUDIT_SECRET)%'          # required when enabled
+ *
+ * What is journalled is chosen on the entities: #[Auditable] on the class, #[AuditIgnore] and #[AuditTransform(...)] on its properties.
  */
 final class Configuration implements ConfigurationInterface
 {
@@ -43,7 +51,22 @@ final class Configuration implements ConfigurationInterface
                     ->children()
                         ->booleanNode('enabled')->defaultFalse()->info('On: the table, the writing after every flush and the page exist. Off: none of them.')->end()
                         ->scalarNode('path_prefix')->defaultValue('/')->info('Only requests whose path starts with this are journalled.')->end()
-                        ->arrayNode('ignore')->scalarPrototype()->end()->defaultValue([])->info('Entities that are never written (technical state).')->end()
+                        ->booleanNode('record_ip')->defaultFalse()->info('Write the address of the client with every line.')->end()
+                        ->booleanNode('anonymize_ip')->defaultTrue()->info('Cut the last part off the address (IPv4: the last byte; IPv6: the last 80 bits).')->end()
+                        ->scalarNode('keyed_hash_secret')->defaultNull()->info('The secret of #[AuditTransform(AuditTransform::KEYED_HASH)]; null: the secret of the kernel.')->end()
+                        ->booleanNode('silent_failures')->defaultTrue()->info('true: a line that cannot be written is logged and the saved change stays saved; false: it is an error (development, tests).')->end()
+                        ->arrayNode('integrity')
+                            ->addDefaultsIfNotSet()
+                            ->info('A seal (HMAC) on every line: a line changed or made by hand in the table does not fit it.')
+                            ->children()
+                                ->booleanNode('enabled')->defaultFalse()->end()
+                                ->scalarNode('secret')->defaultNull()->info('The secret of the seal (required when enabled).')->end()
+                            ->end()
+                            ->validate()
+                                ->ifTrue(static fn (array $v): bool => $v['enabled'] && (null === $v['secret'] || '' === $v['secret']))
+                                ->thenInvalid('audit.integrity.secret is required when audit.integrity.enabled is true.')
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
             ->end();

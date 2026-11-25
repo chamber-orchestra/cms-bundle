@@ -27,12 +27,12 @@
     {% else %}
         <div class="table-responsive">
             <table class="table table-sm">
-                <thead><tr><th>{{ 'audit.when'|trans }}</th><th>{{ 'audit.actor'|trans }}</th><th>{{ 'audit.action'|trans }}</th><th>{{ 'audit.what'|trans }}</th><th>{{ 'audit.changes'|trans }}</th><th></th></tr></thead>
+                <thead><tr><th>{{ 'audit.when'|trans }}</th><th>{{ 'audit.actor'|trans }}</th><th>{{ 'audit.action'|trans }}</th><th>{{ 'audit.what'|trans }}</th><th>{{ 'audit.changes'|trans }}</th>{% if integrity %}<th>{{ 'audit.seal'|trans }}</th>{% endif %}<th></th></tr></thead>
                 <tbody>
                 {% for r in rows %}
                     <tr>
                         <td class="text-nowrap">{{ r.occurred_at|date('d.m.Y H:i') }}</td>
-                        <td>{{ r.actor }}</td>
+                        <td>{{ r.actor }}{% if r.ip %}<div class="small text-muted">{{ r.ip }}</div>{% endif %}</td>
                         <td><span class="badge {{ r.action == 'delete' ? 'theme-danger' : (r.action == 'create' ? 'theme-success' : 'theme-secondary') }}">{{ ('audit.actions.' ~ r.action)|trans }}</span></td>
                         <td>{{ r.kind }}: {{ r.entity_label }}</td>
                         <td class="small">
@@ -41,6 +41,13 @@
                             {% endfor %}
                             {% if r.changes|length > 4 %}<div class="text-muted">+{{ r.changes|length - 4 }}</div>{% endif %}
                         </td>
+                        {% if integrity %}
+                            <td class="text-nowrap small">
+                                {% if r.sealed is same as(true) %}<span class="text-success" title="{{ 'audit.seal_ok'|trans }}">&#10003;</span>
+                                {% elseif r.sealed is same as(false) %}<span class="text-danger" title="{{ 'audit.seal_broken'|trans }}">&#10007; {{ 'audit.seal_broken'|trans }}</span>
+                                {% else %}<span class="text-muted" title="{{ 'audit.seal_none'|trans }}">—</span>{% endif %}
+                            </td>
+                        {% endif %}
                         <td class="text-end">
                             {% if r.deleted %}
                                 <form method="post" action="{{ path('audit_restore', {id: r.id}) }}">

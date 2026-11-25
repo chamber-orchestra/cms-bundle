@@ -183,6 +183,10 @@ audit:
     find: Найти
     empty: Записей нет
     restore: Восстановить
+    seal: Подпись
+    seal_ok: Подпись верна
+    seal_broken: Запись изменена
+    seal_none: Без подписи (записана до включения подписей)
     actions:
         create: Создание
         update: Изменение
