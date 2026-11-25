@@ -183,6 +183,10 @@ audit:
     find: Search
     empty: No records
     restore: Restore
+    seal: Seal
+    seal_ok: The seal fits
+    seal_broken: The line was changed
+    seal_none: No seal (written before the seals were on)
     actions:
         create: Created
         update: Changed

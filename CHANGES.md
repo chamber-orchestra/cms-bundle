@@ -174,5 +174,16 @@ What the 8.2 line adds to `v8.2.0-BETA1` (`aa8f846`): the new admin front end (S
 
 ## The journal of the administrators (`audit`, off by default)
 
-- Config: `chamber_orchestra_cms.audit: {enabled: false, path_prefix: '/', ignore: []}`. On: `AuditLog` (table `audit_log`) is mapped, its migration (`Resources/migrations`, namespace `ChamberOrchestra\CmsBundle\Migrations`) is registered for `doctrine_migrations`, `Audit\AuditWriter` and `Audit\AuditSubscriber` are defined (they write one line per row created, changed, deleted or restored after every flush of a request under `path_prefix` made by an `admin_user_class` user: `{field: [before, after]}`, secrets as `***`). Off: none of that exists; the parameter `chamber_orchestra_cms.audit.enabled` lets the application hide its menu item.
+- Config: `chamber_orchestra_cms.audit: {enabled: false, path_prefix: '/', record_ip: false, anonymize_ip: true, keyed_hash_secret: null, silent_failures: true, integrity: {enabled: false}}` (what is journalled is chosen with `#[Auditable]`, see the last section). On: `AuditLog` (table `audit_log`) is mapped, its migration (`Resources/migrations`, namespace `ChamberOrchestra\CmsBundle\Migrations`) is registered for `doctrine_migrations`, `Audit\AuditWriter` and `Audit\AuditSubscriber` are defined (they write one line per row of an `#[Auditable]` entity created, changed, deleted or restored after every flush of a request under `path_prefix` made by an `admin_user_class` user: `{field: [before, after]}`, secrets as `***`). Off: none of that exists; the parameter `chamber_orchestra_cms.audit.enabled` lets the application hide its menu item.
 - `Controller\AuditController` (`audit_index` `/audit`, `audit_restore` `POST /audit/{id}/restore` under the admin prefix, `Resources/views/audit/index.html.twig`, translations `audit.*` of the `cms` domain): the journal with a filter and "Restore" for a soft-deleted row (`SoftDeleteInterface`); 404 while the journal is off. The application names the kinds of rows with `audit.kind.<ShortClassName>`.
+
+## The journal: chosen with attributes, with more settings
+- **`#[Auditable]` opt-in** (`Audit\Attribute\Auditable`, on a class or its parent; `actions: [...]` limits the actions): the journal writes only these entities. The configuration `audit.ignore` is **gone**.
+  `#[AuditIgnore]` (a property is never written; a change of it alone writes no line) and `#[AuditTransform(HIDDEN|HASH|KEYED_HASH)]` (a property is written as `***`, a short
+  digest or a keyed digest). `AuditMetadata` reads them by reflection once per class. A field named like password / token / secret / hash is still masked without the attribute.
+  `AbstractAdminUser` has `#[Auditable]` and a hidden password.
+- **New settings** of `chamber_orchestra_cms.audit`: `record_ip`, `anonymize_ip` (default true), `keyed_hash_secret` (default: the kernel secret), `silent_failures` (default true),
+  `integrity: {enabled, secret}` (a seal, an HMAC, on every line; `secret` is required when it is enabled).
+- **Table `audit_log`**: new columns `ip` and `signature` (migration `Version20261125000001`, `IF NOT EXISTS`). The page shows the address and, with the seals on, whether the line fits its seal;
+  `cms:audit:check` checks every line (exit 1 when one does not fit). `AuditWriter::write()` takes the address and makes the id in PHP (`Uuid::v7()`), so that it can be sealed.
+- New translation keys `audit.seal`, `audit.seal_ok`, `audit.seal_broken`, `audit.seal_none`.

@@ -20,7 +20,7 @@ use Symfony\Component\Clock\DatePoint;
 /**
  * One line of the journal of the admin: who (`actor`, the e-mail of the administrator), when, what (`action`: create, update, delete, restore), which row (`entityClass`,
  * `entityId`, `entityLabel`: how the row was called then) and what changed (`changes`: `{field: [before, after]}`). Written by `AuditWriter` with plain SQL after the flush of
- * a request of the admin; never changed.
+ * a request of the admin; never changed. `ip` and `signature` are filled when `record_ip` and `integrity` are on.
  */
 #[ORM\Entity(readOnly: true)]
 #[ORM\Table(name: 'audit_log')]
@@ -53,4 +53,12 @@ class AuditLog
     /** @var array<string, array{0: mixed, 1: mixed}>|null */
     #[ORM\Column(type: Types::JSON, nullable: true, options: ['jsonb' => true])]
     public private(set) ?array $changes = null;
+
+    /** The address of the client (truncated when `anonymize_ip` is on); null when `record_ip` is off. */
+    #[ORM\Column(type: Types::STRING, length: 45, nullable: true)]
+    public private(set) ?string $ip = null;
+
+    /** The seal of the line (`integrity.enabled`): an HMAC over what the line says; null when the line was written without one. */
+    #[ORM\Column(type: Types::STRING, length: 64, nullable: true)]
+    public private(set) ?string $signature = null;
 }

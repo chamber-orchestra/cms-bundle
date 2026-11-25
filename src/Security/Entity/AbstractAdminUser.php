@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace ChamberOrchestra\CmsBundle\Security\Entity;
 
+use ChamberOrchestra\CmsBundle\Audit\Attribute\Auditable;
+use ChamberOrchestra\CmsBundle\Audit\Attribute\AuditTransform;
 use ChamberOrchestra\DoctrineClockBundle\Entity\TimestampCreateTrait;
 use ChamberOrchestra\DoctrineExtensionsBundle\Entity\GeneratedIdTrait;
 use Doctrine\DBAL\Types\Types;
@@ -26,6 +28,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * configuration. The administrators are not the customers of the site: the admin firewall has its own provider and its own session.
  */
 #[ORM\MappedSuperclass]
+#[Auditable]
 abstract class AbstractAdminUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
     use GeneratedIdTrait;
@@ -41,6 +44,7 @@ abstract class AbstractAdminUser implements UserInterface, PasswordAuthenticated
 
     /** A hash (the hasher of the admin firewall; an old hash is rehashed at the next sign-in). */
     #[ORM\Column(type: Types::STRING, length: 255)]
+    #[AuditTransform(AuditTransform::HIDDEN)]
     protected string $password;
 
     #[ORM\Column(type: Types::STRING, length: 128, nullable: true)]
